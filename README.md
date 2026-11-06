@@ -44,6 +44,7 @@ Copied from [affaan-m/ECC](https://github.com/affaan-m/ECC/tree/main/skills) und
 - `skills/content-engine/`
 - `skills/brand-voice/`
 - `skills/security-review/`
+- `skills/remotion-video-creation/`
 
 ## Required API Keys
 
