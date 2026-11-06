@@ -485,7 +485,7 @@ const EndText: React.FC<{t: number}> = ({t}) => {
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', paddingBottom: 640}}>
       <div style={{width: 900, textAlign: 'center', fontFamily: 'Georgia, "Times New Roman", serif', textShadow: '0 3px 16px #000, 0 0 4px #000'}}>
         <div style={{opacity: o1, color: '#ffffff', fontSize: 72, fontWeight: 700, lineHeight: 1.15}}>Кто был за этой дверью?</div>
-        <div style={{opacity: o2, color: '#ff7a6b', fontSize: 46, marginTop: 30, fontStyle: 'italic'}}>Продолжение в следующем видео</div>
+        <div style={{opacity: o2, color: '#ff9585', fontSize: 54, marginTop: 30, fontStyle: 'italic'}}>Продолжение в следующем видео</div>
       </div>
     </AbsoluteFill>
   );
@@ -526,14 +526,14 @@ export const Everest: React.FC = () => {
       <Audio src={staticFile('sfx/drone.mp3')} volume={drone} />
       <Audio src={staticFile('sfx/wind.mp3')} volume={wind} />
       <Audio src={staticFile('sfx/fire.mp3')} volume={fire} />
-      <Sequence from={Math.round(0.3 * FPS)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.5} /></Sequence>
+      <Sequence from={Math.round(0.3 * FPS)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.2} /></Sequence>
       <Sequence from={Math.round(54.94 * FPS)} durationInFrames={Math.round(6.1 * FPS)}>
         <Audio src={staticFile('sfx/static.mp3')} volume={ramp([[0, 0], [0.15, 0.1], [3.5, 0.1], [3.8, 0.05], [5.6, 0.05], [6.0, 0]])} />
       </Sequence>
       {KNOCKS.map((k) => (
-        <Sequence key={k} from={Math.round(k * FPS)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.7} /></Sequence>
+        <Sequence key={k} from={Math.round(k * FPS)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.5} /></Sequence>
       ))}
-      <Sequence from={Math.round(70.76 * FPS)} durationInFrames={Math.round(3.1 * FPS)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.3} /></Sequence>
+      <Sequence from={Math.round(70.76 * FPS)} durationInFrames={Math.round(3.1 * FPS)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.2} /></Sequence>
       <Sequence from={Math.round(45 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.06} /></Sequence>
       <Sequence from={Math.round(52.5 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.06} /></Sequence>
 
