@@ -1,20 +1,21 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import phrases from './phrases.json';
+import subs from './subs.json';
 import {Key, cam, clamp, ease, lerp, rnd, seg} from './util';
 
 export const FPS = 30;
 export const DURATION = 74;
 
+export const KNOCKS = [68.55, 68.95, 69.35];
 const RED = '#8e1c1c';
 const RED_D = '#5a1010';
 const INK = '#07080b';
 
 // ---------- shared pieces ----------
 
-const Shot: React.FC<{a: number; b: number; t: number; fade?: number; children: React.ReactNode}> = ({a, b, t, fade = 0.06, children}) => {
-  if (t < a - 0.001 || t > b + 0.001) return null;
-  const o = Math.min(clamp((t - a) / fade), clamp((b - t) / fade));
+const Shot: React.FC<{a: number; b: number; t: number; fade?: number; children: React.ReactNode}> = ({a, b, t, fade = 0, children}) => {
+  if (t < a || t >= b) return null;
+  const o = fade > 0 ? Math.min(clamp((t - a) / fade), clamp((b - t) / fade)) : 1;
   return <AbsoluteFill style={{opacity: o}}>{children}</AbsoluteFill>;
 };
 
@@ -148,13 +149,17 @@ const MediumDoor: React.FC<{t: number}> = ({t}) => {
       </defs>
       <g transform={`translate(960 600) scale(${1 + slow * 0.08}) translate(-960 -600)`}>
         <rect x={-1500} y={-1500} width={5000} height={5000} fill="#0b0a0c" />
-        <rect x={1180} y={-800} width={560} height={1820} fill="#17130f" />
+        <rect x={1180} y={-800} width={560} height={1820} fill="#241b15" />
+        {[1260, 1420, 1580, 1700].map((x) => (
+          <rect key={x} x={x} y={-800} width={4} height={1820} fill="#000" opacity={0.45} />
+        ))}
         <rect x={1170} y={-800} width={6} height={1830} fill="#9fc3f0" opacity={0.7} />
-        <rect x={-1500} y={-1500} width={5000} height={5000} fill="url(#seam)" />
+        <rect width={1920} height={1080} fill="url(#seam)" />
         <rect x={-1000} y={900} width={4000} height={1500} fill="#050506" />
-        <g transform={`rotate(${-38 * seg(t, 0.5, 2.3)} 1530 560)`} opacity={0.0} />
-        <circle cx={1330} cy={560} r={22} fill="#6f6c66" />
-        <rect x={1330 - 100} y={550} width={115} height={22} rx={11} fill="#6f6c66" transform={`rotate(${-38 * seg(t, 0.5, 2.3)} 1330 560)`} />
+        <rect x={1280} y={440} width={100} height={260} rx={16} fill="#15110e" stroke="#35302a" strokeWidth={2} />
+        <circle cx={1330} cy={560} r={36} fill="#5e5c57" stroke="#000" strokeWidth={2} />
+        <rect x={1330 - 150} y={550} width={185} height={20} rx={10} fill="#77746d" stroke="#000" strokeWidth={2} transform="rotate(-38 1330 560)" />
+        <circle cx={1330} cy={560} r={16} fill="#8d8a84" stroke="#000" strokeWidth={2} />
         <Figure x={lerp(960, 760, k)} y={960} s={lerp(1.9, 2.15, k)} face={{look: 0.8, fear: 0.25 + 0.75 * k}} />
       </g>
     </g></svg>
@@ -243,7 +248,7 @@ const World: React.FC<{t: number}> = ({t}) => {
   const fl = 0.75 + 0.25 * Math.sin(t * 17) * Math.sin(t * 5.3) + 0.1 * Math.sin(t * 41);
   const tags: {x: number; y: number}[] = [];
   for (let r = 0; r < 3; r++) for (let c = 0; c < 7; c++) tags.push({x: 3040 + c * 150, y: 300 + r * 140});
-  const knock = [70.3, 70.85, 71.4];
+  const knock = KNOCKS;
   return (
     <g>
       <defs>
@@ -356,41 +361,41 @@ const World: React.FC<{t: number}> = ({t}) => {
 };
 
 const camKeys: Key[] = [
-  [22.5, 960, 580, 1.0],
-  [26.5, 960, 560, 1.06],
-  [27.5, 520, 450, 1.35],
-  [30.6, 540, 450, 1.4],
+  [20.55, 960, 580, 1.0],
+  [24.0, 960, 560, 1.06],
+  [26.2, 520, 450, 1.35],
+  [30.8, 540, 450, 1.4],
   [31.3, 1100, 560, 1.15],
-  [34.6, 1650, 600, 1.3],
-  [36.8, 1700, 640, 1.35],
-  [37.8, 1960, 800, 1.9],
-  [38.7, 2590, 660, 2.3],
-  [42.5, 2610, 650, 2.4],
-  [44.4, 3300, 520, 1.1],
-  [47.0, 3400, 500, 1.5],
-  [49.6, 3500, 480, 1.7],
-  [52.0, 3720, 480, 2.4],
+  [33.4, 1650, 600, 1.3],
+  [35.3, 1700, 640, 1.35],
+  [36.3, 1960, 800, 1.9],
+  [37.4, 1960, 800, 1.9],
+  [38.1, 2590, 660, 2.3],
+  [41.9, 2610, 650, 2.4],
+  [43.9, 3300, 520, 1.1],
+  [46.4, 3400, 500, 1.5],
+  [49.2, 3500, 480, 1.7],
+  [52.4, 3720, 480, 2.4],
   [54.9, 3730, 480, 2.5],
   [61.0, 3500, 560, 1.15],
-  [67.0, 3600, 540, 1.3],
-  [70.0, 3900, 520, 1.5],
+  [66.0, 3600, 540, 1.3],
+  [67.9, 3900, 520, 1.5],
   [74.0, 3900, 520, 1.5],
 ];
 
 const Interior: React.FC<{t: number}> = ({t}) => {
   const c = cam(t, camKeys);
-  const knock = [70.3, 70.85, 71.4];
+  const knock = KNOCKS;
   let sk = {x: 0, y: 0};
   for (const k of knock) if (t >= k && t < k + 0.18) sk = shake(t, 22 * (1 - (t - k) / 0.18));
-  if (t >= 70.0 && t < 70.3) sk = {x: 0, y: 0};
   const breathe = 1 + 0.004 * Math.sin(t * 1.3);
   const standing = t >= 54.9;
   return (
     <svg width={1080} height={1920} viewBox="0 0 1080 1920"><g transform="translate(540 960) translate(-960 -540)">
       <g transform={`translate(${960 + sk.x} ${540 + sk.y}) scale(${c.s * breathe * 1.15}) translate(${-c.cx} ${-c.cy})`}>
         <World t={t} />
-        {!standing && <Figure x={900} y={880} s={1.15} sitting face={{look: t < 27 ? 0 : t < 31 ? -0.9 : 0.9, fear: t < 31 ? 0.45 : t < 44 ? 0.3 : 0.5}} />}
-        {standing && <Figure x={3500} y={900} s={1.25} face={t >= 61 ? {look: t < 67 ? 0 : 0.9, fear: 1} : undefined} />}
+        {!standing && <Figure x={900} y={880} s={1.15} sitting face={{look: t < 26.2 ? 0 : t < 31.1 ? -0.9 : 0.9, fear: t < 31.1 ? 0.45 : t < 44 ? 0.3 : 0.5}} />}
+        {standing && <Figure x={3500} y={900} s={1.25} face={t >= 61 ? {look: t < 66 ? 0 : 0.9, fear: 1} : undefined} />}
       </g>
     </g></svg>
   );
@@ -446,8 +451,8 @@ const Overlay: React.FC<{t: number; frame: number}> = ({t, frame}) => {
     <>
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.78) 100%)'}} />
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(10,25,50,0.25), rgba(0,0,0,0.05) 50%, rgba(25,10,0,0.12))', mixBlendMode: 'overlay'}} />
-      <AbsoluteFill style={{opacity: 0.07, mixBlendMode: 'screen', transform: `translate(${j * 11}px, ${(j % 3) * 17}px)`}}>
-        <svg width={2600} height={2600}>
+      <AbsoluteFill style={{opacity: 0.07, mixBlendMode: 'screen', overflow: 'hidden'}}>
+        <svg width={2600} height={2600} style={{position: 'absolute', left: -300 + j * 11, top: -300 + (j % 3) * 17}}>
           <filter id="n">
             <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed={3} />
             <feColorMatrix type="saturate" values="0" />
@@ -460,89 +465,105 @@ const Overlay: React.FC<{t: number; frame: number}> = ({t, frame}) => {
 };
 
 const Subtitle: React.FC<{t: number}> = ({t}) => {
-  const p = (phrases as [number, number, number, string][]).find((x) => t >= x[0] - 0.05 && t <= x[1] + 0.25);
+  const list = subs as [number, number, string][];
+  let p: [number, number, string] | undefined;
+  for (const x of list) if (t >= x[0] - 0.04 && t < x[1] + 0.16) p = x;
   if (!p) return null;
-  const o = Math.min(clamp((t - p[0] + 0.05) / 0.2), clamp((p[1] + 0.25 - t) / 0.25));
+  const o = Math.min(clamp((t - p[0] + 0.04) / 0.07), clamp((p[1] + 0.16 - t) / 0.1));
   return (
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 250}}>
-      <div style={{opacity: o, color: '#eef2f7', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', fontSize: 54, textShadow: '0 2px 12px #000, 0 0 3px #000', maxWidth: 900, textAlign: 'center', lineHeight: 1.25}}>{p[3]}</div>
+      <div style={{opacity: o, color: '#eef2f7', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', fontSize: 54, textShadow: '0 2px 12px #000, 0 0 3px #000', width: 880, textAlign: 'center', lineHeight: 1.25}}>{p[2]}</div>
+    </AbsoluteFill>
+  );
+};
+
+const EndText: React.FC<{t: number}> = ({t}) => {
+  if (t < 70.9 || t >= 73.88) return null;
+  const o1 = clamp((t - 70.9) / 0.4);
+  const o2 = clamp((t - 72.1) / 0.4);
+  return (
+    <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', paddingBottom: 640}}>
+      <div style={{width: 900, textAlign: 'center', fontFamily: 'Georgia, "Times New Roman", serif', textShadow: '0 3px 16px #000, 0 0 4px #000'}}>
+        <div style={{opacity: o1, color: '#ffffff', fontSize: 72, fontWeight: 700, lineHeight: 1.15}}>Кто был за этой дверью?</div>
+        <div style={{opacity: o2, color: '#ff7a6b', fontSize: 46, marginTop: 30, fontStyle: 'italic'}}>Продолжение в следующем видео</div>
+      </div>
     </AbsoluteFill>
   );
 };
 
 // ---------- composition ----------
 
-const KNOCKS = [70.3, 70.85, 71.4];
+const ramp = (pts: [number, number][]) => (f: number) => {
+  const t = f / FPS;
+  if (t <= pts[0][0]) return pts[0][1];
+  for (let i = 0; i < pts.length - 1; i++) {
+    if (t <= pts[i + 1][0]) return lerp(pts[i][1], pts[i + 1][1], (t - pts[i][0]) / (pts[i + 1][0] - pts[i][0]));
+  }
+  return pts[pts.length - 1][1];
+};
 
 export const Everest: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / FPS;
 
-  // 0.0–2.45 door close-up, 2.45–5.05 silhouette
   const doorZoom = 1 + 0.35 * ease(t / 2.45);
-  const endDoorP = clamp((t - 71.6) / 2.3);
+  const endZoom = 1.1 + 0.5 * ease((t - 69.65) / 4.2);
 
-  // knock blackouts
   let blackout = 0;
   for (const k of KNOCKS) if (t >= k && t < k + 0.14) blackout = Math.max(blackout, 0.85 * (1 - (t - k) / 0.14));
-  // fade to black at 4.9–5.05 and the final hard cut
-  const dip = t > 4.85 && t < 5.05 ? clamp((t - 4.85) / 0.15) : t >= 5.05 && t < 5.4 ? 1 - clamp((t - 5.05) / 0.35) : 0;
+  const dip = t > 4.85 && t < 5.05 ? clamp((t - 4.85) / 0.2) : t >= 5.05 && t < 5.4 ? 1 - clamp((t - 5.05) / 0.35) : 0;
   const finalBlack = t >= 73.88 ? 1 : 0;
   const black = Math.max(blackout, dip, finalBlack);
 
-  // audio volumes
-  const drone = (f: number) => {
-    const tt = f / FPS;
-    if (tt < 4.5) return lerp(0.2, 0.28, tt / 4.5);
-    if (tt < 5.4) return lerp(0.28, 0.1, (tt - 4.5) / 0.9);
-    if (tt < 54) return lerp(0.1, 0.42, (tt - 5.4) / 48.6);
-    if (tt < 60.4) return 0.42;
-    if (tt < 61.5) return lerp(0.42, 0.02, (tt - 60.4) / 1.1);
-    if (tt < 71.6) return 0.02;
-    return lerp(0.02, 0.35, clamp((tt - 71.6) / 1.8));
-  };
+  const END = 73.95;
+  const drone = ramp([[0, 0.14], [4.5, 0.22], [5.4, 0.09], [54, 0.28], [60.3, 0.28], [61.5, 0.015], [71, 0.015], [73.5, 0.2], [END - 0.1, 0.2], [END, 0]]);
+  const wind = ramp([[0, 0.1], [5, 0.1], [6, 0.07], [60, 0.07], [62, 0.03], [END - 0.1, 0.03], [END, 0]]);
+  const fire = ramp([[0, 0], [22.5, 0], [24, 0.07], [31, 0.07], [36, 0.1], [60.4, 0.1], [61.5, 0], [END, 0]]);
 
   return (
     <AbsoluteFill style={{backgroundColor: '#000'}}>
       <Audio src={staticFile('voice.mp3')} volume={1} />
       <Audio src={staticFile('sfx/drone.mp3')} volume={drone} />
-      <Audio src={staticFile('sfx/wind.mp3')} volume={(f) => (f / FPS < 5.2 ? 0.28 : f / FPS < 61 ? 0.2 : 0.05)} />
-      <Audio src={staticFile('sfx/fire.mp3')} volume={(f) => { const x = f / FPS; return x < 23 ? 0 : x < 60.4 ? 0.14 + 0.1 * seg(x, 31, 36) : 0; }} />
-      <Sequence from={Math.round(0.3 * FPS)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.6} /></Sequence>
-      <Sequence from={Math.round(54.94 * FPS)} durationInFrames={Math.round(6.1 * FPS)}><Audio src={staticFile('sfx/static.mp3')} volume={(f) => (f / FPS < 3.7 ? 0.35 : 0.1)} /></Sequence>
+      <Audio src={staticFile('sfx/wind.mp3')} volume={wind} />
+      <Audio src={staticFile('sfx/fire.mp3')} volume={fire} />
+      <Sequence from={Math.round(0.3 * FPS)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.5} /></Sequence>
+      <Sequence from={Math.round(54.94 * FPS)} durationInFrames={Math.round(6.1 * FPS)}>
+        <Audio src={staticFile('sfx/static.mp3')} volume={ramp([[0, 0], [0.15, 0.1], [3.5, 0.1], [3.8, 0.05], [5.6, 0.05], [6.0, 0]])} />
+      </Sequence>
       {KNOCKS.map((k) => (
-        <Sequence key={k} from={Math.round(k * FPS)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={1} /></Sequence>
+        <Sequence key={k} from={Math.round(k * FPS)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.7} /></Sequence>
       ))}
-      <Sequence from={Math.round(71.7 * FPS)} durationInFrames={Math.round(2.2 * FPS)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.85} /></Sequence>
-      <Sequence from={Math.round(45 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.08} /></Sequence>
-      <Sequence from={Math.round(52.5 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.08} /></Sequence>
+      <Sequence from={Math.round(70.76 * FPS)} durationInFrames={Math.round(3.1 * FPS)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.3} /></Sequence>
+      <Sequence from={Math.round(45 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.06} /></Sequence>
+      <Sequence from={Math.round(52.5 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.06} /></Sequence>
 
       <Shot a={0} b={2.45} t={t}>
         <Door t={t} t0={0.5} t1={2.3} zoom={doorZoom} />
       </Shot>
-      <Shot a={2.45} b={5.06} t={t}>
+      <Shot a={2.45} b={5.05} t={t}>
         <MediumDoor t={t} />
       </Shot>
-      <Shot a={5.05} b={15.7} t={t}>
-        <Mountains t={t} p={clamp((t - 5.05) / 10.65)} />
+      <Shot a={5.05} b={16.15} t={t}>
+        <Mountains t={t} p={clamp((t - 5.05) / 11.1)} />
       </Shot>
-      <Shot a={15.7} b={22.5} t={t}>
-        <HelmetGlove t={t} p={clamp((t - 15.7) / 6.8)} />
+      <Shot a={16.15} b={20.55} t={t}>
+        <HelmetGlove t={t} p={clamp((t - 16.15) / 4.4)} />
       </Shot>
-      <Shot a={22.5} b={54.94} t={t} fade={0.2}>
+      <Shot a={20.55} b={54.94} t={t}>
         <Interior t={t} />
       </Shot>
       <Shot a={54.94} b={61.0} t={t}>
         <Radio t={t} />
       </Shot>
-      <Shot a={61.0} b={71.62} t={t}>
+      <Shot a={61.0} b={69.65} t={t}>
         <Interior t={t} />
       </Shot>
-      <Shot a={71.6} b={74} t={t}>
-        <Door t={t} t0={72.0} t1={73.2} zoom={1.1 + 0.55 * ease(endDoorP)} flipAngle={-42} />
+      <Shot a={69.65} b={74} t={t}>
+        <Door t={t} t0={70.76} t1={73.5} zoom={endZoom} flipAngle={-42} />
       </Shot>
 
       <Overlay t={t} frame={frame} />
+      <EndText t={t} />
       <Subtitle t={t} />
       <AbsoluteFill style={{background: '#000', opacity: black}} />
     </AbsoluteFill>
