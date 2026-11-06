@@ -33,14 +33,48 @@ const Snow: React.FC<{t: number; n?: number; speed?: number; w?: number; h?: num
   </g>
 );
 
-const Figure: React.FC<{x: number; y: number; s?: number; sitting?: boolean}> = ({x, y, s = 1, sitting}) => (
+type FaceProps = {look: number; fear: number};
+
+const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = ({cx, cy, r, look, fear}) => {
+  const sh = look * r * 0.22;
+  const eye = (side: number) => {
+    const ex = cx + sh + side * r * 0.36;
+    const ey = cy - r * 0.02;
+    return (
+      <g key={side}>
+        <ellipse cx={ex} cy={ey} rx={r * 0.19} ry={r * (0.13 + 0.07 * fear)} fill="#f2efe9" stroke="#2a1a14" strokeWidth={1.5} />
+        <circle cx={ex + look * r * 0.07} cy={ey} r={r * (0.075 + 0.02 * fear)} fill="#1b120d" />
+        <circle cx={ex + look * r * 0.07 - 2} cy={ey - 2} r={r * 0.025} fill="#fff" />
+        <path d={`M${ex - r * 0.24} ${ey - r * (0.27 + 0.04 * fear) + side * fear * -r * 0.0} L${ex + r * 0.24} ${ey - r * (0.27 + 0.12 * fear * (side * -1 === -1 ? 1 : 1)) - side * r * 0.0}`} stroke="#1a100c" strokeWidth={r * 0.07} strokeLinecap="round" transform={`rotate(${side * -fear * 10} ${ex} ${ey - r * 0.3})`} />
+      </g>
+    );
+  };
+  return (
+    <g>
+      <circle cx={cx - r * 0.97} cy={cy + r * 0.08} r={r * 0.17} fill="#c28d70" />
+      <circle cx={cx + r * 0.97} cy={cy + r * 0.08} r={r * 0.17} fill="#c28d70" />
+      <ellipse cx={cx} cy={cy} rx={r * 0.98} ry={r * 1.08} fill="#d9a98a" />
+      <ellipse cx={cx + r * 0.45} cy={cy + r * 0.1} rx={r * 0.5} ry={r * 0.95} fill="#9c6a52" opacity={0.28} />
+      <path d={`M${cx - r * 1.02} ${cy - r * 0.15} Q${cx - r * 1.1} ${cy - r * 1.25} ${cx} ${cy - r * 1.22} Q${cx + r * 1.1} ${cy - r * 1.25} ${cx + r * 1.02} ${cy - r * 0.15} Q${cx + r * 0.7} ${cy - r * 0.62} ${cx} ${cy - r * 0.58} Q${cx - r * 0.7} ${cy - r * 0.62} ${cx - r * 1.02} ${cy - r * 0.15} Z`} fill="#17100c" />
+      {eye(-1)}
+      {eye(1)}
+      <path d={`M${cx + sh} ${cy + r * 0.02} Q${cx + sh + r * 0.1} ${cy + r * 0.3} ${cx + sh - r * 0.04} ${cy + r * 0.34}`} stroke="#8a5a45" strokeWidth={r * 0.05} fill="none" strokeLinecap="round" />
+      <ellipse cx={cx + sh} cy={cy + r * 0.56} rx={r * 0.17} ry={r * (0.035 + 0.16 * fear)} fill="#3a0f0f" stroke="#6a3a30" strokeWidth={2} />
+      <path d={`M${cx - r * 0.55} ${cy + r * 0.62} Q${cx} ${cy + r * 0.95} ${cx + r * 0.55} ${cy + r * 0.62}`} stroke="#2a1a14" strokeWidth={r * 0.03} fill="none" opacity={0.18} />
+      <ellipse cx={cx - r * 0.5 + sh} cy={cy + r * 0.3} rx={r * 0.17} ry={r * 0.09} fill="#e8f1fb" opacity={0.15} />
+      <ellipse cx={cx + r * 0.5 + sh} cy={cy + r * 0.3} rx={r * 0.17} ry={r * 0.09} fill="#e8f1fb" opacity={0.15} />
+    </g>
+  );
+};
+
+const Figure: React.FC<{x: number; y: number; s?: number; sitting?: boolean; face?: FaceProps}> = ({x, y, s = 1, sitting, face}) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     {sitting ? (
       <g>
         <ellipse cx={-60} cy={-18} rx={90} ry={22} fill={INK} />
         <path d="M-50 -20 Q-70 -170 -20 -230 Q30 -250 70 -210 Q100 -120 80 -20 Z" fill={RED} />
         <path d="M30 -215 Q90 -150 80 -20 L50 -20 Q60 -140 20 -200 Z" fill={RED_D} />
-        <circle cx={10} cy={-275} r={44} fill={INK} />
+        {face ? <Head cx={10} cy={-278} r={46} {...face} /> : <circle cx={10} cy={-275} r={44} fill={INK} />}
         <path d="M-60 -40 Q-130 -60 -160 -20" stroke={INK} strokeWidth={36} strokeLinecap="round" fill="none" />
       </g>
     ) : (
@@ -51,7 +85,7 @@ const Figure: React.FC<{x: number; y: number; s?: number; sitting?: boolean}> = 
         <path d="M20 -345 Q70 -300 70 -150 L45 -150 Q50 -290 12 -340 Z" fill={RED_D} />
         <rect x={-96} y={-340} width={30} height={170} rx={14} fill={RED} transform="rotate(8 -80 -340)" />
         <rect x={66} y={-340} width={30} height={170} rx={14} fill={RED_D} transform="rotate(-8 80 -340)" />
-        <circle cx={0} cy={-392} r={42} fill={INK} />
+        {face ? <Head cx={0} cy={-395} r={46} {...face} /> : <circle cx={0} cy={-392} r={42} fill={INK} />}
       </g>
     )}
   </g>
@@ -121,7 +155,7 @@ const MediumDoor: React.FC<{t: number}> = ({t}) => {
         <g transform={`rotate(${-38 * seg(t, 0.5, 2.3)} 1530 560)`} opacity={0.0} />
         <circle cx={1330} cy={560} r={22} fill="#6f6c66" />
         <rect x={1330 - 100} y={550} width={115} height={22} rx={11} fill="#6f6c66" transform={`rotate(${-38 * seg(t, 0.5, 2.3)} 1330 560)`} />
-        <Figure x={lerp(960, 760, k)} y={960} s={lerp(1.9, 2.15, k)} />
+        <Figure x={lerp(960, 760, k)} y={960} s={lerp(1.9, 2.15, k)} face={{look: 0.8, fear: 0.25 + 0.75 * k}} />
       </g>
     </g></svg>
   );
@@ -355,8 +389,8 @@ const Interior: React.FC<{t: number}> = ({t}) => {
     <svg width={1080} height={1920} viewBox="0 0 1080 1920"><g transform="translate(540 960) translate(-960 -540)">
       <g transform={`translate(${960 + sk.x} ${540 + sk.y}) scale(${c.s * breathe * 1.15}) translate(${-c.cx} ${-c.cy})`}>
         <World t={t} />
-        {!standing && <Figure x={900} y={880} s={1.15} sitting />}
-        {standing && <Figure x={3500} y={900} s={1.25} />}
+        {!standing && <Figure x={900} y={880} s={1.15} sitting face={{look: t < 27 ? 0 : t < 31 ? -0.9 : 0.9, fear: t < 31 ? 0.45 : t < 44 ? 0.3 : 0.5}} />}
+        {standing && <Figure x={3500} y={900} s={1.25} face={t >= 61 ? {look: t < 67 ? 0 : 0.9, fear: 1} : undefined} />}
       </g>
     </g></svg>
   );
