@@ -260,14 +260,14 @@ const camKeys2: Key[] = [
   [67.7, 2000, 430, 1.6],
   [71.9, 2150, 420, 1.7],
   [73.1, 2150, 400, 1.7],
-  [75.0, 2145, 370, 2.9],
-  [75.7, 2145, 370, 3.1],
+  [75.0, 2145, 370, 2.3],
+  [75.7, 2145, 370, 2.4],
   [75.9, 2145, 380, 2.0],
   [76.4, 2300, 500, 1.2],
   [79.0, 3300, 540, 1.1],
   [80.4, 4000, 540, 1.2],
   [83.9, 4150, 540, 1.3],
-  [87.8, 1250, 570, 1.1],
+  [87.8, 1340, 570, 1.1],
   [92.6, 1280, 560, 1.25],
 ];
 
@@ -294,7 +294,7 @@ const Interior2: React.FC<{t: number}> = ({t}) => {
   else if (t >= 75.9 && t < 87.7) {
     const fx = lerp(2300, 3980, seg(t, 76.2, 80.2));
     fig = {x: fx, y: 900, s: 1.2, face: t < 80.4 ? {look: 0.9, fear: 0.7} : {look: 0.9, fear: 1}};
-  } else if (t >= 87.7) fig = {x: 1660, y: 880, s: 1.2, face: {look: -0.9, fear: 1}};
+  } else if (t >= 87.7) fig = {x: 1560, y: 880, s: 1.2, face: {look: -0.9, fear: 1}};
 
   return (
     <svg width={1080} height={1920} viewBox="0 0 1080 1920">
@@ -342,8 +342,8 @@ export const Ep2: React.FC = () => {
   // door: shot 1 (handle to the end, door starts to open) and shot 3 (door flung open)
   const d1 = t < 4.83;
   const angle1 = lerp(-42, -58, seg(t, 0.0, 2.2));
-  const o1 = 0.7 * seg(t, 3.0, 4.83);
-  const o3 = lerp(0.7, 1.0, ease(seg(t, 13.88, 14.9)));
+  const o1 = 0.85 * seg(t, 3.0, 4.83);
+  const o3 = lerp(0.85, 1.0, ease(seg(t, 13.88, 14.9)));
   const shk1 = t >= 3.0 && t < 4.83 ? shake(t, 2.2 + 3 * seg(t, 3, 4.8)) : {x: 0, y: 0};
   const shk3 = t >= 13.88 && t < 15.3 ? shake(t, 14 * (1 - seg(t, 13.88, 15.3))) : {x: 0, y: 0};
   const zoom1 = lerp(1.6, 1.9, seg(t, 0, 4.83));
