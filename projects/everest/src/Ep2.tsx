@@ -47,7 +47,7 @@ const Door2: React.FC<{t: number; zoom: number; angle: number; o: number; sk?: {
         <Snow t={t} n={110} speed={420} w={1920} h={1080} op={0.85} />
         {/* the door leaf, hinged on the left */}
         <g transform={`translate(${hx} 0) scale(${sx} 1) translate(${-hx} 0)`}>
-          <rect x={-1500} y={-1500} width={5000} height={5000} fill="url(#dw2)" />
+          <rect x={-1500} y={-1500} width={3420} height={5000} fill="url(#dw2)" />
           {Array.from({length: 14}).map((_, i) => (
             <rect key={i} x={i * 150 - 40} y={-1500} width={4} height={5000} fill="#000" opacity={0.45} />
           ))}
@@ -87,7 +87,7 @@ const Porch: React.FC<{t: number; p: number}> = ({t, p}) => {
           <stop offset="1" stopColor="#3b557d" />
         </linearGradient>
       </defs>
-      <g transform={`translate(540 1000) scale(${1 + p * 0.14}) translate(-540 -1000)`}>
+      <g transform={`translate(540 1000) scale(${1 + p * 0.2}) translate(-540 -1000)`}>
         <rect x={-300} y={-300} width={1680} height={1200} fill="url(#pk)" />
         {Array.from({length: 90}).map((_, i) => (
           <circle key={i} cx={rnd(i) * 1080} cy={rnd(i + 1) * 700} r={0.7 + rnd(i + 2) * 1.5} fill="#fff" opacity={0.35 + 0.4 * Math.abs(Math.sin(t * 0.7 + i))} />
@@ -370,7 +370,7 @@ export const Ep2: React.FC = () => {
   if (t >= END) black = 1;
 
   const drone = ramp([[0, 0.12], [3, 0.2], [14, 0.24], [15.4, 0.24], [15.75, 0.01], [17.4, 0.01], [18.6, 0.2], [42.2, 0.2], [42.5, 0.07], [47.6, 0.07], [48.2, 0.22], [62.5, 0.22], [62.9, 0.07], [66.6, 0.07], [67.2, 0.22], [84.0, 0.22], [84.15, 0.004], [87.7, 0.004], [88.5, 0.2], [END - 0.1, 0.25], [END, 0]]);
-  const wind = ramp([[0, 0.12], [3, 0.14], [13.8, 0.14], [14.5, 0.2], [19, 0.17], [34.5, 0.14], [35.0, 0.06], [60, 0.05], [84, 0.05], [84.15, 0.01], [87.7, 0.01], [88.5, 0.05], [END - 0.1, 0.05], [END, 0]]);
+  const wind = ramp([[0, 0.1], [3, 0.11], [13.8, 0.08], [14.5, 0.13], [19, 0.13], [34.5, 0.14], [35.0, 0.06], [60, 0.05], [84, 0.05], [84.15, 0.01], [87.7, 0.01], [88.5, 0.05], [END - 0.1, 0.05], [END, 0]]);
   const fire = ramp([[0, 0], [4.8, 0], [5.4, 0.07], [13.5, 0.07], [14.2, 0], [34.7, 0], [35.4, 0.07], [66, 0.09], [84, 0.09], [84.15, 0.01], [87.7, 0.01], [88.5, 0.07], [END - 0.1, 0.07], [END, 0]]);
   const radioBed = (a: number, b: number, v: number) => ramp([[0, 0], [0.15, v], [b - a - 0.3, v], [b - a, 0]]);
 
@@ -381,19 +381,19 @@ export const Ep2: React.FC = () => {
       <Audio src={staticFile('sfx/wind.mp3')} volume={wind} />
       <Audio src={staticFile('sfx/fire.mp3')} volume={fire} />
       <Sequence from={Math.round(3.0 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.22} /></Sequence>
-      <Sequence from={Math.round(10.75 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.18} /></Sequence>
-      <Sequence from={Math.round(13.9 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.25} /></Sequence>
+      <Sequence from={Math.round(10.75 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.08} /></Sequence>
+      <Sequence from={Math.round(13.9 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.12} /></Sequence>
       <Sequence from={Math.round(20.0 * FPS2)} durationInFrames={100}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.09} /></Sequence>
       <Sequence from={Math.round(24.0 * FPS2)} durationInFrames={110}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.09} /></Sequence>
       <Sequence from={Math.round(30.0 * FPS2)} durationInFrames={90}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.07} /></Sequence>
-      <Sequence from={Math.round(35.55 * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.6} /></Sequence>
-      <Sequence from={Math.round(36.25 * FPS2)} durationInFrames={Math.round(2.6 * FPS2)}><Audio src={staticFile('sfx/drag.mp3')} volume={0.18} /></Sequence>
+      <Sequence from={Math.round(35.55 * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.4} /></Sequence>
+      <Sequence from={Math.round(36.25 * FPS2)} durationInFrames={Math.round(2.6 * FPS2)}><Audio src={staticFile('sfx/drag.mp3')} volume={0.12} /></Sequence>
       <Sequence from={Math.round(39.0 * FPS2)} durationInFrames={Math.round(8.45 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(39.0, 47.45, 0.07)} /></Sequence>
       <Sequence from={Math.round(61.9 * FPS2)} durationInFrames={Math.round(5.0 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(61.9, 66.9, 0.06)} /></Sequence>
       <Sequence from={Math.round(83.9 * FPS2)} durationInFrames={Math.round(3.6 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(83.9, 87.5, 0.07)} /></Sequence>
       <Sequence from={Math.round(68.2 * FPS2)} durationInFrames={Math.round(4.0 * FPS2)}><Audio src={staticFile('sfx/scratch.mp3')} volume={ramp([[0, 0], [0.2, 0.1], [3.4, 0.1], [4, 0]])} /></Sequence>
       {KN.map((k) => (
-        <Sequence key={k} from={Math.round(k * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.5} /></Sequence>
+        <Sequence key={k} from={Math.round(k * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.32} /></Sequence>
       ))}
       <Sequence from={Math.round(92.6 * FPS2)} durationInFrames={Math.round(0.6 * FPS2)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.12} /></Sequence>
 
