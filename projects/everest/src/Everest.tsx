@@ -13,18 +13,18 @@ const INK = '#07080b';
 
 // ---------- shared pieces ----------
 
-const Shot: React.FC<{a: number; b: number; t: number; fade?: number; children: React.ReactNode}> = ({a, b, t, fade = 0, children}) => {
+export const Shot: React.FC<{a: number; b: number; t: number; fade?: number; children: React.ReactNode}> = ({a, b, t, fade = 0, children}) => {
   if (t < a || t >= b) return null;
   const o = fade > 0 ? Math.min(clamp((t - a) / fade), clamp((b - t) / fade)) : 1;
   return <AbsoluteFill style={{opacity: o}}>{children}</AbsoluteFill>;
 };
 
-const shake = (t: number, amp: number) => ({
+export const shake = (t: number, amp: number) => ({
   x: amp * (Math.sin(t * 61.3) + 0.6 * Math.sin(t * 97.1 + 1)),
   y: amp * (Math.sin(t * 53.7 + 2) + 0.6 * Math.sin(t * 83.9)),
 });
 
-const Snow: React.FC<{t: number; n?: number; speed?: number; w?: number; h?: number; op?: number}> = ({t, n = 70, speed = 60, w = 1920, h = 1080, op = 0.6}) => (
+export const Snow: React.FC<{t: number; n?: number; speed?: number; w?: number; h?: number; op?: number}> = ({t, n = 70, speed = 60, w = 1920, h = 1080, op = 0.6}) => (
   <g>
     {Array.from({length: n}).map((_, i) => {
       const x = (rnd(i) * w + t * speed * (0.6 + rnd(i + 9)) + Math.sin(t + i) * 20) % w;
@@ -36,7 +36,7 @@ const Snow: React.FC<{t: number; n?: number; speed?: number; w?: number; h?: num
 
 type FaceProps = {look: number; fear: number};
 
-const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = ({cx, cy, r, look, fear}) => {
+export const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = ({cx, cy, r, look, fear}) => {
   const sh = look * r * 0.22;
   const eye = (side: number) => {
     const ex = cx + sh + side * r * 0.36;
@@ -68,7 +68,7 @@ const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = ({cx, cy
   );
 };
 
-const Figure: React.FC<{x: number; y: number; s?: number; sitting?: boolean; face?: FaceProps}> = ({x, y, s = 1, sitting, face}) => (
+export const Figure: React.FC<{x: number; y: number; s?: number; sitting?: boolean; face?: FaceProps}> = ({x, y, s = 1, sitting, face}) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     {sitting ? (
       <g>
@@ -445,7 +445,7 @@ const Radio: React.FC<{t: number}> = ({t}) => {
   );
 };
 
-const Overlay: React.FC<{t: number; frame: number}> = ({t, frame}) => {
+export const Overlay: React.FC<{t: number; frame: number}> = ({t, frame}) => {
   const j = frame % 6;
   return (
     <>
@@ -493,7 +493,7 @@ const EndText: React.FC<{t: number}> = ({t}) => {
 
 // ---------- composition ----------
 
-const ramp = (pts: [number, number][]) => (f: number) => {
+export const ramp = (pts: [number, number][]) => (f: number) => {
   const t = f / FPS;
   if (t <= pts[0][0]) return pts[0][1];
   for (let i = 0; i < pts.length - 1; i++) {
