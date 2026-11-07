@@ -1,6 +1,6 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import subs2 from './subs2.json';
+import subs2 from './subs3.json';
 import {World2} from './World2';
 import {Figure, Overlay, Shot, Snow, ramp, shake} from './Everest';
 import {Key, cam, clamp, ease, lerp, rnd, seg} from './util';
@@ -8,8 +8,8 @@ import {Key, cam, clamp, ease, lerp, rnd, seg} from './util';
 export const FPS2 = 30;
 export const DURATION2 = 93.28;
 const END = 93.1; // instant darkness
-const KN = [81.75, 82.3, 82.85]; // three knocks on the back door
-const KEYWORDS = new Set(['дверь', 'двери', 'дверью', 'следы', 'рация', 'рации', 'никого', 'обратно', 'снег', 'голос', 'голосу', 'стол', 'полосы', 'царапины', 'трижды', 'постучал', 'вижу', 'открывай', 'открой', 'замер', 'верь', '«беги»', 'это', 'я»', 'фонарик', 'раньше']);
+const KN = [69.45, 70.0, 70.6]; // three knocks on the back door
+const KEYWORDS = new Set(['дверь', 'двери', 'дверью', 'следы', 'рация', 'никого', 'исчез', 'стол', 'царапины', 'удара', 'голос', 'умрём', 'плечо', 'рюкзак', 'замер', 'вижу', 'открывай', 'открой', 'фонарик', 'распахнулась', 'беги', 'обрывались']);
 
 // ---------- door close-up (continues the last frame of episode 1) ----------
 const Door2: React.FC<{t: number; zoom: number; angle: number; o: number; sk?: {x: number; y: number}}> = ({t, zoom, angle, o, sk = {x: 0, y: 0}}) => {
@@ -242,93 +242,110 @@ const Flashlight: React.FC<{ox: number; oy: number; ang: number; spread?: number
 
 // ---------- interior (same room as episode 1) ----------
 const camKeys2: Key[] = [
-  [4.8, 1250, 580, 1.25],
-  [10.7, 1250, 570, 1.4],
-  [12.3, 1300, 580, 1.35],
-  [13.9, 1400, 580, 1.3],
-  [34.9, 1230, 560, 1.25],
-  [36.2, 1230, 560, 1.2],
-  [38.7, 1200, 580, 1.15],
-  [39.1, 1200, 580, 1.15],
-  [47.4, 360, 420, 1.3],
-  [52.5, 340, 440, 1.6],
-  [56.8, 310, 500, 2.1],
-  [61.4, 300, 500, 2.3],
-  [62.5, 500, 560, 1.2],
-  [64.6, 1000, 600, 1.15],
-  [66.5, 1650, 600, 1.25],
-  [67.7, 2000, 430, 1.6],
-  [71.9, 2150, 420, 1.7],
-  [73.1, 2150, 400, 1.7],
-  [75.0, 2145, 370, 2.3],
-  [75.7, 2145, 370, 2.4],
-  [75.9, 2145, 380, 2.0],
-  [76.4, 2300, 500, 1.2],
-  [79.0, 3300, 540, 1.1],
-  [80.4, 4000, 540, 1.2],
-  [83.9, 4150, 540, 1.3],
-  [87.8, 1340, 570, 1.1],
-  [92.6, 1280, 560, 1.25],
+  [2.5, 1250, 580, 1.25], [4.5, 1250, 570, 1.3], [8.4, 1250, 560, 1.35], [10.05, 1250, 560, 1.35],
+  [28.0, 1230, 560, 1.25], [29.3, 1230, 560, 1.2], [31.3, 1200, 580, 1.15],
+  [38.9, 360, 420, 1.3], [43.0, 340, 440, 1.6], [46.0, 310, 500, 2.1], [46.4, 300, 500, 2.3], [47.5, 700, 560, 1.2], [47.8, 700, 560, 1.2],
+  [49.7, 800, 580, 1.2], [52.1, 1500, 600, 1.2], [52.66, 1700, 520, 1.4], [54.9, 1950, 430, 1.6], [57.0, 2100, 400, 1.9],
+  [61.0, 2145, 370, 2.3], [61.58, 2145, 370, 2.45], [62.1, 2145, 370, 2.45], [62.8, 2145, 380, 2.0], [63.1, 2400, 520, 1.2],
+  [66.0, 3800, 540, 1.15], [66.6, 4000, 540, 1.25], [68.0, 4150, 540, 1.3], [71.3, 4150, 540, 1.3], [79.4, 4200, 540, 1.7],
+  [79.5, 4300, 520, 2.6], [87.7, 4300, 520, 3.0], [87.75, 4000, 560, 1.3], [91.6, 4050, 560, 1.4],
 ];
+
+type FigState = {x: number; y: number; s: number; face: {look: number; fear: number}} | null;
+const figAt = (t: number): FigState => {
+  if (t >= 2.5 && t < 10.05) return {x: lerp(1130, 1430, seg(t, 2.8, 3.9)), y: 880, s: 1.2, face: {look: -0.9, fear: t < 8.45 ? 0.5 + 0.4 * seg(t, 2.8, 8.4) : 1}};
+  if (t >= 28.0 && t < 31.3) return {x: lerp(1220, 1150, seg(t, 29.35, 30.9)), y: 880, s: 1.2, face: {look: t < 28.9 ? -0.9 : 0.8, fear: 0.9}};
+  if (t >= 46.36 && t < 47.8) return {x: lerp(480, 900, seg(t, 46.4, 47.3)), y: 880, s: 1.2, face: {look: -0.9, fear: 1}};
+  if (t >= 49.7 && t < 62.8) return {x: lerp(900, 1350, seg(t, 49.8, 52.5)), y: 880, s: 1.2, face: {look: t < 52.66 ? -0.7 : 0.9, fear: 0.9}};
+  if (t >= 62.8 && t < 91.67) return {x: lerp(1350, 3980, ease(seg(t, 62.9, 66.3))), y: 900, s: 1.2, face: {look: 0.9, fear: t < 66.4 ? 0.8 : 1}};
+  return null;
+};
+
+const toScreen = (t: number, wx: number, wy: number) => {
+  const c = cam(t, camKeys2);
+  return {x: 540 + (wx - c.cx) * c.s * 1.15, y: 960 + (wy - c.cy) * c.s * 1.15};
+};
+
+const HandShadow: React.FC<{x: number; t: number}> = ({x, t}) => {
+  const o = seg(t, 88.8, 89.9);
+  if (o <= 0) return null;
+  const slide = (1 - o) * 120;
+  return (
+    <g opacity={0.9 * o} transform={`translate(${slide} ${-slide * 0.2})`}>
+      <path d={`M${x + 760} 300 Q${x + 420} 330 ${x + 130} 500`} stroke="#020202" strokeWidth={46} strokeLinecap="round" fill="none" />
+      <ellipse cx={x + 104} cy={512} rx={54} ry={38} fill="#020202" transform={`rotate(35 ${x + 104} 512)`} />
+      {[-30, -12, 8, 26].map((a, i) => (
+        <rect key={i} x={x + 40 + i * 4} y={500 + i * 14} width={78} height={17} rx={8} fill="#020202" transform={`rotate(${a + 150} ${x + 104} ${512 + i * 6})`} />
+      ))}
+      <path d={`M${x + 760} 300 Q${x + 420} 330 ${x + 130} 500`} stroke="#8a7a66" strokeWidth={3} strokeLinecap="round" fill="none" opacity={0.35} transform="translate(0 -22)" />
+    </g>
+  );
+};
 
 const Interior2: React.FC<{t: number}> = ({t}) => {
   const c = cam(t, camKeys2);
   let sk = {x: 0, y: 0};
   for (const k of KN) if (t >= k && t < k + 0.2) sk = shake(t, 20 * (1 - (t - k) / 0.2));
-  if (t >= 35.5 && t < 35.9) sk = shake(t, 16 * (1 - (t - 35.5) / 0.4));
-  // table: dragged to the door while "придвинул к ней тяжёлый стол"
-  const tableX = t < 36.25 ? 2300 : lerp(2300, 860, ease((t - 36.25) / 2.5));
-  // front door: closed in the flashback, flung open, slammed at 35.6
-  const doorOpen = t < 34.94 ? 0 : 1 - seg(t, 34.94, 35.6);
-  const handleAng = t >= 10.75 && t < 11.7 ? 14 * Math.sin((t - 10.75) * 40) * (1 - (t - 10.75) / 0.95) : t >= 91.71 && t < 92.6 ? 9 * Math.sin(t * 50) : 0;
-  const backShake = KN.reduce((m, k) => (t >= k && t < k + 0.18 ? Math.max(m, 9 * (1 - (t - k) / 0.18) * Math.sin((t - k) * 90)) : m), 0);
-  const streaks = [seg(t, 53.3, 54.6), seg(t, 55.2, 56.2), seg(t, 56.8, 57.8)];
-  const scratch = clamp((t - 68.2) / 3.7);
-  const letters = clamp((t - 72.9) / 2.7) * 4;
-
-  // Ilya: position / pose / face by scene
-  let fig: {x: number; y: number; s: number; face?: {look: number; fear: number}} | null = null;
-  if (t < 13.88) fig = {x: lerp(1130, 1430, seg(t, 12.36, 13.4)), y: 880, s: 1.2, face: {look: -0.9, fear: 0.4 + 0.5 * seg(t, 10.7, 12.4)}};
-  else if (t >= 34.9 && t < 39.1) fig = {x: lerp(1220, 1150, seg(t, 36.25, 38.7)), y: 880, s: 1.2, face: {look: t < 36 ? -0.9 : 0.8, fear: 0.9}};
-  else if (t >= 61.38 && t < 66.6) fig = {x: lerp(560, 1350, seg(t, 61.5, 65.5)), y: 880, s: 1.15, face: {look: -0.7, fear: 0.8}};
-  else if (t >= 75.9 && t < 87.7) {
-    const fx = lerp(2300, 3980, seg(t, 76.2, 80.2));
-    fig = {x: fx, y: 900, s: 1.2, face: t < 80.4 ? {look: 0.9, fear: 0.7} : {look: 0.9, fear: 1}};
-  } else if (t >= 87.7) fig = {x: 1560, y: 880, s: 1.2, face: {look: -0.9, fear: 1}};
+  if (t >= 28.5 && t < 28.95) sk = shake(t, 16 * (1 - (t - 28.5) / 0.45));
+  if (t >= 8.45 && t < 9.2) sk = shake(t, 12 * (1 - (t - 8.45) / 0.75));
+  if (t >= 61.58 && t < 62.1) sk = shake(t, 9);
+  const tableX = t < 29.35 ? 2300 : lerp(2300, 860, ease((t - 29.35) / 1.7));
+  const doorOpen = t < 8.45 ? 0 : t < 28.45 ? lerp(0, 1, ease(seg(t, 8.45, 8.95))) : 1 - seg(t, 28.45, 28.95);
+  const handleAng = t < 2.5 ? -58 : t < 8.45 ? -58 + (t > 5 ? 3 * Math.sin(t * 17) : 0) : t < 28.45 ? lerp(-58, 0, seg(t, 8.45, 8.7)) : 0;
+  const tremor = t >= 71.3 && t < 79.5 ? (t >= 75.1 && t < 77.2 ? 2.4 : 1.1) * Math.sin(t * 43) : t >= 79.5 && t < 87.7 ? (t >= 84.3 ? 3.4 : 1.8) * Math.sin(t * 47) : 0;
+  const knockShake = KN.reduce((m, k) => (t >= k && t < k + 0.18 ? Math.max(m, 9 * (1 - (t - k) / 0.18) * Math.sin((t - k) * 90)) : m), 0);
+  const backShake = knockShake + tremor;
+  const streaks = [seg(t, 42.6, 43.7), seg(t, 44.0, 45.0), seg(t, 45.3, 46.2)];
+  const scratch = clamp((t - 54.9) / 2.2);
+  const letters = clamp((t - 57.2) / 3.9) * 4;
+  const fig = figAt(t);
+  const standing = t >= 87.75 && t < 91.67 ? figAt(t) : null;
 
   return (
     <svg width={1080} height={1920} viewBox="0 0 1080 1920">
       <g transform={`translate(${540 + sk.x} ${960 + sk.y}) scale(${c.s * 1.15}) translate(${-c.cx - Math.sin(t * 0.6) * 5} ${-c.cy})`}>
         <World2 t={t} tableX={tableX} streaks={streaks} scratch={scratch} letters={letters} backShake={backShake} doorOpen={doorOpen} handleAng={handleAng} />
+        {t >= 87.75 && <HandShadow x={3980} t={t} />}
         {fig && <Figure x={fig.x} y={fig.y} s={fig.s} face={fig.face} />}
       </g>
     </svg>
   );
 };
 
+// flashlight in the room: from Ilya's hand toward the door / the wall
+const roomFlash = (t: number) => {
+  const f = figAt(t);
+  if (t >= 4.4 && t < 10.05 && f) {
+    const o = toScreen(t, f.x + 70, 720);
+    const tgt = toScreen(t, 1175, 520);
+    return {ox: o.x, oy: o.y, ang: Math.atan2(tgt.y - o.y, tgt.x - o.x) + 0.02 * Math.sin(t * 9), spread: 0.3, len: 1800, k: Math.min(clamp((t - 4.4) / 0.25), clamp((10.05 - t) / 0.2))};
+  }
+  if (t >= 53.3 && t < 62.8 && f) {
+    const o = toScreen(t, 1420, 720);
+    const tgt = toScreen(t, 2145, 380);
+    return {ox: o.x, oy: o.y, ang: Math.atan2(tgt.y - o.y, tgt.x - o.x) + 0.015 * Math.sin(t * 9), spread: 0.16, len: 4200, k: Math.min(clamp((t - 53.3) / 0.3), clamp((62.8 - t) / 0.3))};
+  }
+  return null;
+};
+
 // ---------- subtitles ----------
-const stripP = (w: string) => w.replace(/[.,:—…?!]+$/g, '').toLowerCase();
+const stripP = (w: string) => w.replace(/[.,:—…?!»«]+/g, '').toLowerCase();
 const Subtitle2: React.FC<{t: number}> = ({t}) => {
   const list = subs2 as [number, number, string][];
   let p: [number, number, string] | undefined;
-  for (const x of list) if (t >= x[0] - 0.04 && t < x[1] + 0.14) p = x;
+  for (const x of list) if (t >= x[0] - 0.03 && t < x[1] + 0.12) p = x;
   if (!p) return null;
-  const o = Math.min(clamp((t - p[0] + 0.04) / 0.06), clamp((p[1] + 0.14 - t) / 0.08));
+  const o = Math.min(clamp((t - p[0] + 0.03) / 0.05), clamp((p[1] + 0.12 - t) / 0.07));
   const words = p[2].split(' ');
-  const special = /Это я/.test(p[2]);
   return (
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 360}}>
       <div style={{opacity: o, width: 900, textAlign: 'center', fontFamily: '"Arial Black", "Liberation Sans", Arial, sans-serif', fontWeight: 900, fontSize: 70, lineHeight: 1.12, color: '#fff', WebkitTextStroke: '10px #000', paintOrder: 'stroke fill', textShadow: '0 4px 14px rgba(0,0,0,0.7)'}}>
-        {words.map((w, i) => {
-          const key = stripP(w);
-          const hot = KEYWORDS.has(key) && (key !== 'я»' || special) && (key !== 'это' || special);
-          return (
-            <span key={i} style={{color: hot ? '#ffd400' : '#fff'}}>
-              {w}
-              {i < words.length - 1 ? ' ' : ''}
-            </span>
-          );
-        })}
+        {words.map((w, i) => (
+          <span key={i} style={{color: KEYWORDS.has(stripP(w)) ? '#ffd400' : '#fff'}}>
+            {w}
+            {i < words.length - 1 ? ' ' : ''}
+          </span>
+        ))}
       </div>
     </AbsoluteFill>
   );
@@ -339,39 +356,31 @@ export const Ep2: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / FPS2;
 
-  // door: shot 1 (handle to the end, door starts to open) and shot 3 (door flung open)
-  const d1 = t < 4.83;
   const angle1 = lerp(-42, -58, seg(t, 0.0, 2.2));
-  const o1 = 0.85 * seg(t, 3.0, 4.83);
-  const o3 = lerp(0.85, 1.0, ease(seg(t, 13.88, 14.9)));
-  const shk1 = t >= 3.0 && t < 4.83 ? shake(t, 2.2 + 3 * seg(t, 3, 4.8)) : {x: 0, y: 0};
-  const shk3 = t >= 13.88 && t < 15.3 ? shake(t, 14 * (1 - seg(t, 13.88, 15.3))) : {x: 0, y: 0};
-  const zoom1 = lerp(1.6, 1.9, seg(t, 0, 4.83));
-  const zoom3 = lerp(1.6, 1.3, ease(seg(t, 13.88, 15.7)));
-
-  // final door: handle moves the other way
-  const endAngle = lerp(0, 14, seg(t, 92.62, 93.1));
+  const zoom1 = lerp(1.6, 1.75, seg(t, 0, 2.52));
+  const endAngle = lerp(0, 14, seg(t, 92.0, 93.1));
 
   // footprints camera
   const fpY = (() => {
-    if (t < 22.3) return lerp(560, 480, seg(t, 19.2, 22.3));
-    if (t < 24.4) return lerp(480, -1000, seg(t, 22.77, 24.4));
-    if (t < 27.3) return lerp(-1000, 480, seg(t, 24.4, 27.3));
+    if (t < 18.5) return 520;
+    if (t < 19.16) return lerp(520, -1000, seg(t, 18.5, 19.16));
+    if (t < 22.5) return lerp(-1000, 480, seg(t, 19.16, 22.5));
     return 480;
   })();
-  const fpZoom = t < 28 ? lerp(1.15, 1.0, seg(t, 19.2, 22.3)) : lerp(1.1, 0.95, seg(t, 28, 34));
-  const fpAng = -Math.PI / 2 + (t < 28 ? 0.1 * Math.sin(t * 1.3) : 0.55 * Math.sin((t - 28) * 0.9));
+  const fpZoom = t < 22.7 ? lerp(1.15, 1.0, seg(t, 15.7, 22.5)) : lerp(1.1, 0.95, seg(t, 22.7, 28));
+  const fpAng = -Math.PI / 2 + (t < 22.7 ? 0.2 * Math.sin(t * 1.1) : 0.55 * Math.sin((t - 22.7) * 0.8));
 
-  // blackout on dips/knocks
-  let black = 0;
-  const dip = t > 4.74 && t < 4.9 ? clamp((t - 4.74) / 0.16) : t >= 4.9 && t < 5.25 ? 1 - clamp((t - 4.9) / 0.35) : 0;
-  black = Math.max(black, dip);
+  const rf = roomFlash(t);
+
+  // blackouts
+  const dip = 0;
+  let black = dip;
   for (const k of KN) if (t >= k && t < k + 0.12) black = Math.max(black, 0.75 * (1 - (t - k) / 0.12));
   if (t >= END) black = 1;
 
-  const drone = ramp([[0, 0.12], [3, 0.2], [14, 0.24], [15.4, 0.24], [15.75, 0.01], [17.4, 0.01], [18.6, 0.2], [42.2, 0.2], [42.5, 0.07], [47.6, 0.07], [48.2, 0.22], [62.5, 0.22], [62.9, 0.07], [66.6, 0.07], [67.2, 0.22], [84.0, 0.22], [84.15, 0.004], [87.7, 0.004], [88.5, 0.2], [END - 0.1, 0.25], [END, 0]]);
-  const wind = ramp([[0, 0.1], [3, 0.11], [13.8, 0.08], [14.5, 0.13], [19, 0.13], [34.5, 0.14], [35.0, 0.06], [60, 0.05], [84, 0.05], [84.15, 0.01], [87.7, 0.01], [88.5, 0.05], [END - 0.1, 0.05], [END, 0]]);
-  const fire = ramp([[0, 0], [4.8, 0], [5.4, 0.07], [13.5, 0.07], [14.2, 0], [34.7, 0], [35.4, 0.07], [66, 0.09], [84, 0.09], [84.15, 0.01], [87.7, 0.01], [88.5, 0.07], [END - 0.1, 0.07], [END, 0]]);
+  const drone = ramp([[0, 0.12], [2.5, 0.2], [6.9, 0.22], [9.9, 0.22], [10.05, 0.01], [12.2, 0.01], [12.6, 0.2], [33.8, 0.2], [34.0, 0.06], [37.2, 0.06], [37.5, 0.2], [49.5, 0.2], [49.7, 0.06], [52.3, 0.06], [52.7, 0.2], [61.3, 0.26], [61.45, 0.01], [62.5, 0.01], [62.9, 0.22], [69.3, 0.22], [71.2, 0.01], [79.3, 0.01], [79.5, 0.14], [84.15, 0.14], [84.3, 0.004], [87.6, 0.004], [88.0, 0.2], [END - 0.1, 0.25], [END, 0]]);
+  const wind = ramp([[0, 0.08], [3, 0.09], [8.4, 0.1], [8.9, 0.2], [15.7, 0.14], [28.0, 0.12], [28.6, 0.05], [60, 0.05], [71.2, 0.03], [79.3, 0.02], [84.3, 0.01], [87.6, 0.01], [88.2, 0.05], [END - 0.1, 0.05], [END, 0]]);
+  const fire = ramp([[0, 0], [2.4, 0], [3.0, 0.07], [8.4, 0.07], [9.0, 0], [28.0, 0], [28.6, 0.07], [60, 0.09], [71.2, 0.02], [84.3, 0.01], [87.6, 0.01], [88.2, 0.07], [END - 0.1, 0.07], [END, 0]]);
   const radioBed = (a: number, b: number, v: number) => ramp([[0, 0], [0.15, v], [b - a - 0.3, v], [b - a, 0]]);
 
   return (
@@ -380,62 +389,61 @@ export const Ep2: React.FC = () => {
       <Audio src={staticFile('sfx/drone.mp3')} volume={drone} />
       <Audio src={staticFile('sfx/wind.mp3')} volume={wind} />
       <Audio src={staticFile('sfx/fire.mp3')} volume={fire} />
-      <Sequence from={Math.round(3.0 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.22} /></Sequence>
-      <Sequence from={Math.round(10.75 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.08} /></Sequence>
-      <Sequence from={Math.round(13.9 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.12} /></Sequence>
-      <Sequence from={Math.round(20.0 * FPS2)} durationInFrames={100}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.09} /></Sequence>
-      <Sequence from={Math.round(24.0 * FPS2)} durationInFrames={110}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.09} /></Sequence>
-      <Sequence from={Math.round(30.0 * FPS2)} durationInFrames={90}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.07} /></Sequence>
-      <Sequence from={Math.round(35.55 * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.4} /></Sequence>
-      <Sequence from={Math.round(36.25 * FPS2)} durationInFrames={Math.round(2.6 * FPS2)}><Audio src={staticFile('sfx/drag.mp3')} volume={0.12} /></Sequence>
-      <Sequence from={Math.round(39.0 * FPS2)} durationInFrames={Math.round(8.45 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(39.0, 47.45, 0.07)} /></Sequence>
-      <Sequence from={Math.round(61.9 * FPS2)} durationInFrames={Math.round(5.0 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(61.9, 66.9, 0.06)} /></Sequence>
-      <Sequence from={Math.round(83.9 * FPS2)} durationInFrames={Math.round(3.6 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(83.9, 87.5, 0.07)} /></Sequence>
-      <Sequence from={Math.round(68.2 * FPS2)} durationInFrames={Math.round(4.0 * FPS2)}><Audio src={staticFile('sfx/scratch.mp3')} volume={ramp([[0, 0], [0.2, 0.1], [3.4, 0.1], [4, 0]])} /></Sequence>
+      <Sequence from={Math.round(1.0 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.1} /></Sequence>
+      <Sequence from={Math.round(5.6 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.08} /></Sequence>
+      <Sequence from={Math.round(8.45 * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.35} /></Sequence>
+      <Sequence from={Math.round(8.5 * FPS2)} durationInFrames={50}><Audio src={staticFile('sfx/creak.mp3')} volume={0.12} /></Sequence>
+      <Sequence from={Math.round(16.0 * FPS2)} durationInFrames={100}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.08} /></Sequence>
+      <Sequence from={Math.round(19.5 * FPS2)} durationInFrames={110}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.08} /></Sequence>
+      <Sequence from={Math.round(23.0 * FPS2)} durationInFrames={90}><Audio src={staticFile('sfx/crunch.mp3')} volume={0.06} /></Sequence>
+      <Sequence from={Math.round(28.55 * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.4} /></Sequence>
+      <Sequence from={Math.round(29.35 * FPS2)} durationInFrames={Math.round(1.8 * FPS2)}><Audio src={staticFile('sfx/drag.mp3')} volume={0.12} /></Sequence>
+      <Sequence from={Math.round(31.3 * FPS2)} durationInFrames={Math.round(7.65 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(31.3, 38.95, 0.07)} /></Sequence>
+      <Sequence from={Math.round(47.8 * FPS2)} durationInFrames={Math.round(1.9 * FPS2)}><Audio src={staticFile('sfx/static.mp3')} volume={radioBed(47.8, 49.7, 0.07)} /></Sequence>
+      <Sequence from={Math.round(54.9 * FPS2)} durationInFrames={Math.round(4.0 * FPS2)}><Audio src={staticFile('sfx/scratch.mp3')} volume={ramp([[0, 0], [0.2, 0.1], [3.4, 0.1], [4, 0]])} /></Sequence>
+      <Sequence from={Math.round(58.0 * FPS2)} durationInFrames={Math.round(3.3 * FPS2)}><Audio src={staticFile('sfx/scratch.mp3')} volume={ramp([[0, 0], [0.2, 0.1], [2.8, 0.1], [3.3, 0]])} /></Sequence>
       {KN.map((k) => (
         <Sequence key={k} from={Math.round(k * FPS2)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.32} /></Sequence>
       ))}
-      <Sequence from={Math.round(92.6 * FPS2)} durationInFrames={Math.round(0.6 * FPS2)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.12} /></Sequence>
+      <Sequence from={Math.round(92.0 * FPS2)} durationInFrames={Math.round(1.0 * FPS2)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.12} /></Sequence>
 
-      <Shot a={0} b={4.83} t={t}>
-        <Door2 t={t} zoom={zoom1} angle={angle1} o={o1} sk={shk1} />
+      <Shot a={0} b={2.52} t={t}>
+        <Door2 t={t} zoom={zoom1} angle={angle1} o={0} />
       </Shot>
-      <Shot a={4.83} b={13.88} t={t}>
+      <Shot a={2.52} b={10.05} t={t}>
         <Interior2 t={t} />
+        {rf && <Flashlight ox={rf.ox} oy={rf.oy} ang={rf.ang} spread={rf.spread} len={rf.len} k={rf.k} />}
       </Shot>
-      <Shot a={13.88} b={15.73} t={t}>
-        <Door2 t={t} zoom={zoom3} angle={-58} o={o3} sk={shk3} />
+      <Shot a={10.05} b={15.72} t={t}>
+        <Porch t={t} p={clamp((t - 10.05) / 5.67)} />
       </Shot>
-      <Shot a={15.73} b={19.2} t={t}>
-        <Porch t={t} p={clamp((t - 15.73) / 3.5)} />
-      </Shot>
-      <Shot a={19.2} b={34.94} t={t}>
+      <Shot a={15.72} b={28.0} t={t}>
         <Footprints t={t} camY={fpY} zoom={fpZoom} />
         <Flashlight ox={540} oy={1950} ang={fpAng} spread={0.34} len={1900} />
       </Shot>
-      <Shot a={34.94} b={39.0} t={t}>
+      <Shot a={28.0} b={31.3} t={t}>
         <Interior2 t={t} />
       </Shot>
-      <Shot a={39.0} b={47.45} t={t}>
-        <Radio2 t={t} t0={39.0} voice={[[42.4, 47.4]]} p={clamp((t - 39) / 8.4)} />
+      <Shot a={31.3} b={38.95} t={t}>
+        <Radio2 t={t} t0={31.3} voice={[[34.0, 34.55], [34.9, 35.95], [36.25, 37.15]]} p={clamp((t - 31.3) / 7.6)} />
       </Shot>
-      <Shot a={47.45} b={66.5} t={t}>
+      <Shot a={38.95} b={46.36} t={t}>
         <Interior2 t={t} />
       </Shot>
-      <Shot a={66.5} b={75.9} t={t}>
-        <Interior2 t={t} />
-        <Flashlight ox={1010} oy={1880} ang={-2.0 + 0.04 * Math.sin(t * 7)} spread={0.32} len={1900} />
-      </Shot>
-      <Shot a={75.9} b={84.0} t={t}>
+      <Shot a={46.36} b={47.8} t={t}>
         <Interior2 t={t} />
       </Shot>
-      <Shot a={84.0} b={87.7} t={t}>
-        <Radio2 t={t} t0={84.0} voice={[[84.3, 87.3]]} p={clamp((t - 84) / 3.7)} />
+      <Shot a={47.8} b={49.7} t={t}>
+        <Radio2 t={t} t0={47.8} voice={[[47.85, 49.4]]} p={clamp((t - 47.8) / 1.9)} />
       </Shot>
-      <Shot a={87.7} b={92.56} t={t}>
+      <Shot a={49.7} b={62.8} t={t}>
+        <Interior2 t={t} />
+        {rf && <Flashlight ox={rf.ox} oy={rf.oy} ang={rf.ang} spread={rf.spread} len={rf.len} k={rf.k} />}
+      </Shot>
+      <Shot a={62.8} b={91.67} t={t}>
         <Interior2 t={t} />
       </Shot>
-      <Shot a={92.56} b={END + 0.2} t={t}>
+      <Shot a={91.67} b={END + 0.2} t={t}>
         <Door2 t={t} zoom={1.7} angle={endAngle} o={0} />
       </Shot>
 
