@@ -3,6 +3,7 @@ import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remoti
 import '@fontsource/montserrat/cyrillic-600.css';
 import '@fontsource/montserrat/latin-600.css';
 import subs3 from './subs_ep3.json';
+import {StyledSub} from './Subs';
 import {World2} from './World2';
 import {Figure, Overlay, Shot, Snow, ramp, shake} from './Everest';
 import {Flashlight, Radio2} from './Ep2';
@@ -366,20 +367,6 @@ const Room3: React.FC<{t: number}> = ({t}) => {
   );
 };
 
-// =============== subtitles ===============
-const Subtitle3: React.FC<{t: number}> = ({t}) => {
-  const list = subs3 as [number, number, string][];
-  let p: [number, number, string] | undefined;
-  for (const x of list) if (t >= x[0] - 0.03 && t < x[1] + 0.12) p = x;
-  if (!p) return null;
-  const o = Math.min(clamp((t - p[0] + 0.03) / 0.05), clamp((p[1] + 0.12 - t) / 0.07));
-  return (
-    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 360}}>
-      <div style={{opacity: o, width: 900, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, fontSize: 62, lineHeight: 1.18, color: '#fff', WebkitTextStroke: '4px rgba(0,0,0,0.85)', paintOrder: 'stroke fill', textShadow: '0 3px 12px rgba(0,0,0,0.6)'}}>{p[2]}</div>
-    </AbsoluteFill>
-  );
-};
-
 // =============== composition ===============
 export const Ep3: React.FC = () => {
   const frame = useCurrentFrame();
@@ -457,7 +444,7 @@ export const Ep3: React.FC = () => {
       <Shot a={84.58} b={CUT} t={t}><Facade t={t} /></Shot>
 
       <Overlay t={t} frame={frame} />
-      <Subtitle3 t={t} />
+      <StyledSub t={t} subs={subs3 as [number, number, string][]} weight={600} />
       <AbsoluteFill style={{background: '#000', opacity: black}} />
     </AbsoluteFill>
   );
