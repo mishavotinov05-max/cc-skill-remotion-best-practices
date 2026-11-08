@@ -500,7 +500,7 @@ export const Overlay: React.FC<{t: number; frame: number}> = ({t, frame}) => {
 const EndText: React.FC<{t: number}> = ({t}) => {
   if (t < 72.0 || t >= 73.88) return null;
   const o1 = clamp((t - 72.0) / 0.4);
-  const o2 = clamp((t - 72.9) / 0.4);
+  const o2 = clamp((t - 72.5) / 0.4);
   return (
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', paddingBottom: 640}}>
       <div style={{width: 900, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', textShadow: '0 3px 16px #000, 0 0 4px #000'}}>
