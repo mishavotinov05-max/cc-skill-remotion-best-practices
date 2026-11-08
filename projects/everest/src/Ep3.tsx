@@ -11,13 +11,14 @@ import {Key, cam, clamp, ease, lerp, rnd, seg} from './util';
 
 export const FPS3 = 30;
 export const DURATION3 = 91.9;
+const HOT3 = new Set(['руку', 'рука', 'оборачивайся', 'замер', 'рация', 'веры', 'илья', 'окно', 'ледоруб', 'стекло', 'дверь', 'дома', 'дом', 'свет', 'табличка', 'красной', 'голос', 'имя', 'инеем', 'очередь', 'заходи', 'палатку', 'пропал', 'рацию', 'спасательный', 'пункт', 'иней']);
 const CUT = 91.72; // black + thud on "очередь"
 const RED = '#8e1c1c';
 const RED_D = '#5a1010';
 const SKIN = '#d9a98a';
 
 // =============== outdoor slope / blizzard ===============
-type SlopeProps = {t: number; p: number; runner?: {x: number; y: number; s: number; bob: number} | null; house?: number; houseScale?: number; glow?: number; door?: boolean; sk?: {x: number; y: number}};
+type SlopeProps = {t: number; p: number; runner?: {x: number; y: number; s: number; bob: number; face?: {look: number; fear: number}} | null; house?: number; houseScale?: number; glow?: number; door?: boolean; sk?: {x: number; y: number}};
 const Slope: React.FC<SlopeProps> = ({t, p, runner, house = 0, houseScale = 1, glow = 0, door = false, sk = {x: 0, y: 0}}) => (
   <svg width={1080} height={1920} viewBox="0 0 1080 1920">
     <defs>
@@ -69,7 +70,7 @@ const Slope: React.FC<SlopeProps> = ({t, p, runner, house = 0, houseScale = 1, g
       )}
       {runner && (
         <g transform={`translate(0 ${Math.abs(Math.sin(t * 14)) * runner.bob * -1}) rotate(${Math.sin(t * 14) * runner.bob * 0.15} ${runner.x} ${runner.y})`}>
-          <Figure x={runner.x} y={runner.y} s={runner.s} />
+          <Figure x={runner.x} y={runner.y} s={runner.s} face={runner.face} />
         </g>
       )}
       <Snow t={t} n={220} speed={720} w={1080} h={1920} op={0.85} />
@@ -330,13 +331,13 @@ const Room3: React.FC<{t: number}> = ({t}) => {
         {t < 12.82 && (
           <>
             <HandShadow3 x={3980} o={handO} />
-            <Figure x={3980} y={900} s={1.2} />
+            <Figure x={3980} y={900} s={1.2} face={{look: 0.9, fear: t < 8.4 ? 0.7 : 1}} />
           </>
         )}
         {t >= 20.87 && (
           <>
             <g opacity={1 - out}>
-              <Figure x={lerp(520, 355, seg(t, 20.9, 22.0))} y={lerp(880, 800, out)} s={lerp(1.2, 0.8, out)} />
+              <Figure x={lerp(520, 355, seg(t, 20.9, 22.0))} y={lerp(880, 800, out)} s={lerp(1.2, 0.8, out)} face={{look: -0.9, fear: t < 22.9 ? 0.75 : 1}} />
             </g>
             {axeVis && (
               <g transform={`translate(520 560)`}>
@@ -382,9 +383,9 @@ export const Ep3: React.FC = () => {
   } else if (t >= 24.42 && t < 25.95) {
     slide = {t, p: clamp((t - 24.42) / 1.5), runner: {x: 540, y: 1700, s: 1.35, bob: 0}, house: 1, houseScale: 1.0, sk: shake(t, 2)};
   } else if (t >= 25.95 && t < 27.31) {
-    slide = {t, p: clamp((t - 25.95) / 1.4), runner: {x: 540, y: 1700, s: 1.35, bob: 0}, house: 0, sk: shake(t, 6 * (1 - seg(t, 25.95, 26.6)))};
+    slide = {t, p: clamp((t - 25.95) / 1.4), runner: {x: 540, y: 1700, s: 1.35, bob: 0, face: {look: -0.6, fear: 1}}, house: 0, sk: shake(t, 6 * (1 - seg(t, 25.95, 26.6)))};
   } else if (t >= 27.31 && t < 32.62) {
-    slide = {t, p: clamp((t - 27.31) / 5.3), runner: {x: 250, y: 1760, s: 1.05, bob: 0}, door: true};
+    slide = {t, p: clamp((t - 27.31) / 5.3), runner: {x: 250, y: 1760, s: 1.05, bob: 0, face: {look: 0.9, fear: 0.85}}, door: true};
   } else if (t >= 32.62 && t < 41.96) {
     const sprint = seg(t, 40.4, 41.4);
     slide = {t, p: clamp((t - 32.62) / 9.3) * 0.9, runner: {x: 540, y: 1620 - seg(t, 37.5, 41.5) * 120, s: lerp(1.2, 0.9, seg(t, 37.5, 41.5)), bob: 18 + 10 * sprint}, house: seg(t, 38.2, 41.5), houseScale: lerp(0.5, 1.2, seg(t, 38.2, 41.9)), glow: seg(t, 37.6, 41.6), sk: shake(t, 3 + 3 * sprint)};
@@ -444,7 +445,7 @@ export const Ep3: React.FC = () => {
       <Shot a={84.58} b={CUT} t={t}><Facade t={t} /></Shot>
 
       <Overlay t={t} frame={frame} />
-      <StyledSub t={t} subs={subs3 as [number, number, string][]} weight={600} />
+      <StyledSub t={t} subs={subs3 as [number, number, string][]} hot={HOT3} />
       <AbsoluteFill style={{background: '#000', opacity: black}} />
     </AbsoluteFill>
   );
