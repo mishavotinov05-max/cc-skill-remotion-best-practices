@@ -12,7 +12,7 @@ const KN = [69.45, 70.0, 70.6]; // three knocks on the back door
 const KEYWORDS = new Set(['дверь', 'двери', 'дверью', 'следы', 'рация', 'никого', 'исчез', 'стол', 'царапины', 'удара', 'голос', 'умрём', 'плечо', 'рюкзак', 'замер', 'вижу', 'открывай', 'открой', 'фонарик', 'распахнулась', 'беги', 'обрывались']);
 
 // ---------- door close-up (continues the last frame of episode 1) ----------
-const Door2: React.FC<{t: number; zoom: number; angle: number; o: number; sk?: {x: number; y: number}}> = ({t, zoom, angle, o, sk = {x: 0, y: 0}}) => {
+export const Door2: React.FC<{t: number; zoom: number; angle: number; o: number; sk?: {x: number; y: number}; dark?: boolean}> = ({t, zoom, angle, o, sk = {x: 0, y: 0}, dark = false}) => {
   const px = 1180;
   const py = 560;
   const hx = 900;
@@ -175,7 +175,7 @@ const Footprints: React.FC<{t: number; camY: number; zoom: number}> = ({t, camY,
 );
 
 // ---------- radio close-up ----------
-const Radio2: React.FC<{t: number; t0: number; voice: [number, number][]; p: number}> = ({t, t0, voice, p}) => {
+export const Radio2: React.FC<{t: number; t0: number; voice: [number, number][]; p: number}> = ({t, t0, voice, p}) => {
   const led = t > t0 + 0.15 ? 0.65 + 0.35 * Math.sin(t * 14) : 0;
   const speak = voice.some(([a, b]) => t >= a && t <= b) ? 1 : 0;
   const flick = Math.max(0, Math.sin(t * 37) * Math.sin(t * 11));
@@ -214,7 +214,7 @@ const Radio2: React.FC<{t: number; t0: number; voice: [number, number][]; p: num
 };
 
 // ---------- flashlight beam: darkens everything except a cone ----------
-const Flashlight: React.FC<{ox: number; oy: number; ang: number; spread?: number; len?: number; k?: number}> = ({ox, oy, ang, spread = 0.3, len = 1800, k = 1}) => {
+export const Flashlight: React.FC<{ox: number; oy: number; ang: number; spread?: number; len?: number; k?: number}> = ({ox, oy, ang, spread = 0.3, len = 1800, k = 1}) => {
   const a1 = ang - spread;
   const a2 = ang + spread;
   const pts = `${ox},${oy} ${ox + Math.cos(a1) * len},${oy + Math.sin(a1) * len} ${ox + Math.cos(a2) * len},${oy + Math.sin(a2) * len}`;

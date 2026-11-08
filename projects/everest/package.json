@@ -6,6 +6,7 @@
     "render": "remotion render src/index.ts Everest out/everest.mp4"
   },
   "dependencies": {
+    "@fontsource/montserrat": "^5.1.0",
     "@remotion/cli": "4.0.250",
     "react": "18.3.1",
     "react-dom": "18.3.1",
