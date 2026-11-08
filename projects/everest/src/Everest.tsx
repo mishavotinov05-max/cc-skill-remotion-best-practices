@@ -38,7 +38,12 @@ export const Snow: React.FC<{t: number; n?: number; speed?: number; w?: number; 
 
 type FaceProps = {look: number; fear: number};
 
-export const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = ({cx, cy, r, look, fear}) => {
+export type Outfit = {top: string; topDark: string; pants: string; hair: string; skin?: [string, string]; hat?: 'hood' | 'scarf' | 'cap' | 'beanie'; hatColor?: string; skirt?: string; vest?: string};
+export const ILYA: Outfit = {top: RED, topDark: RED_D, pants: INK, hair: '#1c130e'};
+
+export const Head: React.FC<{cx: number; cy: number; r: number; outfit?: Outfit} & FaceProps> = ({cx, cy, r, look, fear, outfit = ILYA}) => {
+  const hair = outfit.hair;
+  const sk = outfit.skin || ['#ecbf9f', '#c58b6d'];
   const sh = look * r * 0.2;
   const ey = cy - r * 0.04;
   const open = 0.1 + 0.9 * fear;
@@ -63,17 +68,23 @@ export const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = (
     <g>
       <defs>
         <radialGradient id="skinG" cx="0.42" cy="0.38" r="0.75">
-          <stop offset="0" stopColor="#ecbf9f" />
-          <stop offset="1" stopColor="#c58b6d" />
+          <stop offset="0" stopColor={sk[0]} />
+          <stop offset="1" stopColor={sk[1]} />
         </radialGradient>
         <linearGradient id="neckG" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#7d4f3d" />
           <stop offset="1" stopColor="#b97f62" />
         </linearGradient>
       </defs>
+      {outfit.hat === 'hood' && (
+        <g>
+          <ellipse cx={cx} cy={cy + 0.25 * r} rx={r * 1.3} ry={r * 1.4} fill={outfit.hatColor || outfit.topDark} />
+          <path d={`M${cx - 1.3 * r} ${cy + 0.9 * r} Q${cx} ${cy + 2.1 * r} ${cx + 1.3 * r} ${cy + 0.9 * r} L${cx + 1.5 * r} ${cy + 1.9 * r} L${cx - 1.5 * r} ${cy + 1.9 * r} Z`} fill={outfit.hatColor || outfit.topDark} />
+        </g>
+      )}
       <rect x={cx - 0.34 * r + sh * 0.3} y={cy + 0.7 * r} width={0.68 * r} height={0.9 * r} fill="url(#neckG)" />
-      <path d={`M${cx - 0.72 * r + sh * 0.3} ${cy + 0.95 * r} Q${cx + sh * 0.3} ${cy + 1.22 * r} ${cx + 0.72 * r + sh * 0.3} ${cy + 0.95 * r} L${cx + 0.98 * r} ${cy + 1.5 * r} Q${cx} ${cy + 1.78 * r} ${cx - 0.98 * r} ${cy + 1.5 * r} Z`} fill="#4a0e0e" />
-      <path d={`M${cx - 0.7 * r + sh * 0.3} ${cy + 0.98 * r} Q${cx + sh * 0.3} ${cy + 1.26 * r} ${cx + 0.7 * r + sh * 0.3} ${cy + 0.98 * r}`} stroke="#b04030" strokeWidth={r * 0.06} fill="none" opacity={0.6} />
+      <path d={`M${cx - 0.72 * r + sh * 0.3} ${cy + 0.95 * r} Q${cx + sh * 0.3} ${cy + 1.22 * r} ${cx + 0.72 * r + sh * 0.3} ${cy + 0.95 * r} L${cx + 0.98 * r} ${cy + 1.5 * r} Q${cx} ${cy + 1.78 * r} ${cx - 0.98 * r} ${cy + 1.5 * r} Z`} fill={outfit.topDark} />
+      <path d={`M${cx - 0.7 * r + sh * 0.3} ${cy + 0.98 * r} Q${cx + sh * 0.3} ${cy + 1.26 * r} ${cx + 0.7 * r + sh * 0.3} ${cy + 0.98 * r}`} stroke="#ffffff" strokeWidth={r * 0.05} fill="none" opacity={0.18} />
       <ellipse cx={cx - 0.97 * r} cy={cy + 0.1 * r} rx={r * 0.16} ry={r * 0.26} fill="#c28d70" opacity={Math.max(0, Math.min(1, 1 - (look - 0.2) * 2))} />
       <ellipse cx={cx + 0.97 * r} cy={cy + 0.1 * r} rx={r * 0.16} ry={r * 0.26} fill="#c28d70" opacity={Math.max(0, Math.min(1, 1 + (look + 0.2) * 2))} />
       <path d={face} fill="url(#skinG)" />
@@ -95,32 +106,53 @@ export const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = (
       ) : (
         <path d={`M${cx + sh - 0.2 * r} ${cy + 0.64 * r} Q${cx + sh} ${cy + 0.7 * r} ${cx + sh + 0.2 * r} ${cy + 0.64 * r}`} stroke="#8e4a3e" strokeWidth={r * 0.06} fill="none" strokeLinecap="round" />
       )}
-      <path d={`M${cx - 0.97 * r} ${cy - 0.02 * r} C${cx - 1.12 * r} ${cy - 1.1 * r} ${cx + 0.2 * r} ${cy - 1.5 * r} ${cx + 0.96 * r} ${cy - 0.8 * r} C${cx + 1.06 * r} ${cy - 0.5 * r} ${cx + 1.0 * r} ${cy - 0.15 * r} ${cx + 0.97 * r} ${cy - 0.02 * r} C${cx + 0.86 * r} ${cy - 0.34 * r} ${cx + 0.55 * r} ${cy - 0.6 * r} ${cx + 0.1 * r} ${cy - 0.56 * r} C${cx - 0.4 * r} ${cy - 0.62 * r} ${cx - 0.76 * r} ${cy - 0.38 * r} ${cx - 0.97 * r} ${cy - 0.02 * r} Z`} fill="#1c130e" />
-      <path d={`M${cx - 0.5 * r} ${cy - 0.56 * r} L${cx - 0.3 * r} ${cy - 0.3 * r} L${cx - 0.1 * r} ${cy - 0.58 * r} Z M${cx + 0.1 * r} ${cy - 0.57 * r} L${cx + 0.3 * r} ${cy - 0.32 * r} L${cx + 0.5 * r} ${cy - 0.52 * r} Z`} fill="#1c130e" />
+      <path d={`M${cx - 0.97 * r} ${cy - 0.02 * r} C${cx - 1.12 * r} ${cy - 1.1 * r} ${cx + 0.2 * r} ${cy - 1.5 * r} ${cx + 0.96 * r} ${cy - 0.8 * r} C${cx + 1.06 * r} ${cy - 0.5 * r} ${cx + 1.0 * r} ${cy - 0.15 * r} ${cx + 0.97 * r} ${cy - 0.02 * r} C${cx + 0.86 * r} ${cy - 0.34 * r} ${cx + 0.55 * r} ${cy - 0.6 * r} ${cx + 0.1 * r} ${cy - 0.56 * r} C${cx - 0.4 * r} ${cy - 0.62 * r} ${cx - 0.76 * r} ${cy - 0.38 * r} ${cx - 0.97 * r} ${cy - 0.02 * r} Z`} fill={hair} />
+      <path d={`M${cx - 0.5 * r} ${cy - 0.56 * r} L${cx - 0.3 * r} ${cy - 0.3 * r} L${cx - 0.1 * r} ${cy - 0.58 * r} Z M${cx + 0.1 * r} ${cy - 0.57 * r} L${cx + 0.3 * r} ${cy - 0.32 * r} L${cx + 0.5 * r} ${cy - 0.52 * r} Z`} fill={hair} />
       <path d={`M${cx - 0.6 * r} ${cy - 0.95 * r} Q${cx} ${cy - 1.25 * r} ${cx + 0.6 * r} ${cy - 0.95 * r}`} stroke="#5b4636" strokeWidth={r * 0.05} fill="none" opacity={0.5} />
+      {outfit.hat === 'scarf' && (
+        <g>
+          <path d={`M${cx - 1.06 * r} ${cy + 0.4 * r} C${cx - 1.25 * r} ${cy - 1.35 * r} ${cx + 1.25 * r} ${cy - 1.35 * r} ${cx + 1.06 * r} ${cy + 0.4 * r} Q${cx + 0.82 * r} ${cy - 0.05 * r} ${cx + 0.62 * r} ${cy - 0.34 * r} Q${cx} ${cy - 0.78 * r} ${cx - 0.62 * r} ${cy - 0.34 * r} Q${cx - 0.82 * r} ${cy - 0.05 * r} ${cx - 1.06 * r} ${cy + 0.4 * r} Z`} fill={outfit.hatColor || '#7a2e2e'} />
+          <ellipse cx={cx - 0.1 * r} cy={cy + 1.05 * r} rx={r * 0.22} ry={r * 0.16} fill={outfit.hatColor || '#7a2e2e'} />
+          <path d={`M${cx - 0.8 * r} ${cy - 0.7 * r} Q${cx} ${cy - 1.1 * r} ${cx + 0.8 * r} ${cy - 0.7 * r}`} stroke="#fff" strokeWidth={r * 0.04} fill="none" opacity={0.18} />
+        </g>
+      )}
+      {outfit.hat === 'cap' && (
+        <g>
+          <path d={`M${cx - 1.0 * r} ${cy - 0.32 * r} C${cx - 1.06 * r} ${cy - 1.3 * r} ${cx + 1.06 * r} ${cy - 1.3 * r} ${cx + 1.0 * r} ${cy - 0.32 * r} Z`} fill={outfit.hatColor || '#555a60'} />
+          <path d={`M${cx + 0.3 * r} ${cy - 0.42 * r} L${cx + 1.45 * r} ${cy - 0.3 * r} L${cx + 1.35 * r} ${cy - 0.16 * r} L${cx + 0.1 * r} ${cy - 0.28 * r} Z`} fill="#33373b" />
+        </g>
+      )}
+      {outfit.hat === 'beanie' && (
+        <g>
+          <path d={`M${cx - 1.0 * r} ${cy - 0.3 * r} C${cx - 1.08 * r} ${cy - 1.5 * r} ${cx + 1.08 * r} ${cy - 1.5 * r} ${cx + 1.0 * r} ${cy - 0.3 * r} Z`} fill={outfit.hatColor || '#2a2f36'} />
+          <rect x={cx - 1.02 * r} y={cy - 0.5 * r} width={2.04 * r} height={0.22 * r} rx={r * 0.08} fill="#14171b" />
+        </g>
+      )}
     </g>
   );
 };
 
-export const Figure: React.FC<{x: number; y: number; s?: number; sitting?: boolean; face?: FaceProps}> = ({x, y, s = 1, sitting, face}) => (
+export const Figure: React.FC<{x: number; y: number; s?: number; sitting?: boolean; face?: FaceProps; outfit?: Outfit}> = ({x, y, s = 1, sitting, face, outfit = ILYA}) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     {sitting ? (
       <g>
-        <ellipse cx={-60} cy={-18} rx={90} ry={22} fill={INK} />
-        <path d="M-50 -20 Q-70 -170 -20 -230 Q30 -250 70 -210 Q100 -120 80 -20 Z" fill={RED} />
-        <path d="M30 -215 Q90 -150 80 -20 L50 -20 Q60 -140 20 -200 Z" fill={RED_D} />
-        {face ? <Head cx={10} cy={-278} r={46} {...face} /> : <circle cx={10} cy={-275} r={44} fill={INK} />}
-        <path d="M-60 -40 Q-130 -60 -160 -20" stroke={INK} strokeWidth={36} strokeLinecap="round" fill="none" />
+        <ellipse cx={-60} cy={-18} rx={90} ry={22} fill={outfit.pants} />
+        <path d="M-50 -20 Q-70 -170 -20 -230 Q30 -250 70 -210 Q100 -120 80 -20 Z" fill={outfit.top} />
+        <path d="M30 -215 Q90 -150 80 -20 L50 -20 Q60 -140 20 -200 Z" fill={outfit.topDark} />
+        {face ? <Head cx={10} cy={-278} r={46} outfit={outfit} {...face} /> : <circle cx={10} cy={-275} r={44} fill={outfit.hair} />}
+        <path d="M-60 -40 Q-130 -60 -160 -20" stroke={outfit.pants} strokeWidth={36} strokeLinecap="round" fill="none" />
       </g>
     ) : (
       <g>
-        <rect x={-48} y={-140} width={34} height={140} rx={14} fill={INK} />
-        <rect x={14} y={-140} width={34} height={140} rx={14} fill={INK} />
-        <path d="M-70 -150 Q-78 -300 -40 -350 L40 -350 Q78 -300 70 -150 Z" fill={RED} />
-        <path d="M20 -345 Q70 -300 70 -150 L45 -150 Q50 -290 12 -340 Z" fill={RED_D} />
-        <rect x={-96} y={-340} width={30} height={170} rx={14} fill={RED} transform="rotate(8 -80 -340)" />
-        <rect x={66} y={-340} width={30} height={170} rx={14} fill={RED_D} transform="rotate(-8 80 -340)" />
-        {face ? <Head cx={0} cy={-395} r={46} {...face} /> : <circle cx={0} cy={-392} r={42} fill={INK} />}
+        <rect x={-48} y={-140} width={34} height={140} rx={14} fill={outfit.pants} />
+        <rect x={14} y={-140} width={34} height={140} rx={14} fill={outfit.pants} />
+        {outfit.skirt && <path d="M-82 -165 L82 -165 L108 -62 L-108 -62 Z" fill={outfit.skirt} />}
+        <path d="M-70 -150 Q-78 -300 -40 -350 L40 -350 Q78 -300 70 -150 Z" fill={outfit.top} />
+        <path d="M20 -345 Q70 -300 70 -150 L45 -150 Q50 -290 12 -340 Z" fill={outfit.topDark} />
+        {outfit.vest && <path d="M-52 -340 L-18 -340 L-24 -150 L-62 -150 Z M18 -340 L52 -340 L62 -150 L24 -150 Z" fill={outfit.vest} opacity={0.9} />}
+        <rect x={-96} y={-340} width={30} height={170} rx={14} fill={outfit.top} transform="rotate(8 -80 -340)" />
+        <rect x={66} y={-340} width={30} height={170} rx={14} fill={outfit.topDark} transform="rotate(-8 80 -340)" />
+        {face ? <Head cx={0} cy={-395} r={46} outfit={outfit} {...face} /> : <circle cx={0} cy={-392} r={42} fill={outfit.hair} />}
       </g>
     )}
   </g>
