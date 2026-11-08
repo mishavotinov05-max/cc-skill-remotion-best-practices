@@ -619,9 +619,9 @@ export const TrucksArrive: React.FC<{t: number}> = ({t}) => {
       <Trees y={1280} off={-t * 30} n={9} size={210} color="#15101a" gap={200} />
       <rect x={0} y={1280} width={W} height={640} fill="#2a2018" />
       <rect x={0} y={1600} width={W} height={220} fill="#1a1410" />
-      <Truck x={lerp(1700, 760, ease(k))} y={1520} s={1.5} color="#c0392b" />
-      <Truck x={lerp(2250, 1250, ease(P(t, 42.7, 45.0)))} y={1640} s={1.3} color="#2c6aa0" />
-      <Truck x={lerp(2700, 1640, ease(P(t, 43.0, 45.2)))} y={1740} s={1.15} color="#3a8a4a" />
+      <Truck x={lerp(1350, 640, ease(k))} y={1520} s={1.35} color="#c0392b" />
+      <Truck x={lerp(1650, 880, ease(P(t, 42.6, 44.9)))} y={1650} s={1.15} color="#2c6aa0" />
+      <Truck x={lerp(2000, 1100, ease(P(t, 42.8, 45.1)))} y={1760} s={1.0} color="#3a8a4a" />
       {Array.from({length: 16}).map((_, i) => (
         <circle key={i} cx={lerp(1500, 600, ease(k)) + i * 40} cy={1600 + Math.sin(i + t * 4) * 12} r={16 + i * 2} fill="#7a6a58" opacity={0.2 * (1 - i / 16)} />
       ))}
@@ -763,7 +763,7 @@ export const BigText: React.FC<{t: number; text: string; t0: number}> = ({t, tex
   return (
     <Svg>
       <rect width={W} height={H} fill="#0a0806" />
-      <text x={540} y={1010} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={lerp(160, 250, k)} fill="#f2c230" opacity={k}>{text}</text>
+      <text x={540} y={1010} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={lerp(130, 190, k)} fill="#f2c230" opacity={k}>{text}</text>
       <rect x={140} y={1090} width={800} height={10} fill="#f2c230" opacity={k * 0.6} />
     </Svg>
   );
@@ -830,8 +830,9 @@ export const Phone: React.FC<{t: number}> = ({t}) => {
   const n1 = ease(P(t, 82.0, 82.35));
   const a1 = ease(P(t, 83.45, 83.8));
   const a2 = ease(P(t, 88.3, 88.65));
-  const zoom = 1 + 0.4 * P(t, 80.9, 88.2) + 2.7 * ease(P(t, 89.9, 90.9));
-  const cy = lerp(1080, 800, ease(P(t, 89.9, 90.9)));
+  const zoom = 1 + 0.4 * P(t, 80.9, 88.2);
+  const cy = 1080;
+  const fin = ease(P(t, 90.0, 90.45));
   const flash = t > 83.45 && t < 83.85 ? 0.35 * (1 - (t - 83.45) / 0.4) : 0;
   return (
     <Svg>
@@ -855,15 +856,21 @@ export const Phone: React.FC<{t: number}> = ({t}) => {
         </g>
         <g opacity={a2} transform={`translate(0 ${(1 - a2) * -40})`}>
           <rect x={256} y={1140} width={568} height={300} rx={30} fill="#4a0e0b" stroke="#ff2a1a" strokeWidth={6} />
-          <text x={540} y={1224} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={50} fill="#ff3b2e">ЗАРАЖЕНИЕ</text>
-          <text x={540} y={1290} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={50} fill="#ff3b2e">РАСПРОСТРАНЯЕТСЯ</text>
-          <text x={540} y={1356} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={50} fill="#ff3b2e">БЫСТРЕЕ</text>
-          <text x={540} y={1422} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={50} fill="#ff3b2e">ПРОГНОЗА</text>
+          <text x={540} y={1224} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={42} fill="#ff3b2e">ЗАРАЖЕНИЕ</text>
+          <text x={540} y={1290} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={40} fill="#ff3b2e">РАСПРОСТРАНЯЕТСЯ</text>
+          <text x={540} y={1356} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={42} fill="#ff3b2e">БЫСТРЕЕ</text>
+          <text x={540} y={1422} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={42} fill="#ff3b2e">ПРОГНОЗА</text>
         </g>
         <rect x={226} y={346} width={628} height={1248} rx={58} fill="#ff2a1a" opacity={flash} />
       </g>
+      <g opacity={fin}>
+        <rect width={W} height={H} fill="#3a0a08" />
+        {['ЗАРАЖЕНИЕ', 'РАСПРОСТРАНЯЕТСЯ', 'БЫСТРЕЕ', 'ПРОГНОЗА'].map((l, i) => (
+          <text key={l} x={540} y={720 + i * 150} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={i === 1 ? 80 : 132} fill="#ff3b2e">{l}</text>
+        ))}
+      </g>
       {/* Max's hand holding the phone */}
-      <g opacity={1 - clamp((t - 89.9) / 0.6)}>
+      <g opacity={(1 - fin) * (1 - ease(P(t, 88.2, 88.9)))}>
         <rect x={180} y={1560} width={720} height={420} fill="#2f5fa8" />
         <path d="M200 1640 Q150 1500 230 1380 L300 1400 Q250 1500 300 1600 Z" fill="#d9a98a" />
         <path d="M880 1640 Q930 1500 850 1380 L780 1400 Q830 1500 780 1600 Z" fill="#d9a98a" />
