@@ -3,6 +3,7 @@ import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remoti
 import subs2 from './subs3.json';
 import {World2} from './World2';
 import {Figure, Overlay, Shot, Snow, ramp, shake} from './Everest';
+import {StyledSub} from './Subs';
 import {Key, cam, clamp, ease, lerp, rnd, seg} from './util';
 
 export const FPS2 = 30;
@@ -448,7 +449,7 @@ export const Ep2: React.FC = () => {
       </Shot>
 
       <Overlay t={t} frame={frame} />
-      <Subtitle2 t={t} />
+      <StyledSub t={t} subs={subs2 as [number, number, string][]} hot={KEYWORDS} />
       <AbsoluteFill style={{background: '#000', opacity: black}} />
     </AbsoluteFill>
   );

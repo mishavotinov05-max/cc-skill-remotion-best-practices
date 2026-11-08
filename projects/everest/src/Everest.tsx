@@ -1,12 +1,14 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import subs from './subs.json';
+import subs1 from './subs_ep1.json';
+import {StyledSub} from './Subs';
 import {Key, cam, clamp, ease, lerp, rnd, seg} from './util';
 
 export const FPS = 30;
+const HOT1 = new Set(['эвереста', 'дом', 'печь', 'рация', 'веры', 'илья', 'замер', 'удар', 'второй', 'третий', 'ручка', 'царапина', 'бирки', 'ветер']);
 export const DURATION = 74;
 
-export const KNOCKS = [68.55, 68.95, 69.35];
+export const KNOCKS = [69.0, 70.0, 70.9];
 const RED = '#8e1c1c';
 const RED_D = '#5a1010';
 const INK = '#07080b';
@@ -37,33 +39,65 @@ export const Snow: React.FC<{t: number; n?: number; speed?: number; w?: number; 
 type FaceProps = {look: number; fear: number};
 
 export const Head: React.FC<{cx: number; cy: number; r: number} & FaceProps> = ({cx, cy, r, look, fear}) => {
-  const sh = look * r * 0.22;
-  const eye = (side: number) => {
-    const ex = cx + sh + side * r * 0.36;
-    const ey = cy - r * 0.02;
+  const sh = look * r * 0.2;
+  const ey = cy - r * 0.04;
+  const open = 0.1 + 0.9 * fear;
+  const face = `M${cx - 0.92 * r} ${cy - 0.3 * r} C${cx - 1.02 * r} ${cy + 0.35 * r} ${cx - 0.6 * r} ${cy + 1.08 * r} ${cx} ${cy + 1.16 * r} C${cx + 0.6 * r} ${cy + 1.08 * r} ${cx + 1.02 * r} ${cy + 0.35 * r} ${cx + 0.92 * r} ${cy - 0.3 * r} C${cx + 0.82 * r} ${cy - 1.0 * r} ${cx - 0.82 * r} ${cy - 1.0 * r} ${cx - 0.92 * r} ${cy - 0.3 * r} Z`;
+  const eye = (s: number) => {
+    const ex = cx + sh + s * r * 0.38;
+    const ry = r * (0.1 + 0.075 * fear);
     return (
-      <g key={side}>
-        <ellipse cx={ex} cy={ey} rx={r * 0.19} ry={r * (0.13 + 0.07 * fear)} fill="#f2efe9" stroke="#2a1a14" strokeWidth={1.5} />
-        <circle cx={ex + look * r * 0.07} cy={ey} r={r * (0.075 + 0.02 * fear)} fill="#1b120d" />
-        <circle cx={ex + look * r * 0.07 - 2} cy={ey - 2} r={r * 0.025} fill="#fff" />
-        <path d={`M${ex - r * 0.24} ${ey - r * (0.27 + 0.04 * fear) + side * fear * -r * 0.0} L${ex + r * 0.24} ${ey - r * (0.27 + 0.12 * fear * (side * -1 === -1 ? 1 : 1)) - side * r * 0.0}`} stroke="#1a100c" strokeWidth={r * 0.07} strokeLinecap="round" transform={`rotate(${side * -fear * 10} ${ex} ${ey - r * 0.3})`} />
+      <g key={s}>
+        <path d={`M${ex - 0.27 * r} ${ey - 0.2 * r} Q${ex} ${ey - 0.3 * r} ${ex + 0.27 * r} ${ey - 0.2 * r}`} stroke="#9c6a52" strokeWidth={r * 0.035} fill="none" opacity={0.55} />
+        <ellipse cx={ex} cy={ey} rx={r * 0.2} ry={ry} fill="#f4f0ea" />
+        <circle cx={ex + look * r * 0.07} cy={ey} r={Math.min(r * 0.115, ry * 1.05)} fill="#4d3322" />
+        <circle cx={ex + look * r * 0.07} cy={ey} r={r * 0.055} fill="#0b0705" />
+        <circle cx={ex + look * r * 0.07 - r * 0.04} cy={ey - r * 0.04} r={r * 0.025} fill="#fff" />
+        <path d={`M${ex - 0.22 * r} ${ey + 0.01 * r} Q${ex} ${ey - ry * 1.9} ${ex + 0.22 * r} ${ey + 0.01 * r}`} stroke="#1b0f0a" strokeWidth={r * 0.06} strokeLinecap="round" fill="none" />
+        <path d={`M${ex - 0.18 * r} ${ey + ry * 0.95} Q${ex} ${ey + ry * 1.5} ${ex + 0.18 * r} ${ey + ry * 0.95}`} stroke="#8a5a45" strokeWidth={r * 0.025} fill="none" opacity={0.5} />
+        <path d={`M${ex - s * 0.2 * r} ${ey - r * (0.3 + 0.12 * fear)} Q${ex + s * 0.02 * r} ${ey - r * (0.46 + 0.08 * fear)} ${ex + s * 0.3 * r} ${ey - r * (0.34 - 0.04 * fear)}`} stroke="#1b110c" strokeWidth={r * 0.1} strokeLinecap="round" fill="none" />
       </g>
     );
   };
   return (
     <g>
-      <circle cx={cx - r * 0.97} cy={cy + r * 0.08} r={r * 0.17} fill="#c28d70" />
-      <circle cx={cx + r * 0.97} cy={cy + r * 0.08} r={r * 0.17} fill="#c28d70" />
-      <ellipse cx={cx} cy={cy} rx={r * 0.98} ry={r * 1.08} fill="#d9a98a" />
-      <ellipse cx={cx + r * 0.45} cy={cy + r * 0.1} rx={r * 0.5} ry={r * 0.95} fill="#9c6a52" opacity={0.28} />
-      <path d={`M${cx - r * 1.02} ${cy - r * 0.15} Q${cx - r * 1.1} ${cy - r * 1.25} ${cx} ${cy - r * 1.22} Q${cx + r * 1.1} ${cy - r * 1.25} ${cx + r * 1.02} ${cy - r * 0.15} Q${cx + r * 0.7} ${cy - r * 0.62} ${cx} ${cy - r * 0.58} Q${cx - r * 0.7} ${cy - r * 0.62} ${cx - r * 1.02} ${cy - r * 0.15} Z`} fill="#17100c" />
+      <defs>
+        <radialGradient id="skinG" cx="0.42" cy="0.38" r="0.75">
+          <stop offset="0" stopColor="#ecbf9f" />
+          <stop offset="1" stopColor="#c58b6d" />
+        </radialGradient>
+        <linearGradient id="neckG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#7d4f3d" />
+          <stop offset="1" stopColor="#b97f62" />
+        </linearGradient>
+      </defs>
+      <rect x={cx - 0.34 * r + sh * 0.3} y={cy + 0.7 * r} width={0.68 * r} height={0.9 * r} fill="url(#neckG)" />
+      <path d={`M${cx - 0.72 * r + sh * 0.3} ${cy + 0.95 * r} Q${cx + sh * 0.3} ${cy + 1.22 * r} ${cx + 0.72 * r + sh * 0.3} ${cy + 0.95 * r} L${cx + 0.98 * r} ${cy + 1.5 * r} Q${cx} ${cy + 1.78 * r} ${cx - 0.98 * r} ${cy + 1.5 * r} Z`} fill="#4a0e0e" />
+      <path d={`M${cx - 0.7 * r + sh * 0.3} ${cy + 0.98 * r} Q${cx + sh * 0.3} ${cy + 1.26 * r} ${cx + 0.7 * r + sh * 0.3} ${cy + 0.98 * r}`} stroke="#b04030" strokeWidth={r * 0.06} fill="none" opacity={0.6} />
+      <ellipse cx={cx - 0.97 * r} cy={cy + 0.1 * r} rx={r * 0.16} ry={r * 0.26} fill="#c28d70" opacity={Math.max(0, Math.min(1, 1 - (look - 0.2) * 2))} />
+      <ellipse cx={cx + 0.97 * r} cy={cy + 0.1 * r} rx={r * 0.16} ry={r * 0.26} fill="#c28d70" opacity={Math.max(0, Math.min(1, 1 + (look + 0.2) * 2))} />
+      <path d={face} fill="url(#skinG)" />
+      <path d={face} fill="none" stroke="#9fc3f0" strokeWidth={r * 0.04} opacity={0.22} transform={`translate(${r * 0.02} ${-r * 0.02})`} />
+      <ellipse cx={cx} cy={cy + 0.86 * r} rx={r * 0.62} ry={r * 0.3} fill="#2a1b14" opacity={0.14} />
+      <ellipse cx={cx - 0.55 * r + sh} cy={cy + 0.36 * r} rx={r * 0.2} ry={r * 0.11} fill="#e0806a" opacity={0.18} />
+      <ellipse cx={cx + 0.55 * r + sh} cy={cy + 0.36 * r} rx={r * 0.2} ry={r * 0.11} fill="#e0806a" opacity={0.18} />
       {eye(-1)}
       {eye(1)}
-      <path d={`M${cx + sh} ${cy + r * 0.02} Q${cx + sh + r * 0.1} ${cy + r * 0.3} ${cx + sh - r * 0.04} ${cy + r * 0.34}`} stroke="#8a5a45" strokeWidth={r * 0.05} fill="none" strokeLinecap="round" />
-      <ellipse cx={cx + sh} cy={cy + r * 0.56} rx={r * 0.17} ry={r * (0.035 + 0.16 * fear)} fill="#3a0f0f" stroke="#6a3a30" strokeWidth={2} />
-      <path d={`M${cx - r * 0.55} ${cy + r * 0.62} Q${cx} ${cy + r * 0.95} ${cx + r * 0.55} ${cy + r * 0.62}`} stroke="#2a1a14" strokeWidth={r * 0.03} fill="none" opacity={0.18} />
-      <ellipse cx={cx - r * 0.5 + sh} cy={cy + r * 0.3} rx={r * 0.17} ry={r * 0.09} fill="#e8f1fb" opacity={0.15} />
-      <ellipse cx={cx + r * 0.5 + sh} cy={cy + r * 0.3} rx={r * 0.17} ry={r * 0.09} fill="#e8f1fb" opacity={0.15} />
+      <path d={`M${cx + sh + 0.04 * r} ${ey + 0.05 * r} Q${cx + sh + 0.14 * r} ${cy + 0.3 * r} ${cx + sh - 0.04 * r} ${cy + 0.36 * r}`} stroke="#8a5a45" strokeWidth={r * 0.05} fill="none" strokeLinecap="round" />
+      <ellipse cx={cx + sh - 0.07 * r} cy={cy + 0.38 * r} rx={r * 0.05} ry={r * 0.03} fill="#4a2a20" opacity={0.7} />
+      <ellipse cx={cx + sh + 0.07 * r} cy={cy + 0.38 * r} rx={r * 0.05} ry={r * 0.03} fill="#4a2a20" opacity={0.7} />
+      {open > 0.45 ? (
+        <g>
+          <ellipse cx={cx + sh} cy={cy + 0.64 * r} rx={r * 0.2} ry={r * (0.05 + 0.15 * fear)} fill="#2a0a0a" />
+          <rect x={cx + sh - r * 0.14} y={cy + 0.64 * r - r * (0.05 + 0.15 * fear) + 1} width={r * 0.28} height={r * 0.05} rx={2} fill="#eee" opacity={0.85} />
+          <path d={`M${cx + sh - 0.22 * r} ${cy + 0.62 * r} Q${cx + sh} ${cy + 0.5 * r} ${cx + sh + 0.22 * r} ${cy + 0.62 * r}`} stroke="#a55a4c" strokeWidth={r * 0.05} fill="none" strokeLinecap="round" />
+        </g>
+      ) : (
+        <path d={`M${cx + sh - 0.2 * r} ${cy + 0.64 * r} Q${cx + sh} ${cy + 0.7 * r} ${cx + sh + 0.2 * r} ${cy + 0.64 * r}`} stroke="#8e4a3e" strokeWidth={r * 0.06} fill="none" strokeLinecap="round" />
+      )}
+      <path d={`M${cx - 0.97 * r} ${cy - 0.02 * r} C${cx - 1.12 * r} ${cy - 1.1 * r} ${cx + 0.2 * r} ${cy - 1.5 * r} ${cx + 0.96 * r} ${cy - 0.8 * r} C${cx + 1.06 * r} ${cy - 0.5 * r} ${cx + 1.0 * r} ${cy - 0.15 * r} ${cx + 0.97 * r} ${cy - 0.02 * r} C${cx + 0.86 * r} ${cy - 0.34 * r} ${cx + 0.55 * r} ${cy - 0.6 * r} ${cx + 0.1 * r} ${cy - 0.56 * r} C${cx - 0.4 * r} ${cy - 0.62 * r} ${cx - 0.76 * r} ${cy - 0.38 * r} ${cx - 0.97 * r} ${cy - 0.02 * r} Z`} fill="#1c130e" />
+      <path d={`M${cx - 0.5 * r} ${cy - 0.56 * r} L${cx - 0.3 * r} ${cy - 0.3 * r} L${cx - 0.1 * r} ${cy - 0.58 * r} Z M${cx + 0.1 * r} ${cy - 0.57 * r} L${cx + 0.3 * r} ${cy - 0.32 * r} L${cx + 0.5 * r} ${cy - 0.52 * r} Z`} fill="#1c130e" />
+      <path d={`M${cx - 0.6 * r} ${cy - 0.95 * r} Q${cx} ${cy - 1.25 * r} ${cx + 0.6 * r} ${cy - 0.95 * r}`} stroke="#5b4636" strokeWidth={r * 0.05} fill="none" opacity={0.5} />
     </g>
   );
 };
@@ -364,14 +398,13 @@ const camKeys: Key[] = [
   [20.55, 960, 580, 1.0],
   [24.0, 960, 560, 1.06],
   [26.2, 520, 450, 1.35],
-  [30.8, 540, 450, 1.4],
-  [31.3, 1100, 560, 1.15],
-  [33.4, 1650, 600, 1.3],
-  [35.3, 1700, 640, 1.35],
-  [36.3, 1960, 800, 1.9],
-  [37.4, 1960, 800, 1.9],
-  [38.1, 2590, 660, 2.3],
-  [41.9, 2610, 650, 2.4],
+  [28.7, 540, 450, 1.4],
+  [29.6, 1100, 560, 1.15],
+  [31.2, 1650, 600, 1.3],
+  [35.0, 1700, 640, 1.35],
+  [36.5, 1700, 640, 1.35],
+  [37.4, 2590, 660, 2.3],
+  [42.3, 2610, 650, 2.4],
   [43.9, 3300, 520, 1.1],
   [46.4, 3400, 500, 1.5],
   [49.2, 3500, 480, 1.7],
@@ -394,7 +427,7 @@ const Interior: React.FC<{t: number}> = ({t}) => {
     <svg width={1080} height={1920} viewBox="0 0 1080 1920"><g transform="translate(540 960) translate(-960 -540)">
       <g transform={`translate(${960 + sk.x} ${540 + sk.y}) scale(${c.s * breathe * 1.15}) translate(${-c.cx} ${-c.cy})`}>
         <World t={t} />
-        {!standing && <Figure x={900} y={880} s={1.15} sitting face={{look: t < 26.2 ? 0 : t < 31.1 ? -0.9 : 0.9, fear: t < 31.1 ? 0.45 : t < 44 ? 0.3 : 0.5}} />}
+        {!standing && <Figure x={900} y={880} s={1.15} sitting face={{look: t < 26.2 ? 0 : t < 29.0 ? -0.9 : 0.9, fear: t < 31.1 ? 0.45 : t < 44 ? 0.3 : 0.5}} />}
         {standing && <Figure x={3500} y={900} s={1.25} face={t >= 61 ? {look: t < 66 ? 0 : 0.9, fear: 1} : undefined} />}
       </g>
     </g></svg>
@@ -464,28 +497,15 @@ export const Overlay: React.FC<{t: number; frame: number}> = ({t, frame}) => {
   );
 };
 
-const Subtitle: React.FC<{t: number}> = ({t}) => {
-  const list = subs as [number, number, string][];
-  let p: [number, number, string] | undefined;
-  for (const x of list) if (t >= x[0] - 0.04 && t < x[1] + 0.16) p = x;
-  if (!p) return null;
-  const o = Math.min(clamp((t - p[0] + 0.04) / 0.07), clamp((p[1] + 0.16 - t) / 0.1));
-  return (
-    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 250}}>
-      <div style={{opacity: o, color: '#eef2f7', fontFamily: 'Georgia, "Times New Roman", serif', fontStyle: 'italic', fontSize: 54, textShadow: '0 2px 12px #000, 0 0 3px #000', width: 880, textAlign: 'center', lineHeight: 1.25}}>{p[2]}</div>
-    </AbsoluteFill>
-  );
-};
-
 const EndText: React.FC<{t: number}> = ({t}) => {
-  if (t < 70.9 || t >= 73.88) return null;
-  const o1 = clamp((t - 70.9) / 0.4);
-  const o2 = clamp((t - 72.1) / 0.4);
+  if (t < 72.0 || t >= 73.88) return null;
+  const o1 = clamp((t - 72.0) / 0.4);
+  const o2 = clamp((t - 72.9) / 0.4);
   return (
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', paddingBottom: 640}}>
-      <div style={{width: 900, textAlign: 'center', fontFamily: 'Georgia, "Times New Roman", serif', textShadow: '0 3px 16px #000, 0 0 4px #000'}}>
-        <div style={{opacity: o1, color: '#ffffff', fontSize: 72, fontWeight: 700, lineHeight: 1.15}}>Кто был за этой дверью?</div>
-        <div style={{opacity: o2, color: '#ff9585', fontSize: 54, marginTop: 30, fontStyle: 'italic'}}>Продолжение в следующем видео</div>
+      <div style={{width: 900, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', textShadow: '0 3px 16px #000, 0 0 4px #000'}}>
+        <div style={{opacity: o1, color: '#ffffff', fontSize: 72, fontWeight: 700, lineHeight: 1.2}}>Кто был за этой дверью?</div>
+        <div style={{opacity: o2, color: '#ff9585', fontSize: 54, marginTop: 30, fontWeight: 600}}>Продолжение в следующем видео</div>
       </div>
     </AbsoluteFill>
   );
@@ -507,7 +527,7 @@ export const Everest: React.FC = () => {
   const t = frame / FPS;
 
   const doorZoom = 1 + 0.35 * ease(t / 2.45);
-  const endZoom = 1.1 + 0.5 * ease((t - 69.65) / 4.2);
+  const endZoom = 1.1 + 0.5 * ease((t - 71.3) / 2.6);
 
   let blackout = 0;
   for (const k of KNOCKS) if (t >= k && t < k + 0.14) blackout = Math.max(blackout, 0.85 * (1 - (t - k) / 0.14));
@@ -533,7 +553,7 @@ export const Everest: React.FC = () => {
       {KNOCKS.map((k) => (
         <Sequence key={k} from={Math.round(k * FPS)} durationInFrames={24}><Audio src={staticFile('sfx/knock.mp3')} volume={0.5} /></Sequence>
       ))}
-      <Sequence from={Math.round(70.76 * FPS)} durationInFrames={Math.round(3.1 * FPS)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.2} /></Sequence>
+      <Sequence from={Math.round(71.7 * FPS)} durationInFrames={Math.round(2.2 * FPS)}><Audio src={staticFile('sfx/creak.mp3')} volume={0.2} /></Sequence>
       <Sequence from={Math.round(45 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.06} /></Sequence>
       <Sequence from={Math.round(52.5 * FPS)} durationInFrames={70}><Audio src={staticFile('sfx/ping.mp3')} volume={0.06} /></Sequence>
 
@@ -555,16 +575,16 @@ export const Everest: React.FC = () => {
       <Shot a={54.94} b={61.0} t={t}>
         <Radio t={t} />
       </Shot>
-      <Shot a={61.0} b={69.65} t={t}>
+      <Shot a={61.0} b={71.3} t={t}>
         <Interior t={t} />
       </Shot>
-      <Shot a={69.65} b={74} t={t}>
-        <Door t={t} t0={70.76} t1={73.5} zoom={endZoom} flipAngle={-42} />
+      <Shot a={71.3} b={74} t={t}>
+        <Door t={t} t0={71.7} t1={73.6} zoom={endZoom} flipAngle={-42} />
       </Shot>
 
       <Overlay t={t} frame={frame} />
       <EndText t={t} />
-      <Subtitle t={t} />
+      <StyledSub t={t} subs={subs1 as [number, number, string][]} hot={HOT1} />
       <AbsoluteFill style={{background: '#000', opacity: black}} />
     </AbsoluteFill>
   );
