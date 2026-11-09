@@ -55,11 +55,11 @@ export const Bunker2: React.FC = () => {
       <Sequence from={Math.round(63.3 * FPS2())} durationInFrames={26}><Audio src={staticFile('sfx/clank.mp3')} volume={0.1} /></Sequence>
       <Sequence from={Math.round(64.33 * FPS2())} durationInFrames={Math.round(2.6 * FPS2())}><Audio src={staticFile('sfx/fan.mp3')} volume={steps(64.33, 66.9, 0.1)} /></Sequence>
       <Sequence from={Math.round(66.95 * FPS2())} durationInFrames={20}><Audio src={staticFile('sfx/beep.mp3')} volume={0.25} /></Sequence>
-      <Sequence from={Math.round(70.02 * FPS2())} durationInFrames={Math.round(2.35 * FPS2())}><Audio src={staticFile('sfx/siren.mp3')} volume={ramp([[0, 0], [0.1, 0.24], [2.2, 0.24], [2.35, 0]])} /></Sequence>
+      <Sequence from={Math.round(70.02 * FPS2())} durationInFrames={Math.round(2.35 * FPS2())}><Audio src={staticFile('sfx/siren.mp3')} volume={ramp([[0, 0], [0.1, 0.09], [2.2, 0.09], [2.35, 0]])} /></Sequence>
       {[73.45, 73.9, 74.35, 74.8].map((c) => (
         <Sequence key={c} from={Math.round(c * FPS2())} durationInFrames={20}><Audio src={staticFile('sfx/beep.mp3')} volume={0.14} /></Sequence>
       ))}
-      <Sequence from={Math.round(75.35 * FPS2())} durationInFrames={Math.round((CUT - 75.35) * FPS2())}><Audio src={staticFile('sfx/alarm.mp3')} volume={0.3} /></Sequence>
+      <Sequence from={Math.round(75.35 * FPS2())} durationInFrames={Math.round((CUT - 75.35) * FPS2())}><Audio src={staticFile('sfx/alarm.mp3')} volume={0.16} /></Sequence>
 
       <Shot a={0} b={6.16} t={t}><Phone2 t={t} t0={0} mode="warn" /></Shot>
       <Shot a={6.16} b={10.23} t={t}><VillageRun t={t} a={6.16} b={10.0} /></Shot>
