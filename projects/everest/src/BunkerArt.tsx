@@ -7,13 +7,13 @@ import {Key, cam, clamp, ease, lerp, rnd, seg} from './util';
 
 const W = 1080;
 const H = 1920;
-const FONT = 'Montserrat, sans-serif';
-const Svg: React.FC<{children: React.ReactNode}> = ({children}) => (
+export const FONT = 'Montserrat, sans-serif';
+export const Svg: React.FC<{children: React.ReactNode}> = ({children}) => (
   <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
     {children}
   </svg>
 );
-const P = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
+export const P = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
 
 // ---------- small reusable props ----------
 export const Excavator: React.FC<{x: number; y: number; s?: number; a1?: number; a2?: number; a3?: number; flip?: boolean}> = ({x, y, s = 1, a1 = -35, a2 = 60, a3 = 40, flip}) => (
@@ -38,7 +38,7 @@ export const Excavator: React.FC<{x: number; y: number; s?: number; a1?: number;
   </g>
 );
 
-const Truck: React.FC<{x: number; y: number; s?: number; color?: string; load?: boolean}> = ({x, y, s = 1, color = '#c0392b', load = true}) => (
+export const Truck: React.FC<{x: number; y: number; s?: number; color?: string; load?: boolean}> = ({x, y, s = 1, color = '#c0392b', load = true}) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <rect x={-170} y={-170} width={250} height={150} rx={6} fill="#2b2f36" />
     {load && <rect x={-160} y={-160} width={230} height={130} fill="#3a2f22" opacity={0.0} />}
@@ -55,7 +55,7 @@ const Truck: React.FC<{x: number; y: number; s?: number; color?: string; load?: 
   </g>
 );
 
-const Car: React.FC<{x: number; y: number; s?: number; trunk?: number; bob?: number}> = ({x, y, s = 1, trunk = 0, bob = 0}) => (
+export const Car: React.FC<{x: number; y: number; s?: number; trunk?: number; bob?: number}> = ({x, y, s = 1, trunk = 0, bob = 0}) => (
   <g transform={`translate(${x} ${y + bob}) scale(${s})`}>
     <ellipse cx={0} cy={6} rx={190} ry={14} fill="#000" opacity={0.45} />
     <path d="M-190 -20 L-190 -86 Q-190 -100 -170 -102 L-95 -106 L-40 -160 L70 -160 L120 -108 L180 -98 Q196 -96 196 -80 L196 -20 Z" fill="#3b4250" />
@@ -73,7 +73,7 @@ const Car: React.FC<{x: number; y: number; s?: number; trunk?: number; bob?: num
   </g>
 );
 
-const Trees: React.FC<{y: number; off: number; n: number; size: number; color: string; gap?: number}> = ({y, off, n, size, color, gap = 190}) => (
+export const Trees: React.FC<{y: number; off: number; n: number; size: number; color: string; gap?: number}> = ({y, off, n, size, color, gap = 190}) => (
   <g>
     {Array.from({length: n}).map((_, i) => {
       const x = (((i * gap + off) % (n * gap)) + n * gap) % (n * gap) - gap;
@@ -88,7 +88,7 @@ const Trees: React.FC<{y: number; off: number; n: number; size: number; color: s
   </g>
 );
 
-const Box: React.FC<{x: number; y: number; w?: number; h?: number; color?: string}> = ({x, y, w = 70, h = 56, color = '#b08a52'}) => (
+export const Box: React.FC<{x: number; y: number; w?: number; h?: number; color?: string}> = ({x, y, w = 70, h = 56, color = '#b08a52'}) => (
   <g transform={`translate(${x} ${y})`}>
     <rect x={-w / 2} y={-h} width={w} height={h} fill={color} stroke="#5a431f" strokeWidth={3} />
     <rect x={-w / 2} y={-h * 0.62} width={w} height={6} fill="#5a431f" opacity={0.6} />
@@ -300,7 +300,7 @@ export const Highway: React.FC<{t: number; p: number}> = ({t, p}) => (
 );
 
 // ---------- village and excavation ----------
-const House: React.FC<{x: number; y: number; s?: number; lit?: boolean; smoke?: number}> = ({x, y, s = 1, lit = true, smoke = 0}) => (
+export const House: React.FC<{x: number; y: number; s?: number; lit?: boolean; smoke?: number}> = ({x, y, s = 1, lit = true, smoke = 0}) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <rect x={-110} y={-130} width={220} height={130} fill="#3b2a1e" />
     {[-70, -30, 10, 50, 90].map((c) => (
