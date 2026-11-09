@@ -37,7 +37,7 @@ const Entrance: React.FC<{x: number; y: number; s?: number; lamp?: boolean}> = (
 // ---------- phone ----------
 export const Phone2: React.FC<{t: number; t0: number; mode: 'warn' | 'nosig'}> = ({t, t0, mode}) => {
   const k = t - t0;
-  const zoom = mode === 'warn' ? 1 + 1.15 * ease(clamp(k / 0.8)) + 0.04 * k : 1.5 + 0.03 * k;
+  const zoom = mode === 'warn' ? 1 + 0.7 * ease(clamp(k / 0.8)) + 0.03 * k : 1.5 + 0.03 * k;
   const card = ease(clamp((k - 0.5) / 0.35));
   const flash = mode === 'warn' && t > 3.45 && t < 3.95 ? 0.45 * (1 - (t - 3.45) / 0.5) : 0;
   const blink = Math.floor(t * 3) % 2 === 0;
@@ -51,11 +51,12 @@ export const Phone2: React.FC<{t: number; t0: number; mode: 'warn' | 'nosig'}> =
         <text x={540} y={625} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={32} fill="#8b95a3">Воскресенье, 9 ноября</text>
         {mode === 'warn' ? (
           <g opacity={card} transform={`translate(0 ${(1 - card) * -40})`}>
-            <rect x={256} y={760} width={568} height={340} rx={30} fill="#3a0f0d" stroke="#e0261b" strokeWidth={6} />
+            <rect x={256} y={760} width={568} height={330} rx={30} fill="#3a0f0d" stroke="#e0261b" strokeWidth={6} />
             <text x={540} y={830} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={32} fill="#ffb4ab">ПРЕДУПРЕЖДЕНИЕ</text>
             <text x={540} y={910} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={42} fill="#ff4a3d">ЗАРАЖЕНИЕ</text>
-            <text x={540} y={966} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={36} fill="#ff4a3d">РАСПРОСТРАНЯЕТСЯ</text>
-            <text x={540} y={1022} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={42} fill="#ff4a3d">БЫСТРЕЕ ПРОГНОЗА</text>
+            <text x={540} y={960} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={34} fill="#ff4a3d">РАСПРОСТРАНЯЕТСЯ</text>
+            <text x={540} y={1012} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={40} fill="#ff4a3d">БЫСТРЕЕ</text>
+            <text x={540} y={1060} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={40} fill="#ff4a3d">ПРОГНОЗА</text>
           </g>
         ) : (
           <g>
@@ -325,14 +326,14 @@ export const Counter: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <rect width={W} height={H} fill="#0a0d12" />
-      <g transform={`translate(540 560) scale(${pulse}) translate(-540 -560)`}>
-        <text x={540} y={640} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={290} fill={lack > 0.3 ? '#ff3b2e' : '#f2f4f8'} opacity={reveal}>49/50</text>
+      <g transform={`translate(540 480) scale(${pulse}) translate(-540 -480)`}>
+        <text x={540} y={560} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={290} fill={lack > 0.3 ? '#ff3b2e' : '#f2f4f8'} opacity={reveal}>49/50</text>
       </g>
       {Array.from({length: 50}).map((_, i) => {
         const col = i % 10;
         const row = Math.floor(i / 10);
         const x = 130 + col * 90;
-        const y = 900 + row * 150;
+        const y = 760 + row * 130;
         const missing = i === 49;
         const lit = !missing && clamp(reveal * 60 - i) > 0.5;
         return (
@@ -453,12 +454,12 @@ export const VentMonitor: React.FC<{t: number}> = ({t}) => {
   const warn = P(t, 66.9, 67.5);
   const alert = ease(P(t, 70.02, 70.4));
   const blink = Math.floor(t * 4) % 2 === 0;
-  const zoom = 1 + 0.35 * P(t, 64.33, 70.0);
+  const zoom = 1 + 0.1 * P(t, 64.33, 70.0);
   return (
     <Svg>
       <rect width={W} height={H} fill="#0b0e12" />
-      <g transform={`translate(540 960) scale(${zoom}) translate(-540 -960)`}>
-        <rect x={0} y={1520} width={W} height={400} fill="#171c22" />
+      <g transform={`translate(540 960) scale(${zoom}) translate(-560 -960)`}>
+        <rect x={-200} y={1520} width={1480} height={400} fill="#171c22" />
         <rect x={60} y={720} width={400} height={760} rx={16} fill="#3d4349" stroke="#7a8088" strokeWidth={8} />
         <g transform="translate(260 1000)">
           <circle r={140} fill="#1d2126" stroke="#9aa2aa" strokeWidth={8} />
