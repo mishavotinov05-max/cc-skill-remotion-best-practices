@@ -30,7 +30,7 @@ export const Characters2: React.FC = () => (
       <text x={960} y={62} textAnchor="middle" fontFamily="Montserrat, sans-serif" fontWeight={600} fontSize={36} fill="#f2f4f8">ПЕРСОНАЖИ · БУНКЕР, СЕРИЯ 2</text>
       <Card x={200} name="МАКС" role="главный герой" outfit={OUTFITS.max} fear={0.5} look={0.4} s={1.3} />
       <Card x={560} name="ДЯДЯ ВИТЯ" role="помогает с дверями" outfit={OUTFITS.uncle_vitya} s={1.3} />
-      <Card x={920} name="БАБУШКА" role="забирает сумку с документами" outfit={OUTFITS.babushka} s={1.24} />
+      <Card x={920} name="БАБУШКА" role="бабушка Макса" outfit={OUTFITS.babushka} s={1.24} />
       <rect x={1130} y={90} width={720} height={880} rx={22} fill="#10141c" stroke="#27303f" strokeWidth={2} />
       <Figure x={1270} y={820} s={1.05} face={{look: 0.3, fear: 0.4}} outfit={OUTFITS.neighbor} />
       <Figure x={1490} y={840} s={1.0} face={{look: 0, fear: 0.4}} outfit={OUTFITS.neighbor_woman} />
