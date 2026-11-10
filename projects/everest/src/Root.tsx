@@ -6,6 +6,7 @@ import {Ep3, FPS3, DURATION3} from './Ep3';
 import {Characters, Characters2} from './Characters';
 import {Bunker, FPSB, DURATIONB} from './Bunker';
 import {Bunker2, FPSB2, DURATIONB2} from './Bunker2';
+import {Million, FPSM, DURATIONM} from './Million';
 
 export const Root: React.FC = () => (
   <>
@@ -16,5 +17,6 @@ export const Root: React.FC = () => (
   <Composition id="Bunker" component={Bunker} durationInFrames={Math.round(DURATIONB * FPSB)} fps={FPSB} width={1080} height={1920} />
   <Composition id="Characters2" component={Characters2} durationInFrames={1} fps={30} width={1920} height={1080} />
   <Composition id="Bunker2" component={Bunker2} durationInFrames={Math.round(DURATIONB2 * FPSB2)} fps={FPSB2} width={1080} height={1920} />
+  <Composition id="Million" component={Million} durationInFrames={Math.round(DURATIONM * FPSM)} fps={FPSM} width={1080} height={1920} />
   </>
 );
