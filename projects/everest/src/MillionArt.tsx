@@ -14,99 +14,109 @@ export const Svg: React.FC<{children: React.ReactNode}> = ({children}) => (
 );
 
 // ================= characters =================
-export type Look = {skin: string; hair: string; style: 'short' | 'bun' | 'spiky' | 'bald' | 'slick'; top: string; topDark: string; bottom: string; dollar?: boolean; glasses?: boolean; tie?: string; jacket?: string; skirt?: boolean; stache?: boolean};
+export type Look = {skin: string; hair: string; style: 'spiky' | 'curly' | 'bald' | 'slick' | 'short'; top: string; topDark: string; bottom: string; dollar?: boolean; glasses?: boolean; tie?: string; jacket?: string; skirt?: boolean; stache?: boolean; shoes?: string};
 export const LOOKS: Record<string, Look> = {
-  max: {skin: '#f7c8a0', hair: '#6b3f1f', style: 'short', top: '#7b3fd6', topDark: '#5a2aa8', bottom: '#15151a', dollar: true},
-  mama: {skin: '#f7c8a0', hair: '#7a3b22', style: 'bun', top: '#f27ea4', topDark: '#d45a86', bottom: '#5b4a8a', skirt: true},
-  danya: {skin: '#f2bf94', hair: '#111116', style: 'spiky', top: '#34b35c', topDark: '#238a44', bottom: '#2a3a6a'},
-  teacher: {skin: '#efc29c', hair: '#8a8a90', style: 'bald', top: '#5a6068', topDark: '#3e434a', bottom: '#2a2d33', glasses: true, tie: '#b8322a', stache: true},
-  seller: {skin: '#f2c49a', hair: '#1b1b20', style: 'slick', top: '#f4f4f4', topDark: '#d4d4d8', bottom: '#20232b', jacket: '#262b36', tie: '#2a6ad0'},
+  max: {skin: '#ffc89a', hair: '#7a4720', style: 'spiky', top: '#7b3fd6', topDark: '#5a2aa8', bottom: '#1a1a2a', dollar: true, shoes: '#ffffff'},
+  mama: {skin: '#ffc89a', hair: '#b4532c', style: 'curly', top: '#ff7fae', topDark: '#d95a8a', bottom: '#5b4a8a', skirt: true, shoes: '#ffd1e0'},
+  danya: {skin: '#f7bf90', hair: '#14141c', style: 'spiky', top: '#2fbf5e', topDark: '#238a44', bottom: '#2a3a6a', shoes: '#ffffff'},
+  teacher: {skin: '#f2c29a', hair: '#8a8a94', style: 'bald', top: '#4a5058', topDark: '#33383f', bottom: '#2a2d33', glasses: true, tie: '#d23a30', stache: true, shoes: '#111'},
+  seller: {skin: '#f7c49a', hair: '#15151c', style: 'slick', top: '#f6f6f6', topDark: '#d4d4d8', bottom: '#1c1f28', jacket: '#20242f', tie: '#2a6ad0', shoes: '#111'},
 };
+const OUT = '#1d1830';
 
 export type Face = {eyes?: 'open' | 'wide' | 'blank' | 'closed'; mouth?: 'smile' | 'flat' | 'o' | 'sad' | 'open'; look?: number};
 export const Kid: React.FC<{x: number; y: number; s?: number; look: Look; face?: Face; armL?: number; armR?: number; bob?: number; flip?: boolean; sweat?: boolean; hold?: React.ReactNode}> = ({x, y, s = 1, look, face = {}, armL = 8, armR = -8, bob = 0, flip, sweat, hold}) => {
   const {eyes = 'open', mouth = 'smile', look: lk = 0} = face;
-  const hy = -330;
+  const hy = -405;
+  const hr = 90;
+  const sw = {stroke: OUT, strokeWidth: 6, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const};
   return (
-    <g transform={`translate(${x} ${y - bob}) scale(${flip ? -s : s} ${s})`}>
-      <ellipse cx={0} cy={4} rx={80} ry={12} fill="#000" opacity={0.18} />
-      <rect x={-36} y={-112} width={28} height={110} rx={12} fill={look.bottom} />
-      <rect x={8} y={-112} width={28} height={110} rx={12} fill={look.bottom} />
-      <ellipse cx={-24} cy={0} rx={26} ry={12} fill="#222" />
-      <ellipse cx={24} cy={0} rx={26} ry={12} fill="#222" />
-      {look.skirt && <path d="M-62 -150 L62 -150 L82 -52 L-82 -52 Z" fill={look.bottom} />}
-      <rect x={-56} y={-262} width={112} height={160} rx={30} fill={look.top} />
-      <rect x={-56} y={-150} width={112} height={48} rx={20} fill={look.topDark} opacity={0.35} />
+    <g transform={`translate(${x} ${y - bob}) scale(${flip ? -s * 0.82 : s * 0.82} ${s * 0.82})`}>
+      <ellipse cx={0} cy={6} rx={104} ry={14} fill="#000" opacity={0.2} />
+      <rect x={-46} y={-140} width={38} height={132} rx={16} fill={look.bottom} {...sw} />
+      <rect x={8} y={-140} width={38} height={132} rx={16} fill={look.bottom} {...sw} />
+      <ellipse cx={-30} cy={-2} rx={36} ry={16} fill={look.shoes || '#fff'} {...sw} />
+      <ellipse cx={30} cy={-2} rx={36} ry={16} fill={look.shoes || '#fff'} {...sw} />
+      {look.skirt && <path d="M-84 -180 L84 -180 L108 -62 L-108 -62 Z" fill={look.bottom} {...sw} />}
+      <path d="M-84 -300 Q-90 -330 -50 -334 L50 -334 Q90 -330 84 -300 L78 -140 Q0 -120 -78 -140 Z" fill={look.top} {...sw} />
+      <path d="M-78 -170 Q0 -150 78 -170 L78 -140 Q0 -120 -78 -140 Z" fill={look.topDark} opacity={0.4} />
       {look.jacket && (
         <g>
-          <rect x={-56} y={-262} width={112} height={160} rx={30} fill={look.jacket} />
-          <path d="M-18 -262 L0 -190 L18 -262 Z" fill="#f4f4f4" />
+          <path d="M-84 -300 Q-90 -330 -50 -334 L50 -334 Q90 -330 84 -300 L78 -140 Q0 -120 -78 -140 Z" fill={look.jacket} {...sw} />
+          <path d="M-26 -334 L0 -240 L26 -334 Z" fill="#f6f6f6" {...sw} />
         </g>
       )}
-      {look.tie && <path d="M-9 -258 L9 -258 L14 -180 L0 -160 L-14 -180 Z" fill={look.tie} />}
-      {look.dollar && <text x={0} y={-168} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={84} fill="#fff">$</text>}
+      {look.tie && <path d="M-12 -332 L12 -332 L18 -250 L0 -222 L-18 -250 Z" fill={look.tie} {...sw} />}
+      {look.dollar && <text x={0} y={-188} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={128} fill="#fff" stroke={OUT} strokeWidth={5} paintOrder="stroke">$</text>}
       {[
-        {sx: -62, a: armL},
-        {sx: 62, a: armR},
+        {sx: -88, a: armL},
+        {sx: 88, a: armR},
       ].map((ar, i) => (
-        <g key={i} transform={`translate(${ar.sx} -240) rotate(${ar.a})`}>
-          <rect x={-14} y={0} width={28} height={112} rx={14} fill={look.jacket && i >= 0 ? look.jacket : look.top} />
-          <circle cx={0} cy={118} r={17} fill={look.skin} />
+        <g key={i} transform={`translate(${ar.sx} -308) rotate(${ar.a})`}>
+          <rect x={-19} y={0} width={38} height={118} rx={19} fill={look.jacket || look.top} {...sw} />
+          <circle cx={0} cy={128} r={25} fill={look.skin} {...sw} />
         </g>
       ))}
       {hold}
-      <circle cx={-72} cy={hy + 6} r={16} fill={look.skin} />
-      <circle cx={72} cy={hy + 6} r={16} fill={look.skin} />
-      <circle cx={0} cy={hy} r={74} fill={look.skin} />
-      {look.style === 'short' && <path d={`M-76 ${hy - 6} Q-80 ${hy - 90} 0 ${hy - 92} Q80 ${hy - 90} 76 ${hy - 6} Q50 ${hy - 40} 10 ${hy - 44} Q-40 ${hy - 40} -76 ${hy - 6} Z`} fill={look.hair} />}
-      {look.style === 'bun' && (
-        <g>
-          <circle cx={0} cy={hy - 96} r={30} fill={look.hair} />
-          <path d={`M-78 ${hy} Q-84 ${hy - 90} 0 ${hy - 90} Q84 ${hy - 90} 78 ${hy} Q56 ${hy - 46} 0 ${hy - 48} Q-56 ${hy - 46} -78 ${hy} Z`} fill={look.hair} />
+      <circle cx={-hr + 2} cy={hy + 8} r={22} fill={look.skin} {...sw} />
+      <circle cx={hr - 2} cy={hy + 8} r={22} fill={look.skin} {...sw} />
+      {look.style === 'curly' && (
+        <g fill={look.hair} {...sw}>
+          {Array.from({length: 11}).map((_, i) => {
+            const a = Math.PI + (i / 10) * Math.PI;
+            return <circle key={i} cx={Math.cos(a) * 100} cy={hy - 6 + Math.sin(a) * 96} r={34} />;
+          })}
+          <circle cx={-98} cy={hy + 40} r={30} />
+          <circle cx={98} cy={hy + 40} r={30} />
         </g>
       )}
-      {look.style === 'spiky' && <path d={`M-78 ${hy - 4} L-60 ${hy - 100} L-34 ${hy - 70} L-14 ${hy - 112} L8 ${hy - 72} L34 ${hy - 108} L50 ${hy - 66} L78 ${hy - 90} L80 ${hy - 4} Q50 ${hy - 40} 0 ${hy - 42} Q-50 ${hy - 40} -78 ${hy - 4} Z`} fill={look.hair} />}
-      {look.style === 'slick' && <path d={`M-76 ${hy - 4} Q-78 ${hy - 96} 8 ${hy - 90} Q80 ${hy - 86} 76 ${hy - 4} Q40 ${hy - 56} -10 ${hy - 54} Q-50 ${hy - 50} -76 ${hy - 4} Z`} fill={look.hair} />}
+      <circle cx={0} cy={hy} r={hr} fill={look.skin} {...sw} />
+      {look.style === 'spiky' && (
+        <path d={`M-92 ${hy - 14} L-84 ${hy - 70} L-66 ${hy - 46} L-58 ${hy - 120} L-34 ${hy - 70} L-14 ${hy - 138} L8 ${hy - 74} L34 ${hy - 130} L46 ${hy - 70} L74 ${hy - 112} L72 ${hy - 54} L92 ${hy - 70} L92 ${hy - 10} Q60 ${hy - 56} 0 ${hy - 58} Q-60 ${hy - 56} -92 ${hy - 14} Z`} fill={look.hair} {...sw} />
+      )}
+      {look.style === 'short' && <path d={`M-92 ${hy - 10} Q-96 ${hy - 110} 0 ${hy - 112} Q96 ${hy - 110} 92 ${hy - 10} Q60 ${hy - 56} 0 ${hy - 58} Q-60 ${hy - 56} -92 ${hy - 10} Z`} fill={look.hair} {...sw} />}
+      {look.style === 'slick' && <path d={`M-90 ${hy - 6} Q-92 ${hy - 112} 10 ${hy - 108} Q96 ${hy - 104} 90 ${hy - 6} Q50 ${hy - 70} -12 ${hy - 66} Q-56 ${hy - 62} -90 ${hy - 6} Z`} fill={look.hair} {...sw} />}
       {look.style === 'bald' && (
-        <g>
-          <path d={`M-76 ${hy + 4} Q-84 ${hy - 36} -66 ${hy - 40} L-62 ${hy - 4} Z`} fill={look.hair} />
-          <path d={`M76 ${hy + 4} Q84 ${hy - 36} 66 ${hy - 40} L62 ${hy - 4} Z`} fill={look.hair} />
+        <g fill={look.hair} {...sw}>
+          <path d={`M-90 ${hy + 4} Q-100 ${hy - 44} -80 ${hy - 48} L-76 ${hy - 4} Z`} />
+          <path d={`M90 ${hy + 4} Q100 ${hy - 44} 80 ${hy - 48} L76 ${hy - 4} Z`} />
         </g>
       )}
       {[-1, 1].map((sd) => {
-        const ex = sd * 30 + lk * 6;
+        const ex = sd * 38 + lk * 6;
         return (
           <g key={sd}>
             {eyes === 'closed' ? (
-              <path d={`M${ex - 18} ${hy - 4} Q${ex} ${hy + 8} ${ex + 18} ${hy - 4}`} stroke="#1a1a22" strokeWidth={6} fill="none" strokeLinecap="round" />
+              <path d={`M${ex - 22} ${hy - 4} Q${ex} ${hy + 12} ${ex + 22} ${hy - 4}`} stroke={OUT} strokeWidth={7} fill="none" strokeLinecap="round" />
             ) : (
               <g>
-                <circle cx={ex} cy={hy - 6} r={eyes === 'wide' ? 28 : 23} fill="#fff" stroke="#1a1a22" strokeWidth={4} />
-                {eyes !== 'blank' && <circle cx={ex + lk * 8} cy={hy - 6} r={eyes === 'wide' ? 7 : 11} fill="#1a1a22" />}
-                {eyes === 'blank' && <circle cx={ex} cy={hy - 6} r={3} fill="#1a1a22" />}
-                <circle cx={ex + lk * 8 - 4} cy={hy - 11} r={3.5} fill="#fff" />
+                <circle cx={ex} cy={hy - 6} r={eyes === 'wide' ? 36 : 31} fill="#fff" {...sw} strokeWidth={5} />
+                {eyes !== 'blank' && <circle cx={ex + lk * 11} cy={hy - 4} r={eyes === 'wide' ? 9 : 15} fill={OUT} />}
+                {eyes === 'blank' && <circle cx={ex} cy={hy - 6} r={4} fill={OUT} />}
+                {eyes !== 'blank' && <circle cx={ex + lk * 11 - 5} cy={hy - 10} r={4.5} fill="#fff" />}
               </g>
             )}
-            <path d={`M${ex - 22} ${hy - 40} L${ex + 22} ${hy - 40 + sd * (face.mouth === 'flat' ? -4 : 0)}`} stroke={look.hair === '#8a8a90' ? '#444' : look.hair} strokeWidth={7} strokeLinecap="round" transform={`rotate(${sd * (mouth === 'sad' ? -10 : mouth === 'flat' ? 8 : -3)} ${ex} ${hy - 40})`} />
+            <path d={`M${ex - 28} ${hy - 50} Q${ex} ${hy - 62} ${ex + 28} ${hy - 50}`} stroke={look.style === 'bald' ? '#555' : look.hair} strokeWidth={9} fill="none" strokeLinecap="round" transform={`rotate(${sd * (mouth === 'sad' ? -12 : mouth === 'flat' ? 9 : -4)} ${ex} ${hy - 52})`} />
           </g>
         );
       })}
       {look.glasses && (
-        <g stroke="#222" strokeWidth={5} fill="none">
-          <circle cx={-30 + lk * 6} cy={hy - 6} r={31} />
-          <circle cx={30 + lk * 6} cy={hy - 6} r={31} />
-          <path d={`M${-0 + lk * 6 - 2} ${hy - 8} L${2 + lk * 6} ${hy - 8}`} />
+        <g stroke={OUT} strokeWidth={7} fill="none">
+          <circle cx={-38 + lk * 6} cy={hy - 6} r={40} />
+          <circle cx={38 + lk * 6} cy={hy - 6} r={40} />
+          <path d={`M-4 ${hy - 8} L4 ${hy - 8}`} />
         </g>
       )}
-      <circle cx={-46} cy={hy + 26} r={11} fill="#ff8a8a" opacity={0.35} />
-      <circle cx={46} cy={hy + 26} r={11} fill="#ff8a8a" opacity={0.35} />
-      {look.stache && <path d={`M-26 ${hy + 24} Q0 ${hy + 12} 26 ${hy + 24} Q10 ${hy + 34} 0 ${hy + 30} Q-10 ${hy + 34} -26 ${hy + 24} Z`} fill="#555" />}
-      {mouth === 'smile' && <path d={`M-22 ${hy + 34} Q0 ${hy + 56} 22 ${hy + 34}`} stroke="#8a2a2a" strokeWidth={6} fill="none" strokeLinecap="round" />}
-      {mouth === 'flat' && <path d={`M-18 ${hy + 42} L18 ${hy + 42}`} stroke="#8a2a2a" strokeWidth={6} strokeLinecap="round" />}
-      {mouth === 'sad' && <path d={`M-22 ${hy + 52} Q0 ${hy + 32} 22 ${hy + 52}`} stroke="#8a2a2a" strokeWidth={6} fill="none" strokeLinecap="round" />}
-      {mouth === 'o' && <ellipse cx={0} cy={hy + 46} rx={13} ry={17} fill="#6a1a1a" />}
-      {mouth === 'open' && <path d={`M-24 ${hy + 34} Q0 ${hy + 76} 24 ${hy + 34} Z`} fill="#6a1a1a" />}
-      {sweat && <path d={`M70 ${hy - 40} Q84 ${hy - 10} 70 ${hy - 4} Q56 ${hy - 10} 70 ${hy - 40} Z`} fill="#7fd0ff" />}
+      <path d={`M-6 ${hy + 8} Q6 ${hy + 26} -6 ${hy + 32}`} stroke="#b9764a" strokeWidth={6} fill="none" strokeLinecap="round" />
+      <circle cx={-60} cy={hy + 32} r={14} fill="#ff7a7a" opacity={0.4} />
+      <circle cx={60} cy={hy + 32} r={14} fill="#ff7a7a" opacity={0.4} />
+      {look.stache && <path d={`M-32 ${hy + 34} Q0 ${hy + 18} 32 ${hy + 34} Q12 ${hy + 46} 0 ${hy + 40} Q-12 ${hy + 46} -32 ${hy + 34} Z`} fill="#555" {...sw} strokeWidth={4} />}
+      {mouth === 'smile' && <path d={`M-30 ${hy + 46} Q0 ${hy + 82} 30 ${hy + 46} Z`} fill="#8a1f2a" {...sw} strokeWidth={5} />}
+      {mouth === 'flat' && <path d={`M-22 ${hy + 58} L22 ${hy + 58}`} stroke={OUT} strokeWidth={7} strokeLinecap="round" />}
+      {mouth === 'sad' && <path d={`M-28 ${hy + 66} Q0 ${hy + 40} 28 ${hy + 66}`} stroke={OUT} strokeWidth={7} fill="none" strokeLinecap="round" />}
+      {mouth === 'o' && <ellipse cx={0} cy={hy + 60} rx={17} ry={22} fill="#6a1a1a" {...sw} strokeWidth={5} />}
+      {mouth === 'open' && <path d={`M-32 ${hy + 46} Q0 ${hy + 100} 32 ${hy + 46} Z`} fill="#6a1a1a" {...sw} strokeWidth={5} />}
+      {sweat && <path d={`M82 ${hy - 56} Q100 ${hy - 20} 82 ${hy - 10} Q64 ${hy - 20} 82 ${hy - 56} Z`} fill="#7fd0ff" stroke={OUT} strokeWidth={4} />}
     </g>
   );
 };
@@ -116,20 +126,21 @@ export const TopUI: React.FC<{t: number; left: string; leftSub?: string; right: 
   if (zeroOnly) {
     return (
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{position: 'absolute', left: 0, top: 0}}>
-        <text x={540} y={250} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={150} fill="#ff2f2f" stroke="#000" strokeWidth={8} paintOrder="stroke">$0</text>
+        <text x={540} y={250} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={150} fill="#ff2f2f" stroke="#000" strokeWidth={10} paintOrder="stroke">$0</text>
       </svg>
     );
   }
   const red = fail > 0.5;
+  const mid = (right.length > 14 ? 44 : 52);
   return (
     <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{position: 'absolute', left: 0, top: 0, opacity: 1 - vanish}}>
-      <rect x={36} y={130} width={480} height={170} rx={28} fill={red ? '#6a0f12' : '#0a0c14'} opacity={0.72} stroke={red ? '#ff3b3b' : '#ffffff'} strokeOpacity={0.22} strokeWidth={3} />
-      <text x={276} y={176} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={28} fill={red ? '#ffb4b4' : '#b8c0d0'}>{red ? 'ИСПЫТАНИЕ' : 'ОСТАЛОСЬ МОЛЧАТЬ'}</text>
-      <text x={276} y={262} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={left.length > 8 ? 70 : 82} fill="#ffffff">{red ? 'ПРОВАЛ' : left}</text>
-      {leftSub && !red && <text x={276} y={288} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={20} fill="#b8c0d0">{leftSub}</text>}
-      <rect x={564} y={130} width={480} height={170} rx={28} fill="#0a0c14" opacity={0.72} stroke="#ffffff" strokeOpacity={0.22} strokeWidth={3} />
-      <text x={804} y={176} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={28} fill="#b8c0d0">ВЫИГРЫШ</text>
-      <text x={804} y={262} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={right.length > 6 ? 50 : 96} fill={red && right === '$0' ? '#ff3b3b' : '#38e07b'}>{right}</text>
+      <rect x={36} y={130} width={484} height={150} rx={22} fill="#06101f" opacity={0.9} stroke={red ? '#ff4a4a' : '#35d0ff'} strokeWidth={4} />
+      <text x={64} y={176} fontFamily={FONT} fontWeight={700} fontSize={26} fill={red ? '#ff9a9a' : '#35d0ff'} letterSpacing={2}>{red ? 'ИСПЫТАНИЕ' : 'ОСТАЛОСЬ МОЛЧАТЬ'}</text>
+      <text x={64} y={250} fontFamily={FONT} fontWeight={700} fontSize={left.length > 8 ? 62 : 74} fill="#ffffff">{red ? 'ПРОВАЛ' : left}</text>
+      {leftSub && !red && <text x={500} y={268} textAnchor="end" fontFamily={FONT} fontWeight={700} fontSize={14} fill="#5ea8c8">{leftSub}</text>}
+      <rect x={560} y={130} width={484} height={150} rx={22} fill="#06101f" opacity={0.9} stroke={red && right === '$0' ? '#ff4a4a' : '#38e07b'} strokeWidth={4} />
+      <text x={588} y={176} fontFamily={FONT} fontWeight={700} fontSize={26} fill={red && right === '$0' ? '#ff9a9a' : '#38e07b'} letterSpacing={2}>ВЫИГРЫШ</text>
+      <text x={588} y={250} fontFamily={FONT} fontWeight={700} fontSize={right.length > 6 ? mid : 84} fill={red && right === '$0' ? '#ff4a4a' : '#ffffff'}>{right}</text>
     </svg>
   );
 };
@@ -228,7 +239,7 @@ export const RewindCal: React.FC<{t: number}> = ({t}) => {
 };
 
 export const OfferPhone: React.FC<{t: number}> = ({t}) => {
-  const z = 1 + 0.18 * P(t, 2.3, 5.0);
+  const z = 1 + 0.2 * P(t, 0, 3.64);
   return (
     <Svg>
       <Bg c1="#3a2a78" c2="#1a1038" id="op" />
@@ -252,7 +263,7 @@ export const OfferPhone: React.FC<{t: number}> = ({t}) => {
 };
 
 export const TermsMax: React.FC<{t: number}> = ({t}) => {
-  const sh = t > 6.2 ? Math.sin(t * 50) * 4 * (1 - P(t, 6.2, 7.4)) : 0;
+  const sh = t > 5.6 ? Math.sin(t * 50) * 4 * (1 - P(t, 5.6, 7.0)) : 0;
   return (
     <Svg>
       <Bg c1="#cfd6e4" c2="#9aa4ba" id="tm" />
@@ -477,7 +488,7 @@ export const SellerCounter: React.FC<{t: number; mode: 'talk' | 'passport'}> = (
           <rect x={80} y={1360} width={920} height={60} fill="#5a4630" />
           <rect x={80} y={1420} width={920} height={500} fill="#6a5238" />
           <rect x={470} y={560} width={300} height={200} rx={40} fill="#fff" stroke="#222" strokeWidth={6} />
-          <text x={620} y={690} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={90} fill="#222">Имя?</text>
+          <text x={620} y={690} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={120} fill="#222">?</text>
         </g>
       ) : (
         <g transform={`translate(540 ${1000 - 160 * k}) scale(${1 + 0.15 * k}) translate(-540 -1000)`}>

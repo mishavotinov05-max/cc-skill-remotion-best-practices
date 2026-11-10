@@ -1,8 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import subsM from './subs_million.json';
+import subsM from './subs_million2.json';
 import {Shot, ramp, shake} from './Everest';
-import {StyledSub} from './Subs';
+import {PopSub} from './PopSub';
 import {clamp, ease} from './util';
 import {AgreePress, BarrelStreet, Calendar6, CallMax, CityDrive, Classroom, Corridor, Dealership, Diary, EmptyRoom, Kitchen, Mansion, MoneyIn, OfferPhone, P, PhoneBalance, Ringing, RewindCal, SellerCounter, Sofa, TermsMax, TimerBig, TopUI, Vanish, FailStamp} from './MillionArt';
 
@@ -21,10 +21,6 @@ const uiState = (t: number) => {
   let left = '7 ДНЕЙ';
   let sub: string | undefined;
   let right = fmtMoney(1000000000);
-  if (t < 0.8) right = fmtMoney(1000000000 * (1 - ease(P(t, 0.1, 0.8))));
-  else if (t < 2.3) right = '$0';
-  if (t >= 1.6 && t < 2.3) left = `${Math.min(7, 1 + Math.floor(P(t, 1.6, 2.3) * 7))} ДНЕЙ`;
-  else if (t >= 0.8 && t < 1.6) left = '0 ДНЕЙ';
   if (t >= 46.02 && t < 47.55) left = `${Math.max(1, 7 - Math.floor(P(t, 46.02, 47.3) * 6))} ${Math.max(1, 7 - Math.floor(P(t, 46.02, 47.3) * 6)) === 1 ? 'ДЕНЬ' : 'ДНЕЙ'}`;
   else if (t >= 47.55 && t < 52.72) {
     left = hms(86400 - (86400 - 300) * ease(P(t, 47.55, 52.72)));
@@ -48,16 +44,12 @@ export const Million: React.FC = () => {
   const zeroOnly = t >= VOICE_END - 0.2;
   const vanish = zeroOnly ? 1 : 0;
 
-  const music = ramp([[0, 0.07], [30, 0.08], [33, 0.1], [46, 0.1], [47, 0.07], [58.0, 0.07], [58.3, 0.01], [61.2, 0.01], [61.5, 0.05], [63.8, 0.05], [63.86, 0], [VOICE_END, 0]]);
   const ticks: number[] = [];
   for (let c = 52.8; c < 63.8; c += 0.5) ticks.push(Math.round(c * 10) / 10);
 
   return (
     <AbsoluteFill style={{backgroundColor: '#000'}}>
       <Audio src={staticFile('voice6.mp3')} volume={1} />
-      <Audio src={staticFile('sfx/jaunty.mp3')} volume={music} />
-      <Sequence from={Math.round(0.75 * FPSM)} durationInFrames={30}><Audio src={staticFile('sfx/thud.mp3')} volume={0.5} /></Sequence>
-      <Sequence from={Math.round(1.6 * FPSM)} durationInFrames={Math.round(0.9 * FPSM)}><Audio src={staticFile('sfx/rewind.mp3')} volume={0.28} /></Sequence>
       <Sequence from={Math.round(9.22 * FPSM)} durationInFrames={40}><Audio src={staticFile('sfx/kaching.mp3')} volume={0.28} /></Sequence>
       <Sequence from={Math.round(9.45 * FPSM)} durationInFrames={Math.round(2.0 * FPSM)}><Audio src={staticFile('sfx/ping.mp3')} volume={0.08} /></Sequence>
       <Sequence from={Math.round(18.55 * FPSM)} durationInFrames={40}><Audio src={staticFile('sfx/bell.mp3')} volume={0.18} /></Sequence>
@@ -77,11 +69,8 @@ export const Million: React.FC = () => {
       <Sequence from={Math.round(65.4 * FPSM)} durationInFrames={36}><Audio src={staticFile('sfx/poof.mp3')} volume={ramp([[0, 0.3], [0.8, 0]])} /></Sequence>
       <Sequence from={Math.round(66.6 * FPSM)} durationInFrames={36}><Audio src={staticFile('sfx/poof.mp3')} volume={ramp([[0, 0.3], [0.8, 0]])} /></Sequence>
 
-      <Shot a={0} b={0.8} t={t}><PhoneBalance t={t} /></Shot>
-      <Shot a={0.8} b={1.6} t={t}><EmptyRoom t={t} /></Shot>
-      <Shot a={1.6} b={2.3} t={t}><RewindCal t={t} /></Shot>
-      <Shot a={2.3} b={5.0} t={t}><OfferPhone t={t} /></Shot>
-      <Shot a={5.0} b={8.04} t={t}><TermsMax t={t} /></Shot>
+      <Shot a={0} b={3.64} t={t}><OfferPhone t={t} /></Shot>
+      <Shot a={3.64} b={8.04} t={t}><TermsMax t={t} /></Shot>
       <Shot a={8.04} b={9.22} t={t}><AgreePress t={t} /></Shot>
       <Shot a={9.22} b={12.16} t={t}><MoneyIn t={t} /></Shot>
       <Shot a={12.16} b={14.94} t={t}><Kitchen t={t} a={12.16} b={14.94} pass={false} /></Shot>
@@ -106,7 +95,7 @@ export const Million: React.FC = () => {
       <Shot a={64.74} b={70.8} t={t}><Vanish t={t} /></Shot>
       <Shot a={70.8} b={FINAL_BLACK} t={t}><BarrelStreet t={t} /></Shot>
 
-      <StyledSub t={t} subs={subsM as [number, number, string][]} hot={HOT} bottom={330} />
+      <PopSub t={t} subs={subsM as [number, number, string][]} />
       <TopUI t={t} left={ui.left} leftSub={ui.sub} right={ui.right} fail={ui.fail} vanish={vanish} zeroOnly={zeroOnly} />
       <AbsoluteFill style={{background: '#000', opacity: black}} />
     </AbsoluteFill>
