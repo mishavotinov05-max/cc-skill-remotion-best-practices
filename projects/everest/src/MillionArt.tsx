@@ -602,7 +602,7 @@ export const TimerBig: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#2a2a3a" c2="#0e0e16" id="tb" />
-      <g transform={`translate(540 880) scale(${1 + 0.1 * P(t, 52.72, 55.82)}) translate(-540 -880)`}>
+      <g transform={`translate(540 800) scale(${1 + 0.06 * P(t, 52.72, 55.82)}) translate(-540 -880)`}>
         <circle cx={540} cy={880} r={380} fill="#f6f6f2" stroke="#e63232" strokeWidth={26} />
         {Array.from({length: 12}).map((_, i) => (
           <rect key={i} x={534} y={520} width={12} height={i % 3 === 0 ? 60 : 34} fill="#222" transform={`rotate(${i * 30} 540 880)`} />
@@ -610,7 +610,7 @@ export const TimerBig: React.FC<{t: number}> = ({t}) => {
         <rect x={534} y={560} width={12} height={320} rx={6} fill="#e63232" transform={`rotate(${(t - 52.72) * 360} 540 880)`} />
         <circle cx={540} cy={880} r={22} fill="#222" />
       </g>
-      <text x={540} y={1500} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={200} fill="#ff4a4a" transform={`translate(${sw} 0)`}>{`${mm}:${ss}`}</text>
+      <text x={540} y={1390} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={170} fill="#ff4a4a" transform={`translate(${sw} 0)`}>{`${mm}:${ss}`}</text>
     </Svg>
   );
 };
