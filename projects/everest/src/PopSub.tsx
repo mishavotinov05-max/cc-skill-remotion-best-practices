@@ -20,7 +20,7 @@ export const PopSub: React.FC<{t: number; subs: [number, number, string][]}> = (
   const scale = 0.9 + 0.1 * k;
   const words = p[2].split(' ');
   return (
-    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 400}}>
+    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 320}}>
       <div style={{opacity: o, transform: `scale(${scale})`, width: 960, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 92, lineHeight: 1.04, letterSpacing: '0.01em', WebkitTextStroke: '10px #0b0b14', paintOrder: 'stroke fill', textShadow: '0 8px 0 rgba(0,0,0,0.35)'}}>
         {words.map((w, i) => (
           <span key={i} style={{color: colorOf(w.replace(/[?!]/g, ''))}}>

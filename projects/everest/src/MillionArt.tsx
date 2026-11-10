@@ -14,24 +14,30 @@ export const Svg: React.FC<{children: React.ReactNode}> = ({children}) => (
 );
 
 // ================= characters =================
-export type Look = {skin: string; hair: string; style: 'spiky' | 'curly' | 'bald' | 'slick' | 'short'; top: string; topDark: string; bottom: string; dollar?: boolean; glasses?: boolean; tie?: string; jacket?: string; skirt?: boolean; stache?: boolean; shoes?: string};
+export type Look = {skin: string; hair: string; style: 'spiky' | 'curly' | 'bald' | 'slick' | 'short' | 'quiff'; top: string; topDark: string; bottom: string; dollar?: boolean; glasses?: boolean; tie?: string; jacket?: string; skirt?: boolean; stache?: boolean; shoes?: string};
 export const LOOKS: Record<string, Look> = {
-  max: {skin: '#ffc89a', hair: '#7a4720', style: 'spiky', top: '#7b3fd6', topDark: '#5a2aa8', bottom: '#1a1a2a', dollar: true, shoes: '#ffffff'},
+  max: {skin: '#ffc89a', hair: '#8a4a1e', style: 'quiff', top: '#2fc25c', topDark: '#1f8f46', bottom: '#1a1a2a', dollar: true, shoes: '#ffffff'},
   mama: {skin: '#ffc89a', hair: '#b4532c', style: 'curly', top: '#ff7fae', topDark: '#d95a8a', bottom: '#5b4a8a', skirt: true, shoes: '#ffd1e0'},
-  danya: {skin: '#f7bf90', hair: '#14141c', style: 'spiky', top: '#2fbf5e', topDark: '#238a44', bottom: '#2a3a6a', shoes: '#ffffff'},
+  danya: {skin: '#f7bf90', hair: '#14141c', style: 'spiky', top: '#ff8a2a', topDark: '#cc6a14', bottom: '#2a3a6a', shoes: '#ffffff'},
   teacher: {skin: '#f2c29a', hair: '#8a8a94', style: 'bald', top: '#4a5058', topDark: '#33383f', bottom: '#2a2d33', glasses: true, tie: '#d23a30', stache: true, shoes: '#111'},
   seller: {skin: '#f7c49a', hair: '#15151c', style: 'slick', top: '#f6f6f6', topDark: '#d4d4d8', bottom: '#1c1f28', jacket: '#20242f', tie: '#2a6ad0', shoes: '#111'},
 };
 const OUT = '#1d1830';
 
 export type Face = {eyes?: 'open' | 'wide' | 'blank' | 'closed'; mouth?: 'smile' | 'flat' | 'o' | 'sad' | 'open'; look?: number};
-export const Kid: React.FC<{x: number; y: number; s?: number; look: Look; face?: Face; armL?: number; armR?: number; bob?: number; flip?: boolean; sweat?: boolean; hold?: React.ReactNode}> = ({x, y, s = 1, look, face = {}, armL = 8, armR = -8, bob = 0, flip, sweat, hold}) => {
-  const {eyes = 'open', mouth = 'smile', look: lk = 0} = face;
+export const Kid: React.FC<{t?: number; x: number; y: number; s?: number; look: Look; face?: Face; armL?: number; armR?: number; bob?: number; flip?: boolean; sweat?: boolean; hold?: React.ReactNode}> = ({t, x, y, s = 1, look, face = {}, armL: armL0 = 8, armR: armR0 = -8, bob = 0, flip, sweat, hold}) => {
+  const alive = t !== undefined;
+  const blink = alive && ((t as number) + x * 0.003) % 3.1 < 0.13;
+  const armL = armL0 + (alive ? Math.sin((t as number) * 2.2 + x) * 4 : 0);
+  const armR = armR0 + (alive ? Math.sin((t as number) * 2.2 + x + 2) * 4 : 0);
+  const breathe = alive ? 1 + 0.014 * Math.sin((t as number) * 2.6 + x) : 1;
+  const {eyes: eyes0 = 'open', mouth = 'smile', look: lk = 0} = face;
+  const eyes = blink && eyes0 === 'open' ? 'closed' : eyes0;
   const hy = -405;
   const hr = 90;
   const sw = {stroke: OUT, strokeWidth: 6, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const};
   return (
-    <g transform={`translate(${x} ${y - bob}) scale(${flip ? -s * 0.82 : s * 0.82} ${s * 0.82})`}>
+    <g transform={`translate(${x} ${y - bob}) scale(${flip ? -s * 0.82 : s * 0.82} ${s * 0.82 * breathe})`}>
       <ellipse cx={0} cy={6} rx={104} ry={14} fill="#000" opacity={0.2} />
       <rect x={-46} y={-140} width={38} height={132} rx={16} fill={look.bottom} {...sw} />
       <rect x={8} y={-140} width={38} height={132} rx={16} fill={look.bottom} {...sw} />
@@ -73,6 +79,13 @@ export const Kid: React.FC<{x: number; y: number; s?: number; look: Look; face?:
       <circle cx={0} cy={hy} r={hr} fill={look.skin} {...sw} />
       {look.style === 'spiky' && (
         <path d={`M-92 ${hy - 14} L-84 ${hy - 70} L-66 ${hy - 46} L-58 ${hy - 120} L-34 ${hy - 70} L-14 ${hy - 138} L8 ${hy - 74} L34 ${hy - 130} L46 ${hy - 70} L74 ${hy - 112} L72 ${hy - 54} L92 ${hy - 70} L92 ${hy - 10} Q60 ${hy - 56} 0 ${hy - 58} Q-60 ${hy - 56} -92 ${hy - 14} Z`} fill={look.hair} {...sw} />
+      )}
+      {look.style === 'quiff' && (
+        <g {...sw}>
+          <path d={`M-94 ${hy - 6} Q-102 ${hy - 100} -30 ${hy - 116} Q40 ${hy - 150} 92 ${hy - 96} Q108 ${hy - 70} 94 ${hy - 6} Q70 ${hy - 54} 20 ${hy - 62} Q-40 ${hy - 70} -94 ${hy - 6} Z`} fill={look.hair} />
+          <path d={`M-30 ${hy - 116} Q30 ${hy - 190} 104 ${hy - 140} Q70 ${hy - 138} 56 ${hy - 104} Q20 ${hy - 120} -30 ${hy - 116} Z`} fill={look.hair} />
+          <path d={`M-70 ${hy - 70} Q-10 ${hy - 104} 40 ${hy - 92}`} stroke="#c88a4a" strokeWidth={8} fill="none" opacity={0.7} />
+        </g>
       )}
       {look.style === 'short' && <path d={`M-92 ${hy - 10} Q-96 ${hy - 110} 0 ${hy - 112} Q96 ${hy - 110} 92 ${hy - 10} Q60 ${hy - 56} 0 ${hy - 58} Q-60 ${hy - 56} -92 ${hy - 10} Z`} fill={look.hair} {...sw} />}
       {look.style === 'slick' && <path d={`M-90 ${hy - 6} Q-92 ${hy - 112} 10 ${hy - 108} Q96 ${hy - 104} 90 ${hy - 6} Q50 ${hy - 70} -12 ${hy - 66} Q-56 ${hy - 62} -90 ${hy - 6} Z`} fill={look.hair} {...sw} />}
@@ -179,6 +192,62 @@ const Bg: React.FC<{c1: string; c2: string; id: string}> = ({c1, c2, id}) => (
   </g>
 );
 
+
+const WindowCity: React.FC<{x: number; y: number; w: number; h: number; night?: boolean}> = ({x, y, w, h, night}) => (
+  <g>
+    <rect x={x} y={y} width={w} height={h} rx={10} fill={night ? '#16204a' : '#9fd8ff'} stroke="#fff" strokeWidth={12} />
+    {[0, 1, 2, 3].map((i) => (
+      <rect key={i} x={x + 14 + i * (w / 4.2)} y={y + h * 0.45 - (i % 2) * 40} width={w / 5} height={h * 0.55} fill={night ? '#2b3a78' : '#7fa6d8'} />
+    ))}
+    <circle cx={x + w * 0.78} cy={y + h * 0.22} r={w * 0.08} fill={night ? '#fff6c0' : '#ffe066'} />
+    <rect x={x + w / 2 - 5} y={y} width={10} height={h} fill="#fff" />
+    <rect x={x} y={y + h / 2 - 5} width={w} height={10} fill="#fff" />
+  </g>
+);
+const Clock: React.FC<{x: number; y: number; r: number; t: number}> = ({x, y, r, t}) => (
+  <g>
+    <circle cx={x} cy={y} r={r} fill="#fff" stroke="#1d1830" strokeWidth={8} />
+    {Array.from({length: 12}).map((_, i) => (
+      <rect key={i} x={x - 3} y={y - r + 8} width={6} height={i % 3 === 0 ? 16 : 9} fill="#1d1830" transform={`rotate(${i * 30} ${x} ${y})`} />
+    ))}
+    <rect x={x - 3} y={y - r * 0.6} width={6} height={r * 0.6} rx={3} fill="#1d1830" transform={`rotate(${t * 6} ${x} ${y})`} />
+    <rect x={x - 2.5} y={y - r * 0.8} width={5} height={r * 0.8} rx={3} fill="#e63232" transform={`rotate(${t * 60} ${x} ${y})`} />
+  </g>
+);
+const Plant: React.FC<{x: number; y: number; s?: number; t: number}> = ({x, y, s = 1, t}) => (
+  <g transform={`translate(${x} ${y}) scale(${s})`}>
+    <path d="M-50 0 L-38 -90 L38 -90 L50 0 Z" fill="#d9744a" stroke="#1d1830" strokeWidth={6} />
+    {[-40, -15, 15, 40].map((a, i) => (
+      <path key={i} d="M0 -90 Q-30 -190 0 -250 Q30 -190 0 -90 Z" fill={['#3ec26a', '#2fa857', '#52d47e', '#2a9650'][i]} stroke="#1d1830" strokeWidth={5} transform={`rotate(${a + Math.sin(t * 1.5 + i) * 3} 0 -90)`} />
+    ))}
+  </g>
+);
+const Palm: React.FC<{x: number; y: number; s?: number; t: number}> = ({x, y, s = 1, t}) => (
+  <g transform={`translate(${x} ${y}) scale(${s})`}>
+    <path d="M-14 0 Q-30 -160 0 -300 L18 -296 Q0 -160 22 0 Z" fill="#a8743a" stroke="#1d1830" strokeWidth={6} />
+    {[-70, -35, 0, 35, 70].map((a, i) => (
+      <path key={i} d="M0 -300 Q80 -360 170 -300 Q90 -330 0 -290 Z" fill="#38b85a" stroke="#1d1830" strokeWidth={5} transform={`rotate(${a + Math.sin(t * 1.4 + i) * 4} 0 -300)`} />
+    ))}
+  </g>
+);
+const LampPost: React.FC<{x: number; y: number; s?: number}> = ({x, y, s = 1}) => (
+  <g transform={`translate(${x} ${y}) scale(${s})`}>
+    <rect x={-8} y={-420} width={16} height={420} fill="#3a3f55" stroke="#1d1830" strokeWidth={5} />
+    <rect x={-8} y={-430} width={90} height={14} fill="#3a3f55" stroke="#1d1830" strokeWidth={4} />
+    <ellipse cx={74} cy={-412} rx={28} ry={14} fill="#ffe27a" />
+  </g>
+);
+const Bill: React.FC<{x: number; y: number; rot: number; s?: number}> = ({x, y, rot, s = 1}) => (
+  <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${s})`}>
+    <rect x={-50} y={-26} width={100} height={52} rx={6} fill="#5fd47e" stroke="#1d6a38" strokeWidth={4} />
+    <circle cx={0} cy={0} r={16} fill="#3aa858" />
+    <text x={0} y={8} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={24} fill="#d7ffe2">$</text>
+  </g>
+);
+const Sparkle: React.FC<{x: number; y: number; r: number; o?: number}> = ({x, y, r, o = 1}) => (
+  <path d={`M${x} ${y - r} L${x + r * 0.25} ${y - r * 0.25} L${x + r} ${y} L${x + r * 0.25} ${y + r * 0.25} L${x} ${y + r} L${x - r * 0.25} ${y + r * 0.25} L${x - r} ${y} L${x - r * 0.25} ${y - r * 0.25} Z`} fill="#fff7b0" opacity={o} />
+);
+
 // ================= scenes =================
 export const PhoneBalance: React.FC<{t: number}> = ({t}) => {
   const k = P(t, 0.1, 0.8);
@@ -209,7 +278,7 @@ export const EmptyRoom: React.FC<{t: number}> = ({t}) => {
       <rect x={0} y={1390} width={W} height={14} fill="#6a5a44" />
       <rect x={330} y={520} width={420} height={420} rx={14} fill="#bfe6ff" stroke="#fff" strokeWidth={14} />
       <rect x={535} y={520} width={10} height={420} fill="#fff" />
-      <Kid x={540} y={1640} s={1.9} look={LOOKS.max} face={{eyes: 'wide', mouth: 'sad'}} armL={16} armR={-16} sweat />
+      <Kid t={t} x={540} y={1640} s={1.9} look={LOOKS.max} face={{eyes: 'wide', mouth: 'sad'}} armL={16} armR={-16} sweat />
       <g transform={`translate(${sh} 0)`}>
         <rect x={110} y={1000} width={860} height={150} rx={30} fill="#e63232" stroke="#fff" strokeWidth={8} />
         <text x={540} y={1105} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={84} fill="#fff">ПОТЕРЯНО ВСЁ</text>
@@ -243,6 +312,8 @@ export const OfferPhone: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#3a2a78" c2="#1a1038" id="op" />
+      {Array.from({length: 7}).map((_, i) => <Bill key={i} x={120 + rnd(i) * 840} y={((rnd(i + 3) * 1920 + t * 150 * (0.5 + rnd(i))) % 2100) - 100} rot={((t * 90 + i * 50) % 360)} s={0.9} />)}
+      {Array.from({length: 6}).map((_, i) => <Sparkle key={i} x={100 + rnd(i + 8) * 880} y={200 + rnd(i + 11) * 1500} r={26 + 12 * Math.sin(t * 5 + i)} />)}
       <g transform={`translate(540 1060) scale(${z}) translate(-540 -1060)`}>
         <Phone x={540} y={1060}>
           <rect x={-140} y={-300} width={280} height={96} rx={20} fill="#ffcf3a" />
@@ -267,8 +338,12 @@ export const TermsMax: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#cfd6e4" c2="#9aa4ba" id="tm" />
+      <WindowCity x={640} y={300} w={320} h={360} />
+      <Plant x={120} y={1440} s={1.0} t={t} />
+      <rect x={90} y={300} width={220} height={150} fill="#fff" stroke="#1d1830" strokeWidth={6} />
+      <text x={200} y={400} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={70} fill="#7b3fd6">$$$</text>
       <rect x={0} y={1450} width={W} height={470} fill="#8a7a62" />
-      <Kid x={380} y={1720} s={1.8} look={LOOKS.max} face={{eyes: 'wide', mouth: 'o', look: 0.5}} armL={-30} armR={14} />
+      <Kid t={t} x={380} y={1720} s={1.8} look={LOOKS.max} face={{eyes: 'wide', mouth: 'o', look: 0.5}} armL={-30} armR={14} />
       <g transform={`translate(${sh} 0)`}>
         <rect x={560} y={640} width={440} height={420} rx={40} fill="#fff" stroke="#222" strokeWidth={6} />
         <path d="M600 1050 L540 1180 L680 1060 Z" fill="#fff" stroke="#222" strokeWidth={6} />
@@ -308,6 +383,7 @@ export const MoneyIn: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#1fa85a" c2="#0b5a2e" id="mi" />
+      {Array.from({length: 14}).map((_, i) => <Bill key={i} x={((rnd(i) * 1080 + t * 40) % 1180) - 50} y={((rnd(i + 5) * 1920 + (t - 9.22) * 380 * (0.4 + rnd(i))) % 2100) - 100} rot={(t * 120 + i * 40) % 360} />)}
       <g transform="translate(540 1000) scale(1.15) translate(-540 -1000)">
         <Phone x={540} y={1000}>
           <text x={0} y={-230} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={34} fill="#9aa3b8">СЧЁТ ПОПОЛНЕН</text>
@@ -332,6 +408,12 @@ export const Kitchen: React.FC<{t: number; a: number; b: number; pass: boolean}>
   return (
     <Svg>
       <Bg c1="#ffe9b8" c2="#f4c98a" id="kt" />
+      <WindowCity x={620} y={380} w={340} h={400} />
+      <path d="M600 380 Q640 500 600 780 M980 380 Q940 500 980 780" stroke="#ff7fae" strokeWidth={26} fill="none" />
+      <Clock x={420} y={440} r={64} t={t} />
+      {Array.from({length: 7}).map((_, i) => <rect key={i} x={0} y={1000 + i * 60} width={W} height={3} fill="#e0b87a" opacity={0.5} />)}
+      <line x1={250} y1={0} x2={250} y2={260} stroke="#1d1830" strokeWidth={6} />
+      <ellipse cx={250} cy={290} rx={90} ry={46} fill="#ffd23f" stroke="#1d1830" strokeWidth={6} />
       <g transform={`translate(${lerp(0, pass ? 0 : -80, k)} 0)`}>
         <rect x={0} y={1420} width={W} height={500} fill="#c9905a" />
         <rect x={0} y={1410} width={W} height={14} fill="#a06a38" />
@@ -351,9 +433,9 @@ export const Kitchen: React.FC<{t: number; a: number; b: number; pass: boolean}>
         <ellipse cx={860} cy={1170} rx={60} ry={16} fill="#fff" stroke="#bbb" strokeWidth={4} />
         <rect x={900} y={1090} width={50} height={70} rx={10} fill="#fff" stroke="#bbb" strokeWidth={4} />
       </g>
-      <Kid x={250} y={1700} s={1.7} look={LOOKS.mama} face={{eyes: 'open', mouth: pass && k > 0.2 ? 'o' : 'smile', look: 0.6}} armL={pass ? -150 : 8} />
+      <Kid t={t} x={250} y={1700} s={1.7} look={LOOKS.mama} face={{eyes: 'open', mouth: pass && k > 0.2 ? 'o' : 'smile', look: 0.6}} armL={pass ? -150 : 8} />
       {pass && k > 0.18 && <text x={250} y={1000} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={180} fill="#e63232" stroke="#fff" strokeWidth={10} paintOrder="stroke">?</text>}
-      <Kid x={maxX} y={1740} s={1.7} look={LOOKS.max} face={{eyes: 'blank', mouth: 'flat', look: pass ? 0.8 : -0.4}} bob={Math.abs(Math.sin(t * 9)) * 10} />
+      <Kid t={t} x={maxX} y={1740} s={1.7} look={LOOKS.max} face={{eyes: 'blank', mouth: 'flat', look: pass ? 0.8 : -0.4}} bob={Math.abs(Math.sin(t * 9)) * 10} />
     </Svg>
   );
 };
@@ -364,6 +446,11 @@ export const Corridor: React.FC<{t: number; mode: 'meet' | 'nod'}> = ({t, mode})
   return (
     <Svg>
       <Bg c1="#cfe8ff" c2="#a8c8ea" id="co" />
+      <rect x={0} y={0} width={W} height={160} fill="#e8f2ff" />
+      {[0, 1, 2, 3].map((i) => <rect key={i} x={90 + i * 260} y={60} width={170} height={26} rx={13} fill="#fff" stroke="#9bb" strokeWidth={4} />)}
+      <rect x={380} y={360} width={330} height={210} rx={14} fill="#c9905a" stroke="#1d1830" strokeWidth={6} />
+      {[0, 1, 2].map((i) => <rect key={i} x={410 + i * 100} y={390 + (i % 2) * 14} width={80} height={110} fill={['#fff', '#ffe066', '#ff9ac8'][i]} stroke="#1d1830" strokeWidth={3} transform={`rotate(${-4 + i * 4} ${450 + i * 100} 450)`} />)}
+      <Clock x={900} y={430} r={70} t={t} />
       {Array.from({length: 7}).map((_, i) => (
         <g key={i}>
           <rect x={i * 190 - 40} y={560} width={170} height={860} rx={8} fill={['#e26a3a', '#3a8ae2', '#e2b63a'][i % 3]} stroke="#0003" strokeWidth={6} />
@@ -372,8 +459,8 @@ export const Corridor: React.FC<{t: number; mode: 'meet' | 'nod'}> = ({t, mode})
         </g>
       ))}
       <rect x={0} y={1420} width={W} height={500} fill="#b8a888" />
-      <Kid x={lerp(1300, 740, k)} y={1720} s={1.75} look={LOOKS.danya} face={{eyes: 'open', mouth: 'open', look: -0.6}} armL={mode === 'meet' ? -110 : 10} flip bob={Math.abs(Math.sin(t * 9)) * (k < 1 ? 10 : 0)} />
-      <Kid x={330} y={1740} s={1.75} look={LOOKS.max} face={{eyes: nod !== 0 ? 'closed' : 'open', mouth: 'flat', look: 0.5}} bob={0} />
+      <Kid t={t} x={lerp(1300, 740, k)} y={1720} s={1.75} look={LOOKS.danya} face={{eyes: 'open', mouth: 'open', look: -0.6}} armL={mode === 'meet' ? -110 : 10} flip bob={Math.abs(Math.sin(t * 9)) * (k < 1 ? 10 : 0)} />
+      <Kid t={t} x={330} y={1740} s={1.75} look={LOOKS.max} face={{eyes: nod !== 0 ? 'closed' : 'open', mouth: 'flat', look: 0.5}} bob={0} />
       {mode === 'meet' && k > 0.85 && (
         <g>
           <rect x={560} y={640} width={260} height={220} rx={36} fill="#fff" stroke="#222" strokeWidth={6} />
@@ -393,6 +480,10 @@ export const Classroom: React.FC<{t: number; mode: 'call' | 'board'}> = ({t, mod
   return (
     <Svg>
       <Bg c1="#f1e6c8" c2="#d8c89a" id="cl" />
+      <WindowCity x={760} y={340} w={260} h={260} />
+      <Clock x={540} y={420} r={70} t={t} />
+      <rect x={80} y={340} width={220} height={150} fill="#ffdd88" stroke="#1d1830" strokeWidth={6} />
+      <text x={190} y={430} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={64} fill="#1d1830">A B C</text>
       <rect x={60} y={480} width={960} height={620} rx={14} fill="#2b5a46" stroke="#8a5a30" strokeWidth={22} />
       {mode === 'board' && (
         <g fontFamily={FONT} fontWeight={700} fill="#fff" opacity={0.92}>
@@ -404,8 +495,8 @@ export const Classroom: React.FC<{t: number; mode: 'call' | 'board'}> = ({t, mod
       <rect x={0} y={1420} width={W} height={500} fill="#b88a56" />
       <rect x={150} y={1220} width={300} height={36} rx={8} fill="#8a5a30" />
       <rect x={180} y={1256} width={26} height={180} fill="#6a4020" />
-      <Kid x={mode === 'call' ? lerp(860, 760, k) : 840} y={1730} s={1.8} look={LOOKS.teacher} face={{eyes: 'open', mouth: 'flat', look: -0.7}} armL={mode === 'call' ? 70 : 4} armR={mode === 'board' ? -60 : -8} flip hold={mode === 'call' ? <rect x={-250} y={-260} width={12} height={240} fill="#8a5a30" transform="rotate(-50)" /> : undefined} />
-      <Kid x={mode === 'call' ? 300 : 420} y={1750} s={1.8} look={LOOKS.max} face={{eyes: 'wide', mouth: mode === 'board' ? 'flat' : 'o', look: 0.6}} armL={mode === 'board' ? 150 : 8} sweat={mode === 'board'} />
+      <Kid t={t} x={mode === 'call' ? lerp(860, 760, k) : 840} y={1730} s={1.8} look={LOOKS.teacher} face={{eyes: 'open', mouth: 'flat', look: -0.7}} armL={mode === 'call' ? 70 : 4} armR={mode === 'board' ? -60 : -8} flip hold={mode === 'call' ? <rect x={-250} y={-260} width={12} height={240} fill="#8a5a30" transform="rotate(-50)" /> : undefined} />
+      <Kid t={t} x={mode === 'call' ? 300 : 420} y={1750} s={1.8} look={LOOKS.max} face={{eyes: 'wide', mouth: mode === 'board' ? 'flat' : 'o', look: 0.6}} armL={mode === 'board' ? 150 : 8} sweat={mode === 'board'} />
       {mode === 'board' && (
         <g>
           <circle cx={560} cy={1130} r={14} fill="#222" opacity={0.0} />
@@ -456,6 +547,10 @@ export const Dealership: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#dfe9ff" c2="#bccbe8" id="ds" />
+      {[0, 1, 2, 3].map((i) => <polygon key={i} points={`${100 + i * 280},0 ${40 + i * 280},0 ${70 + i * 280},420 ${130 + i * 280},420`} fill="#fff" opacity={0.18} />)}
+      <rect x={160} y={350} width={760} height={120} rx={26} fill="#e63232" stroke="#1d1830" strokeWidth={6} />
+      <text x={540} y={434} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={84} fill="#fff">АВТОСАЛОН</text>
+      {Array.from({length: 12}).map((_, i) => <circle key={i} cx={60 + i * 90} cy={150 + Math.sin(t * 3 + i) * 14} r={8} fill="#ffd23f" />)}
       <rect x={0} y={1420} width={W} height={500} fill="#8a92a6" />
       <rect x={0} y={1410} width={W} height={12} fill="#6a7288" />
       <g transform={`translate(${pan} 0)`}>
@@ -469,7 +564,7 @@ export const Dealership: React.FC<{t: number}> = ({t}) => {
           </g>
         ))}
       </g>
-      <Kid x={400} y={1800} s={1.7} look={LOOKS.max} face={{eyes: 'wide', mouth: 'open', look: 0.9}} armR={-100} />
+      <Kid t={t} x={400} y={1800} s={1.7} look={LOOKS.max} face={{eyes: 'wide', mouth: 'open', look: 0.9}} armR={-100} />
       {gold > 0.1 && Array.from({length: 10}).map((_, i) => <text key={i} x={760 + rnd(i) * 300} y={1100 + rnd(i + 2) * 300 - gold * 60} fontFamily={FONT} fontWeight={700} fontSize={50} fill="#ffd23a">✦</text>)}
     </Svg>
   );
@@ -480,11 +575,15 @@ export const SellerCounter: React.FC<{t: number; mode: 'talk' | 'passport'}> = (
   return (
     <Svg>
       <Bg c1="#dfe9ff" c2="#bccbe8" id="sc" />
+      <WindowCity x={700} y={360} w={300} h={300} />
+      <rect x={90} y={360} width={330} height={260} rx={14} fill="#3a4156" stroke="#1d1830" strokeWidth={6} />
+      {Array.from({length: 8}).map((_, i) => <g key={i}><circle cx={140 + (i % 4) * 72} cy={420 + Math.floor(i / 4) * 90} r={13} fill="none" stroke="#ffd23f" strokeWidth={6} /><rect x={134 + (i % 4) * 72} y={436 + Math.floor(i / 4) * 90} width={12} height={34} fill="#ffd23f" /></g>)}
+      <Plant x={960} y={1420} s={0.9} t={t} />
       <rect x={0} y={1420} width={W} height={500} fill="#8a92a6" />
       {mode === 'talk' ? (
         <g>
-          <Kid x={800} y={1720} s={1.8} look={LOOKS.seller} face={{eyes: 'open', mouth: 'open', look: -0.7}} armL={30} flip />
-          <Kid x={300} y={1740} s={1.8} look={LOOKS.max} face={{eyes: 'blank', mouth: 'flat', look: 0.6}} />
+          <Kid t={t} x={800} y={1720} s={1.8} look={LOOKS.seller} face={{eyes: 'open', mouth: 'open', look: -0.7}} armL={30} flip />
+          <Kid t={t} x={300} y={1740} s={1.8} look={LOOKS.max} face={{eyes: 'blank', mouth: 'flat', look: 0.6}} />
           <rect x={80} y={1360} width={920} height={60} fill="#5a4630" />
           <rect x={80} y={1420} width={920} height={500} fill="#6a5238" />
           <rect x={470} y={560} width={300} height={200} rx={40} fill="#fff" stroke="#222" strokeWidth={6} />
@@ -513,6 +612,10 @@ export const CityDrive: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#8fd0ff" c2="#d8f0ff" id="cd" />
+      <Palm x={140} y={1500} s={1.1} t={t} />
+      <Palm x={900} y={1500} s={1.0} t={t} />
+      <circle cx={880} cy={420} r={90} fill="#ffe066" />
+      {Array.from({length: 12}).map((_, i) => <rect key={i} x={878} y={290} width={4} height={40} fill="#ffe066" transform={`rotate(${i * 30 + t * 20} 880 420)`} />)}
       <Cloud x={((200 - t * 40) % 1400 + 1400) % 1400 - 150} y={600} s={1.4} />
       {Array.from({length: 9}).map((_, i) => (
         <rect key={i} x={((i * 220 - t * 160) % 2000 + 2000) % 2000 - 220} y={900 - rnd(i) * 320} width={170} height={700 + rnd(i) * 320} fill={['#8a9ac4', '#a8b4d4', '#7a88b4'][i % 3]} />
@@ -533,6 +636,11 @@ export const Mansion: React.FC<{t: number; vanish?: number}> = ({t, vanish = 0})
   return (
     <Svg>
       <Bg c1="#8fd0ff" c2="#e8f6ff" id="mn" />
+      <circle cx={900} cy={360} r={100} fill="#ffe066" />
+      {Array.from({length: 14}).map((_, i) => <rect key={i} x={898} y={210} width={5} height={46} fill="#ffe066" transform={`rotate(${i * 25.7 + t * 18} 900 360)`} />)}
+      <Cloud x={((220 + t * 30) % 1300) - 100} y={330} s={1.3} />
+      <Palm x={90} y={1420} s={1.2} t={t} />
+      <Palm x={1000} y={1420} s={1.2} t={t} />
       <g transform={`translate(540 1100) scale(${lerp(1.5, 1.0, k)}) translate(-540 -1100)`}>
         <rect x={-300} y={1380} width={1680} height={600} fill="#5ac45a" />
         <g opacity={1 - vanish}>
@@ -578,27 +686,73 @@ export const Calendar6: React.FC<{t: number}> = ({t}) => {
   );
 };
 
+const Icon: React.FC<{kind: number; x: number; y: number; o: number}> = ({kind, x, y, o}) => (
+  <g transform={`translate(${x} ${y}) scale(${0.6 + 0.4 * o})`} opacity={o}>
+    {kind === 0 && (
+      <g stroke="#1d1830" strokeWidth={6} strokeLinejoin="round">
+        <rect x={-70} y={-12} width={140} height={34} rx={14} fill="#e63232" />
+        <path d="M-40 -12 L-10 -60 L50 -60 L70 -12 Z" fill="#ff6a6a" />
+        <circle cx={-42} cy={30} r={16} fill="#444" />
+        <circle cx={42} cy={30} r={16} fill="#444" />
+      </g>
+    )}
+    {kind === 1 && (
+      <g stroke="#1d1830" strokeWidth={6} strokeLinejoin="round">
+        <path d="M-80 10 L80 10 L56 56 L-56 56 Z" fill="#fff" />
+        <path d="M0 -70 L0 6 L60 6 Z" fill="#ff8a2a" />
+        <rect x={-3} y={-80} width={6} height={90} fill="#1d1830" />
+      </g>
+    )}
+    {kind === 2 && (
+      <g stroke="#1d1830" strokeWidth={6} strokeLinejoin="round">
+        <polygon points="-60,-30 60,-30 36,-70 -36,-70" fill="#6ad8ff" />
+        <polygon points="-60,-30 60,-30 0,60" fill="#38b6e8" />
+      </g>
+    )}
+    {kind === 3 && (
+      <g stroke="#1d1830" strokeWidth={6} strokeLinejoin="round">
+        <ellipse cx={0} cy={50} rx={86} ry={22} fill="#ffe08a" />
+        <path d="M0 40 Q-10 -20 6 -60" stroke="#8a5a30" strokeWidth={10} fill="none" />
+        <path d="M6 -60 Q70 -90 96 -40 Q50 -62 6 -60 Z M6 -60 Q-60 -92 -86 -40 Q-40 -62 6 -60 Z" fill="#38b85a" />
+      </g>
+    )}
+    {kind === 4 && (
+      <g stroke="#1d1830" strokeWidth={6} strokeLinejoin="round">
+        <path d="M-70 -6 L70 -6 L52 40 L-52 40 Z" fill="#ffd23f" />
+        <path d="M-30 -6 L-48 -50 L48 -50 L30 -6 Z" fill="#ffe27a" />
+        <ellipse cx={0} cy={-6} rx={70} ry={12} fill="#ffcf3a" />
+      </g>
+    )}
+  </g>
+);
+
 export const Sofa: React.FC<{t: number}> = ({t}) => {
-  const items = [
-    {x: 200, y: 640, e: '🚁'},
-    {x: 470, y: 560, e: '🛥️'},
-    {x: 740, y: 640, e: '💎'},
-    {x: 330, y: 820, e: '🏝️'},
-    {x: 620, y: 800, e: '✈️'},
+  const pos = [
+    {x: 200, y: 700},
+    {x: 470, y: 620},
+    {x: 740, y: 700},
+    {x: 330, y: 880},
+    {x: 620, y: 880},
   ];
   return (
     <Svg>
       <Bg c1="#ffe9d0" c2="#f4c9a0" id="sf" />
+      <WindowCity x={640} y={360} w={340} h={380} night />
+      <rect x={110} y={380} width={360} height={220} rx={14} fill="#16182a" stroke="#1d1830" strokeWidth={8} />
+      <text x={290} y={520} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={100} fill="#38e07b">$ $ $</text>
+      <rect x={60} y={1260} width={14} height={260} fill="#444" />
+      <ellipse cx={67} cy={1250} rx={52} ry={30} fill="#ffd23f" stroke="#1d1830" strokeWidth={5} />
+      <Plant x={990} y={1500} s={1.1} t={t} />
       <rect x={0} y={1500} width={W} height={420} fill="#8a6a4a" />
-      <rect x={120} y={1260} width={840} height={260} rx={50} fill="#9a4ad6" />
-      <rect x={90} y={1180} width={900} height={180} rx={60} fill="#b86af0" />
-      <Kid x={540} y={1470} s={1.6} look={LOOKS.max} face={{eyes: 'open', mouth: 'smile', look: Math.sin(t) * 0.6}} armL={-20} armR={20} />
+      <rect x={120} y={1260} width={840} height={260} rx={50} fill="#9a4ad6" stroke="#1d1830" strokeWidth={6} />
+      <rect x={90} y={1180} width={900} height={180} rx={60} fill="#b86af0" stroke="#1d1830" strokeWidth={6} />
+      <Kid t={t} x={540} y={1470} s={1.6} look={LOOKS.max} face={{eyes: 'open', mouth: 'smile', look: Math.sin(t) * 0.6}} armL={-20} armR={20} />
       <g transform={`translate(0 ${Math.sin(t * 1.6) * 8})`}>
-        <ellipse cx={470} cy={760} rx={400} ry={250} fill="#fff" stroke="#222" strokeWidth={6} />
-        <circle cx={380} cy={1060} r={26} fill="#fff" stroke="#222" strokeWidth={5} />
-        <circle cx={330} cy={1130} r={14} fill="#fff" stroke="#222" strokeWidth={5} />
-        {items.map((it, i) => (
-          <text key={i} x={it.x} y={it.y} fontSize={120} opacity={clamp((t - (47.8 + i * 0.7)) / 0.4)}>{it.e}</text>
+        <ellipse cx={470} cy={780} rx={400} ry={260} fill="#fff" stroke="#1d1830" strokeWidth={6} />
+        <circle cx={380} cy={1090} r={26} fill="#fff" stroke="#1d1830" strokeWidth={5} />
+        <circle cx={330} cy={1160} r={14} fill="#fff" stroke="#1d1830" strokeWidth={5} />
+        {pos.map((it, i) => (
+          <Icon key={i} kind={i} x={it.x} y={it.y} o={clamp((t - (47.8 + i * 0.7)) / 0.4)} />
         ))}
       </g>
     </Svg>
@@ -631,6 +785,7 @@ export const Ringing: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#ffe9d0" c2="#f4c9a0" id="rg" />
+      {Array.from({length: 7}).map((_, i) => <text key={i} x={140 + rnd(i) * 800} y={((rnd(i + 2) * 1920 - t * 160 * (0.4 + rnd(i))) % 1920 + 1920) % 1920} fontFamily={FONT} fontWeight={700} fontSize={70 + rnd(i + 4) * 50} fill="#ff7fae" opacity={0.5}>♥</text>)}
       <g transform={`translate(${sh} 0)`}>
         <Phone x={540} y={1000} s={1.15}>
           <circle cx={0} cy={-120} r={110} fill="#f27ea4" />
@@ -648,9 +803,14 @@ export const Ringing: React.FC<{t: number}> = ({t}) => {
 export const CallMax: React.FC<{t: number; think: boolean}> = ({t, think}) => (
   <Svg>
     <Bg c1="#ffe9d0" c2="#f4c9a0" id="cm" />
+      <WindowCity x={620} y={380} w={320} h={360} night />
+      <rect x={110} y={420} width={190} height={240} fill="#fff" stroke="#1d1830" strokeWidth={8} />
+      <circle cx={205} cy={500} r={42} fill="#f7c8a0" stroke="#1d1830" strokeWidth={5} />
+      <rect x={165} y={548} width={80} height={80} rx={20} fill="#ff7fae" stroke="#1d1830" strokeWidth={5} />
+      <Plant x={950} y={1500} s={1.0} t={t} />
     <rect x={0} y={1500} width={W} height={420} fill="#8a6a4a" />
     <g transform={`translate(540 1400) scale(${think ? 1.25 : 1}) translate(-540 -1400)`}>
-      <Kid x={540} y={1720} s={2.1} look={LOOKS.max} face={{eyes: think ? 'wide' : 'open', mouth: think ? 'flat' : 'sad', look: think ? 0.5 : 0}} armL={think ? 8 : 8} armR={think ? -8 : -150} sweat={think} hold={!think ? <rect x={60} y={-380} width={44} height={76} rx={10} fill="#14151c" stroke="#3a3d4a" strokeWidth={5} transform="rotate(10)" /> : <rect x={-120} y={-170} width={90} height={150} rx={14} fill="#14151c" stroke="#3a3d4a" strokeWidth={5} transform="rotate(-8)" />} />
+      <Kid t={t} x={540} y={1720} s={2.1} look={LOOKS.max} face={{eyes: think ? 'wide' : 'open', mouth: think ? 'flat' : 'sad', look: think ? 0.5 : 0}} armL={think ? 8 : 8} armR={think ? -8 : -150} sweat={think} hold={!think ? <rect x={60} y={-380} width={44} height={76} rx={10} fill="#14151c" stroke="#3a3d4a" strokeWidth={5} transform="rotate(10)" /> : <rect x={-120} y={-170} width={90} height={150} rx={14} fill="#14151c" stroke="#3a3d4a" strokeWidth={5} transform="rotate(-8)" />} />
     </g>
     {!think && (
       <g>
@@ -668,6 +828,7 @@ export const FailStamp: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#ff6a6a" c2="#8a0f12" id="fs" />
+      {Array.from({length: 18}).map((_, i) => <polygon key={i} points="540,1000 520,-100 560,-100" fill="#fff" opacity={0.08} transform={`rotate(${i * 20 + t * 14} 540 1000)`} />)}
       <g transform={`translate(${sh} ${sh * 0.4})`}>
         <Phone x={540} y={1000} s={1.15}>
           <text x={0} y={-60} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={150} fill="#fff">ДА</text>
@@ -691,6 +852,8 @@ export const Vanish: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#8fd0ff" c2="#e8f6ff" id="vn" />
+      <circle cx={880} cy={360} r={100} fill="#ffe066" />
+      <Cloud x={((300 + t * 40) % 1300) - 100} y={400} s={1.5} />
       <rect x={0} y={1380} width={W} height={540} fill="#5ac45a" />
       <g opacity={1 - house}>
         <rect x={160} y={820} width={760} height={560} fill="#f4ead2" stroke="#b89a60" strokeWidth={8} />
@@ -718,6 +881,18 @@ export const BarrelStreet: React.FC<{t: number}> = ({t}) => {
   return (
     <Svg>
       <Bg c1="#bfe3ff" c2="#eaf5ff" id="bs" />
+      {[0, 1, 2].map((i) => (
+        <g key={i}>
+          <rect x={20 + i * 380} y={620} width={330} height={560} fill={['#ffb3c7', '#ffe08a', '#a8e0ff'][i]} stroke="#1d1830" strokeWidth={6} />
+          <rect x={20 + i * 380} y={680} width={330} height={70} fill={['#e63232', '#ff8a2a', '#2a6ad0'][i]} stroke="#1d1830" strokeWidth={5} />
+          <text x={185 + i * 380} y={734} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={44} fill="#fff">{['МАГАЗИН', 'КАФЕ', 'АПТЕКА'][i]}</text>
+          <rect x={70 + i * 380} y={800} width={110} height={160} fill="#8fd0ff" stroke="#fff" strokeWidth={8} />
+          <rect x={210 + i * 380} y={880} width={90} height={300} fill="#8a5a30" stroke="#1d1830" strokeWidth={5} />
+        </g>
+      ))}
+      <LampPost x={200} y={1200} s={1.2} />
+      <LampPost x={880} y={1200} s={1.2} />
+      {[0, 1, 2].map((i) => <ellipse key={i} cx={((300 + i * 330 + t * 60) % 1300) - 100} cy={1250 + (i % 2) * 24} rx={24} ry={16} fill="#8a8a96" stroke="#1d1830" strokeWidth={4} />)}
       <rect x={0} y={1180} width={W} height={740} fill="#7a7e88" />
       <rect x={0} y={1180} width={W} height={20} fill="#5a5e68" />
       {[0, 1, 2, 3, 4].map((i) => (
@@ -725,7 +900,7 @@ export const BarrelStreet: React.FC<{t: number}> = ({t}) => {
       ))}
       <rect x={60} y={820} width={170} height={360} fill="#9aa4c4" />
       <rect x={850} y={760} width={190} height={420} fill="#aab2cc" />
-      <Kid x={540} y={1650} s={2.0} look={{...LOOKS.max, dollar: false}} face={{eyes: blink ? 'closed' : 'blank', mouth: 'flat', look: 0}} armL={20} armR={-20} />
+      <Kid t={t} x={540} y={1650} s={2.0} look={{...LOOKS.max, dollar: false}} face={{eyes: blink ? 'closed' : 'blank', mouth: 'flat', look: 0}} armL={20} armR={-20} />
       <g transform="translate(540 1500)">
         <rect x={-190} y={-300} width={380} height={420} rx={26} fill="#b8864e" stroke="#6a4420" strokeWidth={10} />
         {[-120, 0, 120].map((y) => (

@@ -35,6 +35,14 @@ const uiState = (t: number) => {
   return {left, sub, right, fail};
 };
 
+const Z: React.FC<{a: number; b: number; t: number; i: number; children: React.ReactNode}> = ({a, b, t, i, children}) => {
+  const k = clamp((t - a) / Math.max(0.1, b - a));
+  const dir = i % 2 === 0;
+  const sc = dir ? 1 + 0.08 * ease(k) : 1.08 - 0.08 * ease(k);
+  const origin = ['50% 62%', '30% 58%', '70% 58%'][i % 3];
+  return <div style={{width: '100%', height: '100%', transform: `scale(${sc})`, transformOrigin: origin}}>{children}</div>;
+};
+
 export const Million: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / FPSM;
@@ -69,31 +77,31 @@ export const Million: React.FC = () => {
       <Sequence from={Math.round(65.4 * FPSM)} durationInFrames={36}><Audio src={staticFile('sfx/poof.mp3')} volume={ramp([[0, 0.3], [0.8, 0]])} /></Sequence>
       <Sequence from={Math.round(66.6 * FPSM)} durationInFrames={36}><Audio src={staticFile('sfx/poof.mp3')} volume={ramp([[0, 0.3], [0.8, 0]])} /></Sequence>
 
-      <Shot a={0} b={3.64} t={t}><OfferPhone t={t} /></Shot>
-      <Shot a={3.64} b={8.04} t={t}><TermsMax t={t} /></Shot>
-      <Shot a={8.04} b={9.22} t={t}><AgreePress t={t} /></Shot>
-      <Shot a={9.22} b={12.16} t={t}><MoneyIn t={t} /></Shot>
-      <Shot a={12.16} b={14.94} t={t}><Kitchen t={t} a={12.16} b={14.94} pass={false} /></Shot>
-      <Shot a={14.94} b={18.58} t={t}><Kitchen t={t} a={14.94} b={18.17} pass /></Shot>
-      <Shot a={18.58} b={21.44} t={t}><Corridor t={t} mode="meet" /></Shot>
-      <Shot a={21.44} b={22.87} t={t}><Corridor t={t} mode="nod" /></Shot>
-      <Shot a={22.87} b={25.45} t={t}><Classroom t={t} mode="call" /></Shot>
-      <Shot a={25.45} b={30.96} t={t}><Classroom t={t} mode="board" /></Shot>
-      <Shot a={30.96} b={33.15} t={t}><div style={{transform: `translate(${sk.x}px, ${sk.y}px)`, width: '100%', height: '100%'}}><Diary t={t} /></div></Shot>
-      <Shot a={33.15} b={37.71} t={t}><Dealership t={t} /></Shot>
-      <Shot a={37.71} b={39.9} t={t}><SellerCounter t={t} mode="talk" /></Shot>
-      <Shot a={39.9} b={41.62} t={t}><SellerCounter t={t} mode="passport" /></Shot>
-      <Shot a={41.62} b={43.4} t={t}><CityDrive t={t} /></Shot>
-      <Shot a={43.4} b={46.02} t={t}><Mansion t={t} /></Shot>
-      <Shot a={46.02} b={47.55} t={t}><Calendar6 t={t} /></Shot>
-      <Shot a={47.55} b={52.72} t={t}><Sofa t={t} /></Shot>
-      <Shot a={52.72} b={55.82} t={t}><TimerBig t={t} /></Shot>
-      <Shot a={55.82} b={58.19} t={t}><Ringing t={t} /></Shot>
-      <Shot a={58.19} b={61.35} t={t}><CallMax t={t} think={false} /></Shot>
-      <Shot a={61.35} b={63.84} t={t}><CallMax t={t} think /></Shot>
-      <Shot a={63.84} b={64.74} t={t}><FailStamp t={t} /></Shot>
-      <Shot a={64.74} b={70.8} t={t}><Vanish t={t} /></Shot>
-      <Shot a={70.8} b={FINAL_BLACK} t={t}><BarrelStreet t={t} /></Shot>
+      <Shot a={0} b={3.64} t={t}><Z a={0} b={3.64} t={t} i={0}><OfferPhone t={t} /></Z></Shot>
+      <Shot a={3.64} b={8.04} t={t}><Z a={3.64} b={8.04} t={t} i={1}><TermsMax t={t} /></Z></Shot>
+      <Shot a={8.04} b={9.22} t={t}><Z a={8.04} b={9.22} t={t} i={2}><AgreePress t={t} /></Z></Shot>
+      <Shot a={9.22} b={12.16} t={t}><Z a={9.22} b={12.16} t={t} i={3}><MoneyIn t={t} /></Z></Shot>
+      <Shot a={12.16} b={14.94} t={t}><Z a={12.16} b={14.94} t={t} i={4}><Kitchen t={t} a={12.16} b={14.94} pass={false} /></Z></Shot>
+      <Shot a={14.94} b={18.58} t={t}><Z a={14.94} b={18.58} t={t} i={5}><Kitchen t={t} a={14.94} b={18.17} pass /></Z></Shot>
+      <Shot a={18.58} b={21.44} t={t}><Z a={18.58} b={21.44} t={t} i={6}><Corridor t={t} mode="meet" /></Z></Shot>
+      <Shot a={21.44} b={22.87} t={t}><Z a={21.44} b={22.87} t={t} i={7}><Corridor t={t} mode="nod" /></Z></Shot>
+      <Shot a={22.87} b={25.45} t={t}><Z a={22.87} b={25.45} t={t} i={8}><Classroom t={t} mode="call" /></Z></Shot>
+      <Shot a={25.45} b={30.96} t={t}><Z a={25.45} b={30.96} t={t} i={9}><Classroom t={t} mode="board" /></Z></Shot>
+      <Shot a={30.96} b={33.15} t={t}><Z a={30.96} b={33.15} t={t} i={10}><div style={{transform: `translate(${sk.x}px, ${sk.y}px)`, width: '100%', height: '100%'}}><Diary t={t} /></div></Z></Shot>
+      <Shot a={33.15} b={37.71} t={t}><Z a={33.15} b={37.71} t={t} i={11}><Dealership t={t} /></Z></Shot>
+      <Shot a={37.71} b={39.9} t={t}><Z a={37.71} b={39.9} t={t} i={12}><SellerCounter t={t} mode="talk" /></Z></Shot>
+      <Shot a={39.9} b={41.62} t={t}><Z a={39.9} b={41.62} t={t} i={13}><SellerCounter t={t} mode="passport" /></Z></Shot>
+      <Shot a={41.62} b={43.4} t={t}><Z a={41.62} b={43.4} t={t} i={14}><CityDrive t={t} /></Z></Shot>
+      <Shot a={43.4} b={46.02} t={t}><Z a={43.4} b={46.02} t={t} i={15}><Mansion t={t} /></Z></Shot>
+      <Shot a={46.02} b={47.55} t={t}><Z a={46.02} b={47.55} t={t} i={16}><Calendar6 t={t} /></Z></Shot>
+      <Shot a={47.55} b={52.72} t={t}><Z a={47.55} b={52.72} t={t} i={17}><Sofa t={t} /></Z></Shot>
+      <Shot a={52.72} b={55.82} t={t}><Z a={52.72} b={55.82} t={t} i={18}><TimerBig t={t} /></Z></Shot>
+      <Shot a={55.82} b={58.19} t={t}><Z a={55.82} b={58.19} t={t} i={19}><Ringing t={t} /></Z></Shot>
+      <Shot a={58.19} b={61.35} t={t}><Z a={58.19} b={61.35} t={t} i={20}><CallMax t={t} think={false} /></Z></Shot>
+      <Shot a={61.35} b={63.84} t={t}><Z a={61.35} b={63.84} t={t} i={21}><CallMax t={t} think /></Z></Shot>
+      <Shot a={63.84} b={64.74} t={t}><Z a={63.84} b={64.74} t={t} i={22}><FailStamp t={t} /></Z></Shot>
+      <Shot a={64.74} b={70.8} t={t}><Z a={64.74} b={70.8} t={t} i={23}><Vanish t={t} /></Z></Shot>
+      <Shot a={70.8} b={FINAL_BLACK} t={t}><Z a={70.8} b={FINAL_BLACK} t={t} i={24}><BarrelStreet t={t} /></Z></Shot>
 
       <PopSub t={t} subs={subsM as [number, number, string][]} />
       <TopUI t={t} left={ui.left} leftSub={ui.sub} right={ui.right} fail={ui.fail} vanish={vanish} zeroOnly={zeroOnly} />
