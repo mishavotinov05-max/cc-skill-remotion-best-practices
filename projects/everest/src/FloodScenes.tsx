@@ -91,8 +91,8 @@ export const S4: React.FC<{t: number}> = ({t}) => {
     <Svg>
       <rect width={W} height={H} fill="#05070f" />
       <g transform={`translate(540 940) scale(${0.8 + 0.2 * k})`} opacity={k}>
-        <rect x={-340} y={-90} width={680} height={180} rx={14} fill="#f2c94c" />
-        <text x={0} y={38} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={112} fill="#1a1400" letterSpacing={4}>ПРЕДСТАВЬ</text>
+        <rect x={-420} y={-90} width={840} height={180} rx={14} fill="#f2c94c" />
+        <text x={0} y={36} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={100} fill="#1a1400" letterSpacing={4}>ПРЕДСТАВЬ</text>
       </g>
     </Svg>
   );
@@ -264,7 +264,7 @@ export const PhoneCall: React.FC<{t: number; a: number; b: number; label: string
         <text x={0} y={-230} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={34} fill="#9aa3b8">ВЫЗОВ</text>
         <text x={0} y={-90} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={140} fill="#38e07b" letterSpacing={6}>{digits.map((d, i) => (P(t, a + 0.3 + i * 0.3, a + 0.6 + i * 0.3) > 0.5 ? d : '')).join('')}</text>
         <rect x={-130} y={30} width={260} height={90} rx={26} fill="#38e07b" />
-        <text x={0} y={92} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={38} fill="#063">{sub}</text>
+        <text x={0} y={92} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={sub.length > 10 ? 26 : 38} fill="#063">{sub}</text>
         <circle cx={0} cy={250} r={46} fill="#e63232" />
         {[0, 1, 2].map((i) => <circle key={i} cx={0} cy={250} r={46 + ((t * 40 + i * 20) % 60)} fill="none" stroke="#38e07b" strokeWidth={3} opacity={0.4} />)}
       </g>
@@ -349,7 +349,7 @@ export const Jump: React.FC<{t: number}> = ({t}) => {
 };
 export const Container: React.FC<{t: number}> = ({t}) => {
   const k = P(t, 105.98, 114.9);
-  const x = lerp(-700, 520, Math.pow(k, 1.5));
+  const x = lerp(-320, 520, Math.pow(k, 1.3));
   const s = lerp(0.6, 2.4, Math.pow(k, 2));
   const left = Math.max(0, 114.9 - t);
   return (
@@ -375,7 +375,7 @@ export const Countdown: React.FC<{t: number}> = ({t}) => {
           {Array.from({length: 8}).map((_, i) => <rect key={i} x={-176 + i * 46} y={-160} width={10} height={150} fill="#9a2a20" />)}
         </g>
       }
-      hudOverlay={<text x={540} y={640} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={260} fill="#ff3b3b" stroke="#05070f" strokeWidth={14} paintOrder="stroke">{n}</text>}
+      hudOverlay={<text x={540} y={520} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={260} fill="#ff3b3b" stroke="#05070f" strokeWidth={14} paintOrder="stroke">{n}</text>}
     />
   );
 };

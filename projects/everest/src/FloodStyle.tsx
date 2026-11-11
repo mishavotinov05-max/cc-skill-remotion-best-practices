@@ -28,7 +28,7 @@ export const Chip: React.FC<{x: number; y: number; color: 'red' | 'yellow' | 'gr
 
 export const Tag: React.FC<{x: number; y: number; text: string}> = ({x, y, text}) => (
   <g transform={`translate(${x} ${y})`}>
-    <rect x={0} y={0} width={text.length * 19 + 40} height={52} rx={8} fill="#f2c94c" />
+    <rect x={0} y={0} width={text.length * 22 + 44} height={52} rx={8} fill="#f2c94c" />
     <text x={20} y={37} fontFamily={FONT} fontWeight={700} fontSize={28} fill="#1a1400" letterSpacing={1}>{text}</text>
   </g>
 );
