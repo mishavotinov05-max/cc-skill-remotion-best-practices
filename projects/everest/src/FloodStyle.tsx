@@ -42,17 +42,17 @@ export const Stamp: React.FC<{x: number; y: number; text: string; rot?: number; 
 );
 
 // ---------- flat figure (no outline, two-tone) ----------
-export const FlatHero: React.FC<{x: number; y: number; s?: number; pose?: 'stand' | 'wave'}> = ({x, y, s = 1, pose = 'stand'}) => (
-  <g transform={`translate(${x} ${y}) scale(${s})`}>
+export const FlatHero: React.FC<{x: number; y: number; s?: number; pose?: 'stand' | 'wave'; rot?: number; flip?: boolean; armR?: number; legSwing?: number}> = ({x, y, s = 1, pose = 'stand', rot = 0, flip, armR, legSwing = 0}) => (
+  <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${flip ? -s : s} ${s})`}>
     <ellipse cx={0} cy={4} rx={86} ry={12} fill="#000" opacity={0.3} />
-    <rect x={-42} y={-150} width={34} height={150} rx={14} fill="#1b2438" />
-    <rect x={8} y={-150} width={34} height={150} rx={14} fill="#232d45" />
+    <rect x={-42} y={-150} width={34} height={150} rx={14} fill="#1b2438" transform={`rotate(${legSwing} -25 -150)`} />
+    <rect x={8} y={-150} width={34} height={150} rx={14} fill="#232d45" transform={`rotate(${-legSwing} 25 -150)`} />
     <path d="M-76 -320 Q-80 -350 -44 -354 L44 -354 Q80 -350 76 -320 L70 -150 L-70 -150 Z" fill="#ff7a1a" />
     <path d="M10 -354 L44 -354 Q80 -350 76 -320 L70 -150 L10 -150 Z" fill="#d95f0a" />
     <rect x={-10} y={-350} width={20} height={200} fill="#ffd23f" opacity={0.0} />
     <rect x={-70} y={-250} width={140} height={14} fill="#ffe08a" opacity={0.85} />
     <rect x={-84} y={-326} width={34} height={120} rx={17} fill="#ff7a1a" transform="rotate(8 -66 -326)" />
-    <g transform={pose === 'wave' ? 'translate(66 -326) rotate(150)' : 'translate(66 -326) rotate(-8)'}>
+    <g transform={`translate(66 -326) rotate(${armR ?? (pose === 'wave' ? 150 : -8)})`}>
       <rect x={-17} y={0} width={34} height={120} rx={17} fill="#d95f0a" />
       <circle cx={0} cy={126} r={18} fill="#f2b98a" />
     </g>
