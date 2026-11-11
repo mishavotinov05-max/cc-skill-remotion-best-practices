@@ -71,7 +71,7 @@ export const S2: React.FC<{t: number}> = ({t}) => {
 };
 export const S3: React.FC<{t: number}> = ({t}) => (
   <Svg>
-    <rect width={W} height={H} fill="#070b18" />
+    <rect width={W} height={H} fill="#111b38" />
     <HudBar place="ВНИМАНИЕ" time={clock(t)} />
     {[0, 1, 2].map((i) => {
       const k = ease(P(t, 8.3 + i * 0.9, 8.7 + i * 0.9));
@@ -89,7 +89,7 @@ export const S4: React.FC<{t: number}> = ({t}) => {
   const k = ease(P(t, 11.88, 12.2));
   return (
     <Svg>
-      <rect width={W} height={H} fill="#05070f" />
+      <rect width={W} height={H} fill="#111b38" />
       <g transform={`translate(540 940) scale(${0.8 + 0.2 * k})`} opacity={k}>
         <rect x={-420} y={-90} width={840} height={180} rx={14} fill="#f2c94c" />
         <text x={0} y={36} textAnchor="middle" fontFamily={FONT} fontWeight={700} fontSize={100} fill="#1a1400" letterSpacing={4}>ПРЕДСТАВЬ</text>
@@ -212,7 +212,7 @@ export const Xray: React.FC<{t: number}> = ({t}) => {
           <stop offset="1" stopColor="#05101c" />
         </linearGradient>
       </defs>
-      <rect width={W} height={H} fill="#070b18" />
+      <rect width={W} height={H} fill="#111b38" />
       <rect y={620} width={W} height={1300} fill="url(#xr)" />
       <rect y={610} width={W} height={12} fill="#6ab4e0" opacity={0.7} />
       <FlatHero x={540} y={640} s={0.5} rot={0} />
@@ -257,7 +257,7 @@ export const PhoneCall: React.FC<{t: number; a: number; b: number; label: string
   const digits = label.split('');
   return (
     <Svg>
-      <rect width={W} height={H} fill="#070b18" />
+      <rect width={W} height={H} fill="#111b38" />
       <g transform="translate(540 980) scale(1.25)" opacity={k}>
         <rect x={-190} y={-380} width={380} height={760} rx={52} fill="#14151c" stroke="#38e07b" strokeWidth={8} />
         <rect x={-170} y={-352} width={340} height={704} rx={36} fill="#06101f" />
