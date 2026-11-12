@@ -296,13 +296,11 @@ export const Auto: React.FC = () => {
     </Sequence>
   );
   const black = clamp((t - 169.45) / 0.4);
-  const bedV = ramp([[0, 0.05], [165, 0.05], [169.8, 0]]);
   const hum = ramp([[0, 0.06], [14, 0.06], [16, 0], [127.9, 0], [129, 0.05], [135, 0.05], [137, 0]]);
   const whooshes = [20.2, 27.4, 33.35, 38.0, 40.75, 43.9, 48.14, 59.09, 61.0, 63.07, 64.9, 66.5, 69.2, 94.9, 97.16, 99.52, 101.45, 103.24, 105.14, 105.8, 109.75, 114.4, 118.4, 120.6, 122.6, 124.8, 140.5, 142.41, 144.5];
   return (
     <AbsoluteFill style={{backgroundColor: '#1d2740'}}>
       <Audio src={staticFile('voice8.mp3')} volume={1} />
-      <Audio src={staticFile('sfx/bed.mp3')} volume={bedV} />
       <Audio src={staticFile('sfx/hum.mp3')} volume={hum} />
       {whooshes.map((w) => S(w, 0.8, 'whoosh', 0.09))}
       {S(15.7, 0.8, 'notif', 0.1)}
@@ -415,7 +413,7 @@ export const Auto: React.FC = () => {
       <Sh a={18.39} b={40.73} t={t}>
         <NSvg>
           <InfoBg t={t} tint="#0f2a1c" />
-          <Cam t={t} keys={notesCam}><NotesPhone t={t} a={18.39} /></Cam>
+          <Cam t={t} keys={[[18.39, 540, 960, 1.0], [40.73, 540, 960, 1.0]]}><NotesPhone t={t} a={18.39} /></Cam>
         </NSvg>
       </Sh>
       <Sh a={40.73} b={43.91} t={t}>
