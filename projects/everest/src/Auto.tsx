@@ -1,6 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {ramp, Overlay} from './Everest';
+import {AutoSub} from './AutoSub';
+import subsA from './subs_auto.json';
 import {Arrow, Bars, BankCard, Cam, CK, Drain, Equation, EquipFlow, equipCam, GREEN, GOLD, RED, CYAN, HeroCorner, InfoBg, NSvg, NoLift, NotesPhone, notesCam, Profit, Rent35, Rest43, Shortage, SumUp, sumCam, T, tw, Utilities, Neon} from './AutoInfo';
 import {CoopIn, CoopOut, ServiceIn, ServiceOut, ShowroomIn, ShowroomOut, Sport} from './AutoPlaces';
 import {clamp, ease, lerp, rnd} from './util';
@@ -692,6 +694,7 @@ export const Auto: React.FC = () => {
           <BalanceHud value={bal} delta={delta} />
         </Svg></AbsoluteFill>
       )}
+      <AutoSub t={t} subs={subsA as any} />
       <Overlay t={t} frame={frame} />
       <AbsoluteFill style={{backgroundColor: '#000', opacity: black}} />
     </AbsoluteFill>

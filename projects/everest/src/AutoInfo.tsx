@@ -193,13 +193,13 @@ export const notesCam: CK[] = [
   [18.39, 540, 960, 1.0],
   [20.3, 540, 640, 1.25],
   [24.9, 540, 700, 1.3],
-  [27.4, 540, 960, 1.3],
-  [30.4, 540, 1010, 1.4],
-  [33.3, 540, 1110, 1.45],
-  [36.0, 540, 1200, 1.5],
-  [37.9, 540, 1280, 1.45],
-  [38.8, 540, 1480, 1.35],
-  [40.73, 540, 1500, 1.4],
+  [27.4, 540, 1060, 1.3],
+  [30.4, 540, 1120, 1.4],
+  [33.3, 540, 1220, 1.45],
+  [36.0, 540, 1310, 1.5],
+  [37.9, 540, 1380, 1.4],
+  [38.8, 540, 1480, 1.3],
+  [40.73, 540, 1500, 1.35],
 ];
 
 // ---------------------------- bars ----------------------------
@@ -305,7 +305,7 @@ export const EquipFlow: React.FC<{t: number}> = ({t}) => {
         total += it.price * fly;
         return null;
       })}
-      <Neon x={540} y={1480} w={960} h={330} c={GOLD} t={t}>
+      <Neon x={540} y={1390} w={960} h={330} c={GOLD} t={t}>
         <T x={-430} y={-100} anchor="start" size={32} fill="#9aa3b8">КОРЗИНА ОБОРУДОВАНИЯ</T>
         <T x={430} y={-20} anchor="end" size={92} fill={GOLD}>{`${money(total)} ₽`}</T>
       </Neon>
@@ -314,7 +314,7 @@ export const EquipFlow: React.FC<{t: number}> = ({t}) => {
         const fly = ease(P(t, it.at + 1.2, it.at + 1.7));
         const Ic = it.Ic;
         const px = lerp(540, slots[i] + 40, fly);
-        const py = lerp(720, 1560, fly) - Math.sin(Math.PI * fly) * 120;
+        const py = lerp(700, 1480, fly) - Math.sin(Math.PI * fly) * 120;
         const sc = pop * (1 - 0.72 * fly) * (0.8 + 0.2 * pop);
         const price = Math.round(tw(t, it.at + 0.2, it.at + 0.9, 0, it.price));
         if (t < it.at) return null;
@@ -327,7 +327,7 @@ export const EquipFlow: React.FC<{t: number}> = ({t}) => {
                 <T x={0} y={240} size={80} fill={RED} stroke="#0a1128">{`−${money(price)} ₽`}</T>
               </Neon>
             </g>
-            {fly > 0.95 && <Burst x={slots[i] + 40} y={1560} t={t} a={it.at + 1.7} c={GOLD} />}
+            {fly > 0.95 && <Burst x={slots[i] + 40} y={1480} t={t} a={it.at + 1.7} c={GOLD} />}
           </g>
         );
       })}
