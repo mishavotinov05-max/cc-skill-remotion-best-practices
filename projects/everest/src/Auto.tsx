@@ -1,6 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import {Shot, ramp, Overlay} from './Everest';
+import {ramp, Overlay} from './Everest';
+import {Arrow, Bars, BankCard, Cam, CK, Drain, Equation, EquipFlow, equipCam, GREEN, GOLD, RED, CYAN, HeroCorner, InfoBg, NSvg, NoLift, NotesPhone, notesCam, Profit, Rent35, Rest43, Shortage, SumUp, sumCam, T, tw, Utilities, Neon} from './AutoInfo';
+import {CoopIn, CoopOut, ServiceIn, ServiceOut, ShowroomIn, ShowroomOut, Sport} from './AutoPlaces';
 import {clamp, ease, lerp, rnd} from './util';
 import {BalanceHud, Card, Finger, FONT, GarageInside, GarageRow, Man, money, P, PEOPLE, PhoneShell, Sofa, Svg, Workshop, Zhiguli, IconCompressor, IconJack, IconLift, IconTools} from './AutoArt';
 
@@ -8,10 +10,6 @@ export const FPSA = 30;
 export const DURATIONA = 169.9;
 const BOTTOM = 520; // scene shift
 
-const T: React.FC<{x: number; y: number; size?: number; fill?: string; anchor?: 'start' | 'middle' | 'end'; children: React.ReactNode; o?: number; stroke?: string}> = ({x, y, size = 48, fill = '#fff', anchor = 'middle', children, o = 1, stroke}) => (
-  <text x={x} y={y} textAnchor={anchor} fontFamily={FONT} fontWeight={700} fontSize={size} fill={fill} opacity={o} stroke={stroke} strokeWidth={stroke ? 8 : 0} paintOrder="stroke">{children}</text>
-);
-const tw = (t: number, a: number, b: number, from: number, to: number) => lerp(from, to, ease(P(t, a, b)));
 const Tag: React.FC<{t: number; a: number; text: string; y?: number; color?: string}> = ({t, a, text, y = 340, color = '#ffd23f'}) => {
   const k = ease(P(t, a, a + 0.25));
   const w = text.length * 32 + 80;
@@ -166,23 +164,6 @@ const RingPhone: React.FC<{t: number; a: number; name: string; accepted?: number
     </PhoneShell>
   );
 };
-const Bars: React.FC<{t: number; a: number}> = ({t, a}) => {
-  const k1 = ease(P(t, a, a + 0.8));
-  const k2 = ease(P(t, a + 0.7, a + 1.8));
-  return (
-    <g transform="translate(0 0)">
-      <rect x={90} y={460} width={900} height={760} rx={40} fill="#0f1b33" opacity={0.92} stroke="#ffd23f" strokeWidth={4} />
-      <T x={540} y={540} size={40} fill="#ffd23f">ЗА 5 МЕСЯЦЕВ</T>
-      <rect x={150} y={650} width={700 * 0.375 * k1 + 1} height={150} rx={20} fill="#e5483f" />
-      <T x={150} y={635} anchor="start" size={34} fill="#fff">Зарплата механика</T>
-      <T x={150 + 700 * 0.375 * k1 + 20} y={745} anchor="start" size={50} fill="#fff" o={k1}>{`${money(225000 * k1)} ₽`}</T>
-      <rect x={150} y={900} width={700 * k2 + 1} height={150} rx={20} fill="#2fbf60" />
-      <T x={150} y={885} anchor="start" size={34} fill="#fff">Автосервис (выручка)</T>
-      <T x={150 + Math.min(700 * k2, 480) + 20} y={995} anchor="start" size={50} fill="#fff" o={k2}>{`${money(600000 * k2)} ₽`}</T>
-      <T x={540} y={1150} size={34} fill="#9aa3b8">в месяц: 45 000 против 600 000</T>
-    </g>
-  );
-};
 const Equip: React.FC<{t: number; a: number; b: number}> = ({t, a, b}) => {
   const items = [
     {at: 97.16, name: 'Подъёмник', price: 150000, Icon: IconLift},
@@ -270,10 +251,35 @@ const WheelClose: React.FC<{t: number}> = ({t}) => (
 
 const CarsRoad: React.FC<{t: number; pan: number}> = ({t, pan}) => <GarageRow t={t} pan={pan} />;
 
+const Sh: React.FC<{a: number; b: number; t: number; x?: number; children: React.ReactNode}> = ({a, b, t, x = 0.2, children}) => {
+  if (t < a || t >= b + x) return null;
+  const o = x > 0 ? Math.min(1, Math.max(0, (t - a) / x)) : 1;
+  return <AbsoluteFill style={{opacity: o}}>{children}</AbsoluteFill>;
+};
+const PriceTag: React.FC<{t: number; a: number; text: string; c: string; y?: number}> = ({t, a, text, c, y = 1700}) => {
+  const k = ease(P(t, a, a + 0.35));
+  return <Neon x={700} y={y} w={520} h={150} c={c} k={k} t={t}><T x={0} y={24} size={70} fill={c}>{text}</T></Neon>;
+};
+const Stamp: React.FC<{t: number; a: number; text: string; c: string; y: number; size?: number}> = ({t, a, text, c, y, size = 64}) => {
+  const k = ease(P(t, a, a + 0.25));
+  if (t < a) return null;
+  return <Neon x={540} y={y} w={text.length * size * 0.72 + 90} h={size + 70} c={c} k={k} t={t} rot={-6}><T x={0} y={size * 0.36} size={size} fill={c}>{text}</T></Neon>;
+};
+const IS: React.FC<{t: number; a: number; b: number; keys?: CK[]; hero?: any; heroX?: number; tint?: string; children: React.ReactNode}> = ({t, a, b, keys, hero, heroX, tint, children}) => (
+  <NSvg>
+    <InfoBg t={t} tint={tint} />
+    <Cam t={t} keys={keys ?? [[a, 540, 960, 1.0], [b, 540, 930, 1.08]]}>{children}</Cam>
+    {hero && <HeroCorner t={t} mood={hero} x={heroX ?? 170} />}
+  </NSvg>
+);
+const WalkIn: React.FC<{t: number; a: number; b: number; x0: number; x1: number; y?: number; s?: number; mood?: any; flip?: boolean}> = ({t, a, b, x0, x1, y = 1800, s = 1.1, mood = 'neutral', flip}) => {
+  const e = ease(P(t, a, b));
+  return <Mech x={lerp(x0, x1, e)} y={y} s={s} pose={e < 1 ? 'walk' : 'stand'} t={t} mood={mood} flip={flip} />;
+};
+
 export const Auto: React.FC = () => {
   const frame = useCurrentFrame();
   const t = frame / FPSA;
-  // balance
   const bal =
     t < 120.54 ? 160000 : t < 122.57 ? tw(t, 120.54, 121.4, 160000, 117000) : t < 125 ? tw(t, 122.57, 123.5, 117000, 82000) : t < 140.5 ? 82000 : t < 142.41 ? tw(t, 140.5, 141.3, 82000, 77000) : t < 144.27 ? tw(t, 142.41, 143.2, 77000, 73000) : 73000;
   const showHud = t >= 109.75 && t < 169.0;
@@ -287,35 +293,29 @@ export const Auto: React.FC = () => {
       <Audio src={staticFile(`sfx/${src}.mp3`)} volume={v} />
     </Sequence>
   );
-  const fade = ramp([[0, 1], [168.9, 1], [169.85, 0]]);
-  void fade;
   const black = clamp((t - 169.45) / 0.4);
   const bedV = ramp([[0, 0.05], [165, 0.05], [169.8, 0]]);
   const hum = ramp([[0, 0.06], [14, 0.06], [16, 0], [127.9, 0], [129, 0.05], [135, 0.05], [137, 0]]);
-  const clicks: number[] = [];
-  for (let c = 18.6; c < 27.4; c += 0.28) clicks.push(c);
-  for (let c = 28.0; c < 33.3; c += 0.28) clicks.push(c);
-  for (let c = 33.9; c < 38.0; c += 0.28) clicks.push(c);
+  const whooshes = [20.2, 27.4, 33.35, 38.0, 40.75, 43.9, 48.14, 59.09, 61.0, 63.07, 64.9, 66.5, 69.2, 94.9, 97.16, 99.52, 101.45, 103.24, 105.14, 105.8, 109.75, 114.4, 118.4, 120.6, 122.6, 124.8, 140.5, 142.41, 144.5];
   return (
     <AbsoluteFill style={{backgroundColor: '#1d2740'}}>
       <Audio src={staticFile('voice8.mp3')} volume={1} />
       <Audio src={staticFile('sfx/bed.mp3')} volume={bedV} />
       <Audio src={staticFile('sfx/hum.mp3')} volume={hum} />
-      {clicks.map((c, i) => S(c, 0.3, 'click', 0.1 + (i % 3) * 0.01))}
+      {whooshes.map((w) => S(w, 0.8, 'whoosh', 0.09))}
       {S(15.7, 0.8, 'notif', 0.1)}
+      {S(38.1, 1.0, 'success', 0.1)}
+      {S(48.3, 1.0, 'kaching', 0.1)}
       {S(57.6, 1.8, 'scroll', 0.12)}
       {S(67.5, 6, 'traffic', ramp([[0, 0], [0.8, 0.06], [3, 0.05], [4.2, 0]]))}
       {S(71.7, 3, 'ring', 0.12)}
       {S(77.3, 6, 'traffic', ramp([[0, 0], [0.8, 0.07], [5, 0.06], [6, 0]]))}
       {S(84.0, 1.2, 'creak', 0.18)}
       {S(90.8, 1.0, 'success', 0.1)}
-      {S(97.2, 0.6, 'click', 0.14)}
-      {S(99.55, 0.6, 'click', 0.14)}
-      {S(101.5, 0.6, 'click', 0.14)}
-      {S(103.3, 0.6, 'click', 0.14)}
-      {S(105.2, 0.6, 'click', 0.14)}
+      {S(108.2, 1.0, 'ping', 0.1)}
       {S(109.8, 0.8, 'notif', 0.1)}
-      {S(114.4, 1.0, 'bad', 0.12)}
+      {S(114.9, 1.0, 'bad', 0.12)}
+      {S(118.5, 0.8, 'bad', 0.1)}
       {S(120.6, 0.8, 'bad', 0.1)}
       {S(122.6, 0.8, 'bad', 0.1)}
       {S(125.5, 1.0, 'success', 0.1)}
@@ -327,338 +327,355 @@ export const Auto: React.FC = () => {
       {S(151.45, 3, 'ring', 0.12)}
       {S(165.4, 1.0, 'success', 0.08)}
 
-      {/* 1. clock 21:00 */}
-      <Shot a={0} b={1.62} t={t}>
+      {/* 1. clock */}
+      <Sh a={0} b={1.62} t={t} x={0}>
         <Svg>
-          <World fill="#2a3348">
-            <Workshop t={t} />
-            <rect x={-600} y={-900} width={2300} height={2200} fill="#0b1226" opacity={0.35} />
-          </World>
-          <g transform="translate(540 760)">
-            <circle r={230} fill="#f6f7fb" stroke="#1a2238" strokeWidth={14} />
-            {Array.from({length: 12}).map((_, i) => <rect key={i} x={-4} y={-208} width={8} height={26} fill="#1a2238" transform={`rotate(${i * 30})`} />)}
-            <rect x={-8} y={-150} width={16} height={150} rx={8} fill="#1a2238" transform="rotate(270)" />
-            <rect x={-6} y={-190} width={12} height={190} rx={6} fill="#d33a2c" transform={`rotate(${(t * 60) % 360})`} />
-          </g>
+          <Zoom t={t} a={0} b={1.62} from={1} to={1.1} cy={760}>
+            <World fill="#2a3348"><Workshop t={t} /><rect x={-600} y={-900} width={2300} height={2200} fill="#0b1226" opacity={0.35} /></World>
+            <g transform="translate(540 760)">
+              <circle r={230} fill="#f6f7fb" stroke="#1a2238" strokeWidth={14} />
+              {Array.from({length: 12}).map((_, i) => <rect key={i} x={-4} y={-208} width={8} height={26} fill="#1a2238" transform={`rotate(${i * 30})`} />)}
+              <rect x={-8} y={-150} width={16} height={150} rx={8} fill="#1a2238" transform="rotate(270)" />
+              <rect x={-6} y={-190} width={12} height={190} rx={6} fill="#d33a2c" transform={`rotate(${(t * 60) % 360})`} />
+            </g>
+          </Zoom>
           <Big t={t} a={0.1} text="21:00" y={1230} size={140} />
         </Svg>
-      </Shot>
-      {/* 2. mechanic */}
-      <Shot a={1.62} b={4.02} t={t}>
+      </Sh>
+      <Sh a={1.62} b={4.02} t={t}>
         <Svg>
-          <Zoom t={t} a={1.62} b={4.02} from={1} to={1.08}>
+          <Zoom t={t} a={1.62} b={4.02} from={1} to={1.1}>
             <World><Workshop t={t} /><Mech x={260} t={t} pose="tired" mood="tired" /></World>
           </Zoom>
           <Tag t={t} a={1.8} text="АВТОМЕХАНИК" y={300} />
         </Svg>
-      </Shot>
-      {/* 3. wheel */}
-      <Shot a={4.02} b={8.02} t={t}>
+      </Sh>
+      <Sh a={4.02} b={8.02} t={t}>
         <Svg>
           {t < 6.1 ? (
-            <Zoom t={t} a={4.02} b={6.1} from={1} to={1.12} cy={1000}>
+            <Zoom t={t} a={4.02} b={6.1} from={1} to={1.15} cy={1000}>
               <World><Workshop t={t} wheelRot={t * 90} /><Man p={PEOPLE.mech} x={150} y={900} s={1.25} pose="point" t={t} mood="tired" /></World>
             </Zoom>
           ) : (
-            <World><WheelClose t={t} /></World>
+            <Zoom t={t} a={6.1} b={8.02} from={1.05} to={1}><World><WheelClose t={t} /></World></Zoom>
           )}
           <Tag t={t} a={4.2} text="СТАРЫЕ ЖИГУЛИ" y={300} color="#ff9e4a" />
         </Svg>
-      </Shot>
-      {/* 4. pay */}
-      <Shot a={8.02} b={13.15} t={t}>
+      </Sh>
+      <Sh a={8.02} b={10.6} t={t}>
         <Svg>
-          <World><Workshop t={t} /><Mech x={250} t={t} pose="tired" mood="tired" /></World>
+          <Zoom t={t} a={8.02} b={10.6} from={1} to={1.12}>
+            <World><Workshop t={t} /><Mech x={250} t={t} pose="tired" mood="tired" /></World>
+          </Zoom>
           <Card x={640} y={640} w={640} h={330} k={ease(P(t, 8.3, 8.7))} accent="#f2f5fb">
             <T x={0} y={-60} size={36} fill="#44506a">СМЕНА 12 ЧАСОВ</T>
             <T x={0} y={50} size={100} fill="#1a2238">1 500 ₽</T>
           </Card>
-          {t > 12.4 && <Tag t={t} a={12.4} text="ЭТО МАЛО" y={1500} color="#ff7a6e" />}
         </Svg>
-      </Shot>
-      {/* 5. 125/hour */}
-      <Shot a={13.15} b={15.59} t={t}>
+      </Sh>
+      <Sh a={10.6} b={13.15} t={t}>
+        <NSvg>
+          <InfoBg t={t} />
+          <Cam t={t} keys={[[10.6, 540, 900, 1.0], [13.15, 540, 860, 1.2]]}>
+            <g transform="translate(540 760)">
+              <circle r={250} fill="#0a1128" stroke={GOLD} strokeWidth={9} filter="url(#glffd23f)" />
+              {Array.from({length: 12}).map((_, i) => <rect key={i} x={-4} y={-232} width={8} height={30} fill="#fff" transform={`rotate(${i * 30})`} />)}
+              <path d={`M0 0 L0 -210`} stroke={GOLD} strokeWidth={10} strokeLinecap="round" transform={`rotate(${P(t, 10.6, 13.15) * 360})`} />
+              <T x={0} y={-60} size={44} fill="#9aa3b8">12 ЧАСОВ</T>
+              <T x={0} y={80} size={78} fill="#fff">1 500 ₽</T>
+            </g>
+            <Neon x={540} y={1180} w={760} h={190} c={RED} k={ease(P(t, 11.6, 12.0))} t={t}><T x={0} y={26} size={72} fill={RED}>ЭТО МАЛО</T></Neon>
+          </Cam>
+          <HeroCorner t={t} mood="tired" />
+        </NSvg>
+      </Sh>
+      <Sh a={13.15} b={15.59} t={t}>
+        <NSvg>
+          <InfoBg t={t} />
+          <Cam t={t} keys={[[13.15, 540, 900, 1.0], [15.59, 540, 880, 1.15]]}>
+            <Neon x={540} y={800} w={800} h={520} c={GOLD} t={t} k={ease(P(t, 13.2, 13.6))}>
+              <T x={0} y={40} size={190} fill={GOLD}>125 ₽</T>
+              <T x={0} y={150} size={80}>в час</T>
+            </Neon>
+          </Cam>
+          <HeroCorner t={t} mood="tired" />
+        </NSvg>
+      </Sh>
+      <Sh a={15.59} b={18.39} t={t}>
         <Svg>
-          <World fill="#2a3348"><Workshop t={t} /><Mech x={250} t={t} pose="tired" mood="tired" /></World>
-          <rect width={1080} height={1920} fill="#0b1226" opacity={0.35} />
-          <Big t={t} a={13.3} text="125 ₽" y={560} color="#ffd23f" size={190} />
-          <Big t={t} a={13.9} text="в час" y={680} size={80} />
-        </Svg>
-      </Shot>
-      {/* 6. sofa */}
-      <Shot a={15.59} b={18.39} t={t}>
-        <Svg>
-          <Zoom t={t} a={15.59} b={18.39}>
+          <Zoom t={t} a={15.59} b={18.39} from={1} to={1.12}>
             <World fill="#4a3d52"><Room t={t} /><Man p={PEOPLE.mech} x={470} y={900} s={1.1} pose="sit" t={t} mood="tired" /></World>
           </Zoom>
           <Tag t={t} a={15.8} text="ДОМА · ДИВАН" y={300} color="#9fd0ff" />
         </Svg>
-      </Shot>
-      {/* 7. calc open + 8. three services */}
-      <Shot a={18.39} b={27.43} t={t}>
+      </Sh>
+      {/* 3. notes */}
+      <Sh a={18.39} b={40.73} t={t}>
+        <NSvg>
+          <InfoBg t={t} tint="#0f2a1c" />
+          <Cam t={t} keys={notesCam}><NotesPhone t={t} a={18.39} /></Cam>
+        </NSvg>
+      </Sh>
+      <Sh a={40.73} b={43.91} t={t}>
+        <IS t={t} a={40.73} b={43.91} keys={[[40.73, 540, 960, 1.0], [42.3, 540, 900, 1.06], [43.91, 540, 1000, 1.22]]}><Bars t={t} a={40.73} /></IS>
+      </Sh>
+      <Sh a={43.91} b={48.14} t={t}>
+        <IS t={t} a={43.91} b={48.14} keys={[[43.91, 540, 900, 1.0], [46.0, 540, 880, 1.1], [48.14, 540, 800, 1.0]]} hero="worried" heroX={170}><Drain t={t} /></IS>
+      </Sh>
+      <Sh a={48.14} b={51.99} t={t}>
+        <IS t={t} a={48.14} b={51.99} tint="#0f2a1c" keys={[[48.14, 540, 900, 1.0], [51.99, 540, 820, 1.2]]} hero="happy" heroX={170}><Profit t={t} a={48.14} /></IS>
+      </Sh>
+      <Sh a={51.99} b={55.0} t={t}>
         <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <Calc t={t} a={18.39} b={27.43} expr="2000 + 1000 + 1500" res="4 500" typeUntil={27.2} />
-          {[
-            {at: 20.22, text: 'Замена колёс', price: '2 000 ₽', y: 1450},
-            {at: 22.78, text: 'Замена масла', price: '1 000 ₽', y: 1450},
-            {at: 24.88, text: 'Мелкий ремонт', price: '1 500 ₽', y: 1450},
-          ].map((c, i) => t >= c.at && t < c.at + 2.3 && (
-            <Card key={i} x={540} y={c.y} w={760} h={160} k={ease(P(t, c.at, c.at + 0.3)) * (1 - ease(P(t, c.at + 2.0, c.at + 2.3)))} accent="#f2f5fb">
-              <T x={-330} y={14} anchor="start" size={44} fill="#1a2238">{c.text}</T>
-              <T x={330} y={16} anchor="end" size={56} fill="#0a8a3c">{c.price}</T>
-            </Card>
-          ))}
-          <Big t={t} a={18.5} text="ЦЕНЫ НА УСЛУГИ" y={210} size={64} color="#ffd23f" />
-        </Svg>
-      </Shot>
-      {/* 9. 10 clients */}
-      <Shot a={27.43} b={33.35} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <T x={540} y={240} size={60} fill="#ffd23f">10 КЛИЕНТОВ В ДЕНЬ</T>
-          {Array.from({length: 10}).map((_, i) => {
-            const k = ease(P(t, 27.6 + i * 0.12, 27.9 + i * 0.12));
-            return <g key={i} opacity={k} transform={`translate(${130 + (i % 5) * 205} ${440 + Math.floor(i / 5) * 190})`}><circle r={52} fill="#e8b48a" /><rect x={-48} y={50} width={96} height={64} rx={26} fill={['#2f66bb', '#2f8f4c', '#7b5233', '#b04a3a', '#6a4a8a'][i % 5]} /></g>;
-          })}
-          <T x={540} y={900} size={80}>{`× 2 000 ₽`}</T>
-          <Big t={t} a={30.38} text="= 20 000 ₽" y={1100} size={120} color="#6bf29a" />
-          <Big t={t} a={33.0} text="В ДЕНЬ" y={1220} size={60} color="#fff" />
-        </Svg>
-      </Shot>
-      {/* 10. x30 */}
-      <Shot a={33.35} b={38.0} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <Big t={t} a={33.4} text="20 000 ₽" y={560} size={130} color="#6bf29a" />
-          <Big t={t} a={36.0} text="× 30 дней" y={760} size={96} />
-          <g transform="translate(540 1200)">
-            {Array.from({length: 30}).map((_, i) => {
-              const k = ease(P(t, 36.0 + i * 0.05, 36.3 + i * 0.05));
-              return <rect key={i} x={-400 + (i % 10) * 80} y={-160 + Math.floor(i / 10) * 100} width={66} height={80} rx={14} fill="#f2f5fb" opacity={k}><title>{i}</title></rect>;
-            })}
-          </g>
-        </Svg>
-      </Shot>
-      {/* 11. 600 000 and bars */}
-      <Shot a={38.0} b={43.91} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          {t < 40.5 ? <Big t={t} a={38.0} text="600 000 ₽" y={900} size={150} color="#ffd23f" /> : <Bars t={t} a={40.5} />}
-          {t < 40.5 && <T x={540} y={1050} size={56}>в месяц</T>}
-        </Svg>
-      </Shot>
-      {/* 12. expenses */}
-      <Shot a={43.91} b={51.99} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <T x={540} y={240} size={52} fill="#ff7a6e">РАСХОДЫ</T>
-          {[
-            {at: 44.2, text: 'Аренда'},
-            {at: 45.0, text: 'Зарплаты'},
-            {at: 46.0, text: 'Расходники'},
-            {at: 47.0, text: 'Налоги'},
-          ].map((c, i) => (
-            <Card key={i} x={540} y={430 + i * 190} w={700} h={150} k={ease(P(t, c.at, c.at + 0.3))} accent="#f2f5fb">
-              <T x={0} y={18} size={56} fill="#1a2238">{c.text}</T>
-            </Card>
-          ))}
-          <Big t={t} a={48.14} text="≈ 150 000 ₽" y={1380} size={110} color="#6bf29a" />
-          <T x={540} y={1470} size={42} fill="#cfd8ea" o={ease(P(t, 48.6, 49))}>чистая прибыль в месяц</T>
-        </Svg>
-      </Shot>
-      {/* 13. idea */}
-      <Shot a={51.99} b={57.61} t={t}>
-        <Svg>
-          <Zoom t={t} a={51.99} b={57.61}>
+          <Zoom t={t} a={51.99} b={55.0} from={1} to={1.14}>
             <World fill="#4a3d52"><Room t={t} /><Man p={PEOPLE.mech} x={470} y={900} s={1.1} pose="sit" t={t} mood="happy" /></World>
           </Zoom>
           <g transform="translate(540 580)" opacity={ease(P(t, 52.2, 52.6))}>
-            <circle r={150} fill="#ffd23f" opacity={0.25} />
-            <circle r={78} fill="#ffe27a" />
-            <rect x={-30} y={70} width={60} height={46} rx={10} fill="#8d94a3" />
+            <circle r={150} fill="#ffd23f" opacity={0.25} /><circle r={78} fill="#ffe27a" /><rect x={-30} y={70} width={60} height={46} rx={10} fill="#8d94a3" />
           </g>
           <Tag t={t} a={52.4} text="ИДЕЯ: СВОЙ АВТОСЕРВИС" y={300} />
         </Svg>
-      </Shot>
-      {/* 14. Avito */}
-      <Shot a={57.61} b={59.09} t={t}>
+      </Sh>
+      <Sh a={55.0} b={57.61} t={t}>
+        <Svg>
+          <World fill="#4a3d52"><Cam t={t} keys={[[55.0, 540, 700, 1.3], [57.61, 540, 760, 1.0]]}><Room t={t} /><Man p={PEOPLE.mech} x={470} y={900} s={1.1} pose="sit" t={t} mood="happy" /></Cam></World>
+          <Tag t={t} a={55.2} text="ЗАЙМУСЬ СВОИМ ДЕЛОМ" y={300} color="#6bf29a" />
+        </Svg>
+      </Sh>
+      <Sh a={57.61} b={59.09} t={t}>
         <Svg><rect width={1080} height={1920} fill="#dfe6f2" /><AvitoFeed t={t} a={57.61} /><Finger x={720} y={1250 - 30 * Math.sin(t * 6)} rot={14} /></Svg>
-      </Shot>
-      {/* 15-17 garages */}
-      <Shot a={59.09} b={63.07} t={t}><Svg><Listing t={t} a={59.09} price="100 000 ₽" label="Гараж · центр" note={t > 61.8 ? 'ДОРОГО' : ''} color="#e5483f" garage={0} /></Svg></Shot>
-      <Shot a={63.07} b={66.5} t={t}><Svg><Listing t={t} a={63.07} price="50 000 ₽" label="Гараж · окраина" note={t > 65.0 ? 'ДАЛЕКО' : ''} color="#e5483f" garage={1} /></Svg></Shot>
-      <Shot a={66.5} b={71.68} t={t}><Svg><Listing t={t} a={66.5} price="35 000 ₽" label="Гараж · у дороги" note={t > 69.0 ? 'ВОЗЛЕ ДОРОГИ' : 'ВЫГОДНО'} color="#2fbf60" garage={2} /></Svg></Shot>
-      {/* 18. call */}
-      <Shot a={71.68} b={74.97} t={t}>
-        <Svg><rect width={1080} height={1920} fill="#14182a" /><RingPhone t={t} a={71.68} name="Владелец гаража" accepted={73.2} /></Svg>
-      </Shot>
-      {/* 19-21 next day */}
-      <Shot a={74.97} b={77.68} t={t}>
+      </Sh>
+      {/* 4. garages */}
+      <Sh a={59.09} b={61.0} t={t}>
+        <Svg>
+          <Cam t={t} keys={[[59.09, 280, 1000, 1.0], [60.2, 540, 1000, 1.15], [61.0, 610, 1110, 2.3]]}>
+            <ShowroomOut t={t} />
+            <WalkIn t={t} a={59.09} b={60.6} x0={-120} x1={380} y={1760} s={1.1} mood="worried" />
+          </Cam>
+          <Tag t={t} a={59.2} text="ВАРИАНТ 1 · САЛОН" y={300} color="#ffd23f" />
+        </Svg>
+      </Sh>
+      <Sh a={61.0} b={63.07} t={t}>
+        <NSvg>
+          <Cam t={t} keys={[[61.0, 540, 1000, 1.25], [63.07, 540, 980, 1.0]]}>
+            <ShowroomIn t={t} />
+            <WalkIn t={t} a={61.0} b={62.2} x0={150} x1={540} y={1800} s={1.2} mood="worried" />
+          </Cam>
+          <PriceTag t={t} a={61.1} text="100 000 ₽" c={RED} y={560} />
+          {t > 61.89 && <Stamp t={t} a={61.89} text="ДОРОГО" c={RED} y={800} size={92} />}
+          {t > 62.4 && <Stamp t={t} a={62.4} text="НЕ ПО КАРМАНУ" c={RED} y={1000} size={52} />}
+        </NSvg>
+      </Sh>
+      <Sh a={63.07} b={64.9} t={t}>
+        <Svg>
+          <Cam t={t} keys={[[63.07, 200, 1120, 1.0], [64.2, 540, 1120, 1.12], [64.9, 250, 1200, 2.2]]}>
+            <ServiceOut t={t} />
+            <WalkIn t={t} a={63.07} b={64.5} x0={-120} x1={420} y={1780} s={1.1} mood="worried" />
+          </Cam>
+          <Tag t={t} a={63.2} text="ВАРИАНТ 2 · АВТОСЕРВИС" y={300} color="#ffd23f" />
+        </Svg>
+      </Sh>
+      <Sh a={64.9} b={66.5} t={t}>
+        <NSvg>
+          <Cam t={t} keys={[[64.9, 400, 1000, 1.3], [66.5, 540, 1000, 1.0]]}>
+            <ServiceIn t={t} />
+            <WalkIn t={t} a={64.9} b={65.8} x0={100} x1={600} y={1800} s={1.2} mood="worried" />
+          </Cam>
+          <PriceTag t={t} a={65.0} text="50 000 ₽" c={GOLD} y={560} />
+          {t > 65.0 && <Stamp t={t} a={65.0} text="ДАЛЕКО" c={GOLD} y={800} size={80} />}
+          {t > 65.7 && <Stamp t={t} a={65.7} text="ВСЁ ЕЩЁ ДОРОГО" c={RED} y={1000} size={50} />}
+        </NSvg>
+      </Sh>
+      <Sh a={66.5} b={69.2} t={t}>
+        <Svg>
+          <World fill="#b8cadf">
+            <Cam t={t} keys={[[66.5, 540, 780, 1.0], [68.0, 540, 790, 1.2], [69.2, 540, 810, 2.0]]}>
+              <CoopOut t={t} />
+              <WalkIn t={t} a={66.5} b={67.8} x0={-100} x1={380} y={1250} s={1.0} mood="happy" />
+            </Cam>
+          </World>
+          <Tag t={t} a={66.6} text="ВАРИАНТ 3 · ГАРАЖ" y={300} color="#ffd23f" />
+          <PriceTag t={t} a={67.26} text="35 000 ₽" c={GREEN} y={560} />
+          <Stamp t={t} a={67.6} text="ВЫГОДНО" c={GREEN} y={800} size={92} />
+          {t > 69.0 && <Tag t={t} a={69.0} text="ВОЗЛЕ ДОРОГИ" y={1000} color="#9fd0ff" />}
+        </Svg>
+      </Sh>
+      <Sh a={69.2} b={71.68} t={t}>
+        <Svg>
+          <World>
+            <Cam t={t} keys={[[69.2, 540, 800, 1.3], [71.68, 540, 780, 1.0]]}>
+              <CoopIn t={t} />
+              <Mech x={330} y={900} t={t} mood="happy" look={1} />
+            </Cam>
+          </World>
+          <Stamp t={t} a={69.4} text="ВЫГОДНО" c={GREEN} y={420} size={92} />
+        </Svg>
+      </Sh>
+      {/* 5. call */}
+      <Sh a={71.68} b={74.97} t={t}>
+        <Svg><rect width={1080} height={1920} fill="#14182a" /><Zoom t={t} a={71.68} b={74.97} from={1} to={1.1}><RingPhone t={t} a={71.68} name="Владелец гаража" accepted={73.2} /></Zoom></Svg>
+      </Sh>
+      <Sh a={74.97} b={77.68} t={t}>
         <Svg>
           <World fill="#9ec6e8"><GarageRow t={t} pan={(t - 74.97) * 60} /></World>
           <Tag t={t} a={75.1} text="НА СЛЕДУЮЩИЙ ДЕНЬ" y={300} color="#fff" />
           <Mech x={300} y={1750} s={1.2} pose="walk" t={t} />
         </Svg>
-      </Shot>
-      <Shot a={77.68} b={83.86} t={t}>
+      </Sh>
+      <Sh a={77.68} b={81.88} t={t}>
         <Svg>
           <World fill="#9ec6e8"><GarageRow t={t} pan={120 + (t - 77.68) * 55} /></World>
-          {t < 81.88 ? <Tag t={t} a={77.8} text="ЖИЛЫЕ ДОМА РЯДОМ" y={300} color="#fff" /> : <Tag t={t} a={81.9} text="ИДЕАЛЬНОЕ МЕСТО" y={300} color="#6bf29a" />}
+          <Tag t={t} a={77.8} text="ЖИЛЫЕ ДОМА РЯДОМ" y={300} color="#fff" />
           <Mech x={300} y={1750} s={1.2} pose="walk" t={t} />
         </Svg>
-      </Shot>
-      <Shot a={83.86} b={90.81} t={t}>
+      </Sh>
+      <Sh a={81.88} b={83.86} t={t}>
+        <Svg>
+          <World fill="#9ec6e8"><Cam t={t} keys={[[81.88, 540, 780, 1.0], [83.86, 700, 780, 1.4]]}><GarageRow t={t} pan={250} /></Cam></World>
+          <Tag t={t} a={81.9} text="ИДЕАЛЬНОЕ МЕСТО" y={300} color="#6bf29a" />
+        </Svg>
+      </Sh>
+      <Sh a={83.86} b={86.3} t={t}>
         <Svg>
           <World fill="#9ec6e8"><GarageRow t={t} pan={250} gateOpen={P(t, 83.86, 85.6)} />
-            <Ownr x={760} y={1340} s={1.05} pose={t > 86.3 ? 'point' : 'stand'} t={t} flip />
+            <Ownr x={760} y={1340} s={1.05} t={t} flip />
           </World>
           <Mech x={300} y={1750} s={1.2} t={t} look={1} />
-          {t > 86.6 && t < 90.7 && (
-            <g transform="translate(540 1150)" opacity={ease(P(t, 86.6, 86.9))}>
-              <rect x={-420} y={-70} width={840} height={140} rx={40} fill="#fff" stroke="#1a2238" strokeWidth={5} />
-              <T x={0} y={16} size={44} fill="#1a2238">{t < 88.8 ? '«Заходи, смотри»' : '«Цена — как договорились»'}</T>
-            </g>
-          )}
         </Svg>
-      </Shot>
-      {/* 22. decide */}
-      <Shot a={90.81} b={94.82} t={t}>
+      </Sh>
+      <Sh a={86.3} b={90.81} t={t}>
         <Svg>
-          <World><GarageInside t={t} /><Mech x={330} t={t} mood="happy" look={1} /><Ownr x={760} t={t} flip /></World>
-          <Card x={540} y={380} w={720} h={200} k={ease(P(t, 91.2, 91.6))} accent="#f2f5fb">
-            <T x={0} y={-20} size={36} fill="#44506a">АРЕНДА ГАРАЖА</T>
-            <T x={0} y={50} size={66} fill="#d33a2c">35 000 ₽ / мес</T>
-          </Card>
+          <World><Cam t={t} keys={[[86.3, 540, 760, 1.15], [90.81, 600, 760, 1.4]]}><GarageInside t={t} /><Mech x={300} t={t} look={1} /><Ownr x={760} t={t} flip pose="point" /></Cam></World>
+          <g transform="translate(540 330)" opacity={ease(P(t, 86.6, 86.9))}>
+            <rect x={-420} y={-70} width={840} height={140} rx={40} fill="#fff" stroke="#1a2238" strokeWidth={5} />
+            <T x={0} y={16} size={44} fill="#1a2238">{t < 88.8 ? '«Заходи, смотри»' : '«Цена — как договорились»'}</T>
+          </g>
         </Svg>
-      </Shot>
-      {/* 23-26 equipment & total */}
-      <Shot a={94.82} b={109.75} t={t}><Svg><Equip t={t} a={94.82} b={109.75} /></Svg></Shot>
-      {/* 27. bank */}
-      <Shot a={109.75} b={114.36} t={t}><Svg><Bank t={t} a={109.75} /></Svg></Shot>
-      {/* 28. missing */}
-      <Shot a={114.36} b={117.85} t={t}>
+      </Sh>
+      <Sh a={90.81} b={94.82} t={t}>
+        <NSvg>
+          <World><Cam t={t} keys={[[90.81, 540, 760, 1.0], [94.82, 540, 740, 1.2]]}><GarageInside t={t} /><Mech x={330} t={t} mood="happy" look={1} /><Ownr x={760} t={t} flip /></Cam></World>
+          <Neon x={540} y={380} w={820} h={230} c={GOLD} k={ease(P(t, 91.2, 91.6))} t={t}>
+            <T x={0} y={-30} size={36} fill="#9aa3b8">АРЕНДА ГАРАЖА</T>
+            <T x={0} y={56} size={72} fill={GOLD}>35 000 ₽ / мес</T>
+          </Neon>
+        </NSvg>
+      </Sh>
+      {/* 6. equipment */}
+      <Sh a={94.82} b={97.16} t={t}>
+        <NSvg>
+          <World><Cam t={t} keys={[[94.82, 540, 800, 1.0], [97.16, 540, 800, 1.2]]}>
+            <GarageInside t={t} />
+            <Man p={PEOPLE.mech} x={300} y={900} s={1.35} pose="point" t={t} mood="neutral" look={1} />
+            {[{x: 600, y: 880, k: 95.2, Ic: IconLift}, {x: 800, y: 880, k: 95.7, Ic: IconTools}, {x: 700, y: 760, k: 96.2, Ic: IconCompressor}].map((o, i) => (
+              <g key={i} transform={`translate(${o.x} ${o.y}) scale(${0.9 * ease(P(t, o.k, o.k + 0.3))})`} opacity={0.55}><o.Ic s={1} /></g>
+            ))}
+          </Cam></World>
+          <Tag t={t} a={94.9} text="НУЖНО ОБОРУДОВАНИЕ" y={300} color="#ffd23f" />
+        </NSvg>
+      </Sh>
+      <Sh a={97.16} b={105.14} t={t}>
+        <IS t={t} a={97.16} b={105.14} keys={equipCam}><EquipFlow t={t} /></IS>
+      </Sh>
+      <Sh a={105.14} b={109.75} t={t}>
+        <IS t={t} a={105.14} b={109.75} keys={sumCam(105.14)}><SumUp t={t} a={105.14} /></IS>
+      </Sh>
+      <Sh a={109.75} b={114.36} t={t}>
+        <IS t={t} a={109.75} b={114.36} tint="#0f2a1c" keys={[[109.75, 540, 900, 1.0], [114.36, 540, 800, 1.14]]} hero="happy" heroX={900}><BankCard t={t} a={109.75} /></IS>
+      </Sh>
+      <Sh a={114.36} b={117.85} t={t}>
+        <IS t={t} a={114.36} b={117.85} tint="#3a1424" keys={[[114.36, 540, 900, 1.0], [116.0, 540, 1100, 1.05], [117.85, 540, 1170, 1.22]]} hero="worried" heroX={170}><Shortage t={t} a={114.36} /></IS>
+      </Sh>
+      <Sh a={117.85} b={120.54} t={t}>
+        <IS t={t} a={117.85} b={120.54} keys={[[117.85, 540, 800, 1.0], [119.2, 540, 1000, 1.08], [120.54, 540, 1250, 1.25]]} hero="neutral" heroX={170}><NoLift t={t} a={117.85} /></IS>
+      </Sh>
+      <Sh a={120.54} b={122.57} t={t}>
+        <IS t={t} a={120.54} b={122.57} keys={[[120.54, 540, 760, 1.0], [122.57, 540, 1000, 1.06]]} hero="worried" heroX={170}><Rest43 t={t} a={120.54} /></IS>
+      </Sh>
+      <Sh a={122.57} b={124.8} t={t}>
+        <IS t={t} a={122.57} b={124.8} keys={[[122.57, 540, 900, 1.0], [124.8, 540, 820, 1.14]]} hero="worried" heroX={170}><Rent35 t={t} a={122.57} /></IS>
+      </Sh>
+      <Sh a={124.8} b={127.95} t={t}>
+        <IS t={t} a={124.8} b={127.95} tint="#0f2a1c" keys={[[124.8, 540, 800, 1.0], [126.6, 540, 1000, 1.12], [127.95, 540, 1000, 1.16]]} hero="happy" heroX={170}><Equation t={t} a={124.8} /></IS>
+      </Sh>
+      <Sh a={127.95} b={130.59} t={t}>
         <Svg>
-          <rect width={1080} height={1920} fill="#2a2036" />
-          <T x={540} y={640} size={60} fill="#cfd8ea">228 000 − 160 000</T>
-          <Big t={t} a={114.6} text="НЕ ХВАТАЕТ" y={900} size={90} color="#ff7a6e" />
-          <Big t={t} a={115.0} text="68 000 ₽" y={1060} size={140} color="#ff5a4d" />
-        </Svg>
-      </Shot>
-      {/* 29. without lift */}
-      <Shot a={117.85} b={120.54} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <Card x={540} y={760} w={700} h={360} k={ease(P(t, 118.0, 118.4))} accent="#f2f5fb">
-            <g transform="translate(0 -20)"><IconLift s={1.0} /></g>
-            <T x={0} y={160} size={46} fill="#1a2238">Подъёмник</T>
-          </Card>
-          {t > 118.4 && <g opacity={ease(P(t, 118.4, 118.8))}><path d="M120 560 L960 960 M960 560 L120 960" stroke="#e5483f" strokeWidth={30} strokeLinecap="round" /></g>}
-          <Big t={t} a={119.0} text="БЕЗ ПОДЪЁМНИКА" y={1140} size={68} color="#ffd23f" />
-        </Svg>
-      </Shot>
-      {/* 30. rest of equipment */}
-      <Shot a={120.54} b={122.57} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <T x={540} y={800} size={54} fill="#cfd8ea">остальное оборудование</T>
-          <Big t={t} a={120.7} text="43 000 ₽" y={980} size={120} color="#ff7a6e" />
-        </Svg>
-      </Shot>
-      <Shot a={122.57} b={127.95} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <T x={540} y={800} size={54} fill="#cfd8ea">аренда гаража</T>
-          <Big t={t} a={122.7} text="35 000 ₽" y={980} size={120} color="#ff7a6e" />
-          {t > 124.8 && <Big t={t} a={124.8} text="Осталось 82 000 ₽" y={1250} size={74} color="#6bf29a" />}
-        </Svg>
-      </Shot>
-      {/* 31. garage ready */}
-      <Shot a={127.95} b={130.59} t={t}>
-        <Svg>
-          <World><GarageInside t={t} lightShaft={1} />
+          <World><Cam t={t} keys={[[127.95, 540, 780, 1.0], [130.59, 560, 780, 1.2]]}><GarageInside t={t} lightShaft={1} />
             <Mech x={330} t={t} mood="happy" />
             <g transform="translate(760 880)"><IconLift s={1.5} /></g>
-          </World>
+          </Cam></World>
           <Tag t={t} a={128.1} text="ГАРАЖ ГОТОВ" y={300} color="#6bf29a" />
         </Svg>
-      </Shot>
-      {/* 32. chat */}
-      <Shot a={130.59} b={137.11} t={t}>
+      </Sh>
+      <Sh a={130.59} b={137.11} t={t}>
         <Svg>
           <rect width={1080} height={1920} fill="#14182a" />
-          <Chat t={t} a={130.59} title="Владелец гаража" lines={[
-            {at: 130.8, text: 'Привет!\nКак дела с\nгаражом?'},
-            {at: 133.67, text: 'Коммуналку\nза гараж\nпо счётчикам'},
-          ]} />
+          <Zoom t={t} a={130.59} b={137.11} from={1} to={1.12}>
+            <Chat t={t} a={130.59} title="Владелец гаража" lines={[
+              {at: 130.8, text: 'Привет!\nКак дела с\nгаражом?'},
+              {at: 133.67, text: 'Коммуналку\nза гараж\nпо счётчикам'},
+            ]} />
+          </Zoom>
         </Svg>
-      </Shot>
-      {/* 33. utilities */}
-      <Shot a={137.11} b={144.27} t={t}>
+      </Sh>
+      <Sh a={137.11} b={140.5} t={t}>
         <Svg>
-          <World><GarageInside t={t} /><Mech x={330} t={t} mood="worried" /></World>
+          <World><Cam t={t} keys={[[137.11, 540, 780, 1.0], [140.5, 400, 740, 1.3]]}><GarageInside t={t} /><Mech x={330} t={t} mood="worried" /></Cam></World>
           <Tag t={t} a={137.3} text="ЗАБЫЛ ПРО КОММУНАЛКУ" y={300} color="#ff7a6e" />
-          {t > 140.5 && <Card x={300} y={620} w={460} h={170} k={ease(P(t, 140.5, 140.9))} accent="#f2f5fb"><T x={0} y={-20} size={32} fill="#44506a">Электричество</T><T x={0} y={44} size={52} fill="#d33a2c">−5 000 ₽</T></Card>}
-          {t > 142.41 && <Card x={780} y={620} w={460} h={170} k={ease(P(t, 142.41, 142.8))} accent="#f2f5fb"><T x={0} y={-20} size={32} fill="#44506a">Отопление</T><T x={0} y={44} size={52} fill="#d33a2c">−4 000 ₽</T></Card>}
+          <Stamp t={t} a={138.2} text="?!" c={RED} y={560} size={120} />
         </Svg>
-      </Shot>
-      {/* 34. -9000 */}
-      <Shot a={144.27} b={149.29} t={t}>
-        <Svg>
-          <rect width={1080} height={1920} fill="#1f2d4d" />
-          <Big t={t} a={144.4} text="−9 000 ₽" y={760} size={140} color="#ff5a4d" />
-          <Big t={t} a={147.0} text="Остаток 73 000 ₽" y={1000} size={86} color="#6bf29a" />
-        </Svg>
-      </Shot>
-      {/* 35. ad */}
-      <Shot a={149.29} b={151.42} t={t}>
+      </Sh>
+      <Sh a={140.5} b={149.29} t={t}>
+        <IS t={t} a={140.5} b={149.29} tint="#2a1a2a" keys={[[140.5, 540, 700, 1.0], [142.4, 540, 700, 1.05], [144.3, 540, 1050, 1.1], [146.8, 540, 1250, 1.1], [147.6, 540, 1400, 1.12], [149.29, 540, 1400, 1.16]]} hero="worried" heroX={170}><Utilities t={t} /></IS>
+      </Sh>
+      {/* 7. ad + client */}
+      <Sh a={149.29} b={151.42} t={t}>
         <Svg>
           <rect width={1080} height={1920} fill="#dfe6f2" />
           <PhoneShell x={540} y={820} s={1.55}>
             <rect x={-172} y={-356} width={344} height={712} fill="#f6f7fb" />
             <rect x={-172} y={-356} width={344} height={70} fill="#00aaff" />
-            <T x={-140} y={-308} anchor="start" size={30}>Авито · Новое объявление</T>
+            <T x={-140} y={-308} anchor="start" size={26}>Авито · Новое</T>
             <rect x={-150} y={-260} width={300} height={170} rx={14} fill="#a9764e" />
             <T x={0} y={-30} size={30} fill="#1a2238">АВТОСЕРВИС</T>
             <T x={0} y={20} size={18} fill="#44506a">Колёса · масло · ремонт</T>
             <rect x={-130} y={140} width={260} height={80} rx={40} fill="#00aaff" />
-            <T x={0} y={192} size={32}>Опубликовать</T>
+            <T x={0} y={192} size={28}>Опубликовать</T>
           </PhoneShell>
           <Finger x={600} y={820 + 190 * 1.55} press={t > 150.5 ? 1 : 0} rot={20} />
         </Svg>
-      </Shot>
-      {/* 36. morning call */}
-      <Shot a={151.42} b={159.98} t={t}>
+      </Sh>
+      <Sh a={151.42} b={154.15} t={t}>
         <Svg>
-          <Zoom t={t} a={151.42} b={159.98}>
+          <rect width={1080} height={1920} fill="#14182a" />
+          <Zoom t={t} a={151.42} b={154.15} from={1} to={1.12}><RingPhone t={t} a={151.42} name="Новый клиент" accepted={152.6} /></Zoom>
+          <Tag t={t} a={151.5} text="УТРО" y={300} color="#fff" />
+        </Svg>
+      </Sh>
+      <Sh a={154.15} b={159.98} t={t}>
+        <Svg>
+          <Zoom t={t} a={154.15} b={159.98} from={1} to={1.12}>
             <World><Workshop t={t} night={false} /><Mech x={260} t={t} mood="neutral" look={1} /></World>
           </Zoom>
-          <Tag t={t} a={151.5} text="УТРО" y={300} color="#fff" />
-          <g transform="translate(790 640)" opacity={ease(P(t, 151.5, 151.9)) * (1 - ease(P(t, 153.3, 153.6)))}>
-            <rect x={-170} y={-80} width={340} height={160} rx={40} fill="#fff" stroke="#1a2238" strokeWidth={5} />
-            <T x={0} y={14} size={44} fill="#1a2238">Звонок!</T>
-          </g>
           <g transform="translate(540 1250)" opacity={ease(P(t, 154.2, 154.5))}>
             <rect x={-440} y={-70} width={880} height={140} rx={40} fill="#fff" stroke="#1a2238" strokeWidth={5} />
             <T x={0} y={16} size={42} fill="#1a2238">{t < 157 ? '«Сколько стоит замена колодок?»' : '«На Ладе»'}</T>
           </g>
         </Svg>
-      </Shot>
-      {/* 37. price */}
-      <Shot a={159.98} b={165.34} t={t}>
-        <Svg>
-          <Zoom t={t} a={159.98} b={165.34}>
+      </Sh>
+      <Sh a={159.98} b={165.34} t={t}>
+        <NSvg>
+          <Zoom t={t} a={159.98} b={165.34} from={1} to={1.12}>
             <World><Workshop t={t} night={false} /><Mech x={260} t={t} mood="happy" /></World>
           </Zoom>
-          <Card x={640} y={620} w={640} h={260} k={ease(P(t, 160.1, 160.5))} accent="#f2f5fb">
-            <T x={0} y={-30} size={34} fill="#44506a">РАБОТА</T>
-            <T x={0} y={60} size={96} fill="#0a8a3c">1 500 ₽</T>
-          </Card>
+          <Neon x={660} y={600} w={640} h={270} c={GREEN} k={ease(P(t, 160.1, 160.5))} t={t}>
+            <T x={0} y={-40} size={34} fill="#9affc2">РАБОТА</T>
+            <T x={0} y={66} size={100} fill={GREEN}>1 500 ₽</T>
+          </Neon>
           {t > 161.87 && <Tag t={t} a={161.9} text="ПРИЕДЕТ ЧЕРЕЗ ЧАС" y={1500} color="#ffd23f" />}
-        </Svg>
-      </Shot>
-      {/* 38. first client */}
-      <Shot a={165.34} b={DURATIONA} t={t}>
+        </NSvg>
+      </Sh>
+      <Sh a={165.34} b={DURATIONA} t={t}>
         <Svg>
           <World fill="#9ec6e8">
             <GarageRow t={t} pan={250} gateOpen={1} />
@@ -668,7 +685,7 @@ export const Auto: React.FC = () => {
           <Mech x={260} y={1750} s={1.25} t={t} mood="happy" look={1} />
           {t > 168.0 && <Big t={t} a={168.0} text="ПЕРВЫЙ КЛИЕНТ" y={420} size={84} color="#ffd23f" />}
         </Svg>
-      </Shot>
+      </Sh>
 
       {showHud && (
         <AbsoluteFill><Svg>
