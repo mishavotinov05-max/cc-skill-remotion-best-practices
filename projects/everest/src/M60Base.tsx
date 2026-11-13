@@ -13,13 +13,13 @@ export const Tx: React.FC<{x: number; y: number; size?: number; fill?: string; a
 );
 
 // ====================== people (faceless silhouettes) ======================
-export type Look = {jacket: string; jacket2: string; pants: string; glove: string; boot: string; hood?: boolean; goggles?: boolean; hat?: 'fur' | 'beanie' | 'none'; hatCol?: string; beard?: boolean; hair?: string; skin?: string; fat?: number; pack?: boolean};
-export const ILYA_OUT: Look = {jacket: '#33425e', jacket2: '#445678', pants: '#2c3a56', glove: '#1f2430', boot: '#3a2e28', hat: 'beanie', hatCol: '#1f2430', hair: '#2a2420', skin: '#3a3036', hood: false, goggles: false, pack: false};
-export const ILYA_IN: Look = {jacket: '#5b6676', jacket2: '#6e7a8c', pants: '#2c3a56', glove: '#5b6676', boot: '#3a2e28', hood: false, goggles: false, hair: '#2a2420', skin: '#3a3036'};
-export const DED_IN: Look = {jacket: '#6a5038', jacket2: '#80634a', pants: '#3a3d46', glove: '#6a5038', boot: '#5a4632', hat: 'none', beard: true, hair: '#9a9aa4', skin: '#3a3036', fat: 1.12};
-export const DED_OUT: Look = {jacket: '#5b3f27', jacket2: '#70502f', pants: '#3a2c20', glove: '#2a1f16', boot: '#6a5a46', hat: 'fur', hatCol: '#4a3220', beard: true, hair: '#9a9aa4', skin: '#3a3036', fat: 1.12};
-export const MAX_OUT: Look = {jacket: '#1f4a33', jacket2: '#2b6045', pants: '#252a33', glove: '#2a2f3a', boot: '#1a1c22', hat: 'beanie', hatCol: '#7a7f8a', hair: '#2a2420', skin: '#3a3036', fat: 1.05};
-export type Pose = {hip: V; lean: number; lf: V; lb: V; hf: V; hb: V; nod?: number; hold?: React.ReactNode};
+export type Look = {jacket: string; jacket2: string; pants: string; glove: string; boot: string; hood?: boolean; goggles?: boolean; hat?: 'fur' | 'beanie' | 'none'; hatCol?: string; beard?: boolean; hair?: string; skin?: string; fat?: number; pack?: boolean; stubble?: boolean; old?: boolean};
+export const ILYA_OUT: Look = {jacket: '#33425e', jacket2: '#445678', pants: '#2c3a56', glove: '#1f2430', boot: '#3a2e28', hat: 'beanie', hatCol: '#1f2430', hair: '#2a2420', skin: '#e2ad86', hood: false, goggles: false, pack: false};
+export const ILYA_IN: Look = {jacket: '#5b6676', jacket2: '#6e7a8c', pants: '#2c3a56', glove: '#5b6676', boot: '#3a2e28', hood: false, goggles: false, hair: '#2a2420', skin: '#e2ad86'};
+export const DED_IN: Look = {old: true, jacket: '#6a5038', jacket2: '#80634a', pants: '#3a3d46', glove: '#6a5038', boot: '#5a4632', hat: 'none', beard: true, hair: '#b8b8c0', skin: '#d6a07c', fat: 1.12};
+export const DED_OUT: Look = {old: true, jacket: '#5b3f27', jacket2: '#70502f', pants: '#3a2c20', glove: '#2a1f16', boot: '#6a5a46', hat: 'fur', hatCol: '#4a3220', beard: true, hair: '#b8b8c0', skin: '#d6a07c', fat: 1.12};
+export const MAX_OUT: Look = {jacket: '#1f4a33', jacket2: '#2b6045', pants: '#252a33', glove: '#2a2f3a', boot: '#1a1c22', hat: 'beanie', hatCol: '#7a7f8a', hair: '#2a2420', skin: '#e6b48f', fat: 1.05, stubble: true};
+export type Pose = {hip: V; lean: number; lf: V; lb: V; hf: V; hb: V; nod?: number; hold?: React.ReactNode; mood?: 'neutral' | 'worried' | 'scared' | 'happy'};
 export const Person: React.FC<{x: number; y: number; look: Look; pose: Pose; flip?: boolean; s?: number; shadow?: boolean}> = ({x, y, look, pose, flip, s = 1, shadow = true}) => {
   const {hip, lean, lf, lb, hf, hb, nod = 0, hold} = pose;
   const fat = look.fat ?? 1;
@@ -70,11 +70,23 @@ export const Person: React.FC<{x: number; y: number; look: Look; pose: Pose; fli
           </g>
         ) : (
           <g>
+            <ellipse cx={-4} cy={4} rx={9} ry={11} fill={skin} />
             <circle cx={0} cy={0} r={30} fill={skin} />
-            {look.hat !== 'fur' && look.hat !== 'beanie' && <path d={`M-30 -4 Q-30 -34 0 -34 Q30 -34 30 -4 Q14 -22 0 -22 Q-14 -22 -30 -4 Z`} fill={look.hair ?? '#15171c'} />}
-            {look.hat === 'beanie' && <path d="M-32 -2 Q-32 -38 0 -38 Q32 -38 32 -2 L32 6 L-32 6 Z" fill={look.hatCol ?? '#777'} />}
-            {look.hat === 'fur' && <g><path d="M-36 -4 Q-34 -40 0 -40 Q34 -40 36 -4 L36 8 L-36 8 Z" fill={look.hatCol ?? '#4a3220'} /><rect x={-38} y={2} width={76} height={12} rx={6} fill="#6a4a2e" /></g>}
-            {look.beard && <path d="M-22 6 Q-10 36 10 36 Q26 30 26 8 Q8 18 -22 6 Z" fill={look.hair ?? '#9a9aa4'} />}
+            <ellipse cx={-5} cy={5} rx={5} ry={7} fill="#000" opacity={0.12} />
+            {look.hat !== 'fur' && look.hat !== 'beanie' && <path d={`M-31 2 Q-33 -34 0 -34 Q31 -34 31 -6 Q18 -18 4 -16 Q-14 -16 -31 2 Z`} fill={look.hair ?? '#15171c'} />}
+            {look.hat === 'beanie' && <g><path d="M-33 0 Q-33 -40 0 -40 Q33 -40 33 -2 L33 -4 Q10 -14 -33 -8 Z" fill={look.hatCol ?? '#777'} /><rect x={-34} y={-12} width={68} height={10} rx={5} fill={look.hatCol ?? '#777'} opacity={0.85} /></g>}
+            {look.hat === 'fur' && <g><path d="M-36 -2 Q-34 -42 0 -42 Q34 -42 36 -2 L36 -8 L-36 -8 Z" fill={look.hatCol ?? '#4a3220'} /><rect x={-38} y={-12} width={76} height={12} rx={6} fill="#6a4a2e" /></g>}
+            {/* eye */}
+            <ellipse cx={15} cy={-3} rx={6.5} ry={look.old ? 5 : 6.5} fill="#fff" />
+            <circle cx={17} cy={-3} r={3.2} fill="#1a1a22" />
+            <path d={`M8 ${pose.mood === 'worried' || pose.mood === 'scared' ? -14 : -12} L24 ${pose.mood === 'scared' ? -16 : -13}`} stroke={look.old ? '#b8b8c0' : (look.hair ?? '#2a2420')} strokeWidth={3.5} strokeLinecap="round" />
+            {look.old && <path d="M6 2 Q12 7 20 3" stroke="#000" strokeOpacity={0.18} strokeWidth={2} fill="none" />}
+            {/* nose */}
+            <path d="M28 -2 Q36 6 28 9 Q24 9 25 5 Z" fill={skin} stroke="#000" strokeOpacity={0.2} strokeWidth={1.5} />
+            {/* mouth */}
+            {pose.mood === 'scared' ? <ellipse cx={22} cy={17} rx={4.5} ry={5} fill="#5a2a2a" /> : pose.mood === 'happy' ? <path d="M14 15 Q22 22 28 14" stroke="#7a3a30" strokeWidth={3} fill="none" strokeLinecap="round" /> : <path d={`M15 ${pose.mood === 'worried' ? 19 : 17} Q22 ${pose.mood === 'worried' ? 15 : 19} 28 ${pose.mood === 'worried' ? 19 : 16}`} stroke="#7a3a30" strokeWidth={3} fill="none" strokeLinecap="round" />}
+            {look.stubble && Array.from({length: 18}).map((_, i) => <circle key={i} cx={8 + (i % 6) * 4} cy={14 + Math.floor(i / 6) * 5} r={1.2} fill="#2a2420" opacity={0.55} />)}
+            {look.beard && <g><path d="M-18 4 Q-14 40 12 38 Q32 34 32 12 Q22 20 10 18 Q-6 18 -18 4 Z" fill={look.hair ?? '#b8b8c0'} /><path d="M12 14 Q24 20 33 13 Q28 10 22 11 Q16 9 12 14 Z" fill={look.hair ?? '#b8b8c0'} /></g>}
           </g>
         )}
       </g>
@@ -93,7 +105,7 @@ export const poseWalk = (t: number, sp = 3.2, lean = 8, o: Partial<Pose> = {}): 
 };
 export const poseSit = (o: Partial<Pose> = {}): Pose => ({hip: [0, -66], lean: 6, lf: [74, 0], lb: [50, 0], hf: [64, -80], hb: [22, -70], nod: 4, ...o});
 export const poseCarry = (t: number, sp = 3.0): Pose => poseWalk(t, sp, 10, {hf: [64, -150], hb: [34, -142]});
-export const poseShiver = (t: number): Pose => ({hip: [Math.sin(t * 38) * 1.4, -112], lean: 14, lf: [12, 0], lb: [-14, 0], hf: [28, -186], hb: [8, -176], nod: 8});
+export const poseShiver = (t: number): Pose => ({mood: 'scared', hip: [Math.sin(t * 38) * 1.4, -112], lean: 14, lf: [12, 0], lb: [-14, 0], hf: [28, -186], hb: [8, -176], nod: 8});
 export const poseReach = (hx: number, hy: number, o: Partial<Pose> = {}): Pose => ({...P0, lean: 6, hf: [hx, hy], hb: [hx - 24, hy + 6], ...o});
 
 // ====================== particles / atmosphere ======================

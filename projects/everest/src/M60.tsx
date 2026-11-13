@@ -322,7 +322,7 @@ const kitchenProps = (t: number, p: any) => {
   const knock = k === 'knock' ? E(t, p.knockAt, p.knockAt + 0.4) : k === 'knock2' ? 1 : 0;
   const view = k === 'view' || p.k === 'twowin' ? <NightView t={t} old={p.old ? lerpWin(p.old as any, t) : 1} /> : undefined;
   return {
-    t, lamp, bulbFlick: lampFlick, power: dark ? 1 : 0, flame, curtain: k === 'view' || k === 'twowin' ? 0.05 : curtain, tv, tvBanner: p.banner === 1 ? 1 : p.banner > 1 ? E(t, p.banner, p.banner + 0.3) : 0,
+    t, lamp, bulbFlick: lampFlick, power: dark ? 1 : 0, flame, curtain: ['view', 'twowin', 'knock', 'knock2', 'dedwindow', 'window', 'shutters'].includes(k) ? -0.75 : curtain, tv, tvBanner: p.banner === 1 ? 1 : p.banner > 1 ? E(t, p.banner, p.banner + 0.3) : 0,
     tvTurn: 0, radioOn, needle: 0.5, noise: 0.1, water, chars, outTemp: tempAt(t), outRed: t >= 394.2 ? 1 : 0, shutters: k === 'view' || k === 'twowin' ? 0 : shut,
     cold: k === 'cold' ? 1 : 0, view, knock,
   };
