@@ -7,12 +7,13 @@ import subsS from './subs_shelter.json';
 import {SnowRush, digPose, DIG_TIP, E, FONT, Log, LogEnd, mixc, Mountains, P, Pine, Pose, shivPose, Skier, SkierDefs, SnowParticles, Squirrel, StoveArt, TempHUD, V, walkPose} from './ShelterArt';
 
 export const FPSS = 30;
-export const DURATIONS = 93.3;
-const SURF = 1000, FLOOR = 1320, PX0 = 330, PX1 = 750, SX0 = 210, SX1 = 330;
-const STOVE_X = 665;
-const OFF = 2.0;
-const depthAt = (t: number) => (t < 3.0 ? 190 : 190 + 130 * E(t, 3.0, 5.6));
-const widthAt = (t: number) => 392 + 28 * E(t, 3.0, 5.6);
+export const DURATIONS = 92.9;
+const SURF = 1000, FLOOR = 1345, PX0 = 260, PX1 = 820, SX0 = 100, SX1 = 260;
+const X = (x: number) => 540 + ((x - 540) * 4) / 3;
+const STOVE_X = Math.round(X(665));
+const OFF = 2.4;
+const depthAt = (t: number) => (t < 3.0 ? 205 : 205 + 140 * E(t, 3.0, 5.6));
+const widthAt = (t: number) => 520 + 40 * E(t, 3.0, 5.6);
 
 type H = {x: number; y: number; flip: boolean; pose: Pose; vis: boolean};
 const hh = (x: number, y: number, pose: Pose, flip = false, vis = true): H => ({x, y, flip, pose, vis});
@@ -33,21 +34,21 @@ const climbPose = (t: number): Pose => {
   return {hip: [0, -112], lean: 6, lf: [14, -22 * Math.max(0, s)], lb: [-10, -22 * Math.max(0, -s)], hf: [34, -268 + 22 * s], hb: [6, -258 - 22 * s]};
 };
 
-const heroAt = (t: number): H => {
+const heroAt0 = (t: number): H => {
   const FY = SURF + depthAt(t);
-  if (t < 2.55) {
-    const p = P(t, 2.0, 2.55);
+  if (t < 2.7) {
+    const p = P(t, 2.4, 2.7);
     const e = 1 - (1 - p) * (1 - p);
     const sw = Math.sin(t * 9);
     return hh(lerp(-330, 250, e), SURF, {hip: [0, -104], lean: 22, lf: [26, -8], lb: [-30, -8], hf: [60 + 8 * sw, -128], hb: [10 - 8 * sw, -122], ski: true});
   }
-  if (t < 2.8) {
-    const p = P(t, 2.55, 2.8);
+  if (t < 2.85) {
+    const p = P(t, 2.7, 2.85);
     const s = Math.sin(p * Math.PI);
     return hh(250, SURF, {hip: [0, -100], lean: 12 + 34 * s, lf: [22, 0], lb: [-22, 0], hf: [50, -120 + 84 * s], hb: [20, -120 + 84 * s], pack: p < 0.5});
   }
   if (t < 3.0) {
-    const p = E(t, 2.8, 3.0);
+    const p = E(t, 2.85, 3.0);
     const y = lerp(SURF, FY, p) - Math.sin(Math.PI * p) * 80;
     return hh(lerp(250, 540, p), y, {hip: [0, -108], lean: 10, lf: [12, -26], lb: [-12, -34], hf: [0, 0], hb: [0, 0], shovel: {hb: [18, -172], th: 62}, pack: false});
   }
@@ -56,30 +57,30 @@ const heroAt = (t: number): H => {
     return hh(540 + widthAt(t) / 2 - 110, FY, {...digPose(ph), pack: false});
   }
   const P0 = (o: Partial<Pose>): Pose => ({hip: [0, -116], lean: 5, lf: [18, 0], lb: [-16, 0], hf: [34, -128], hb: [-12, -126], nod: 0, pack: false, ...o});
-  const up = (x: number, k: number): Partial<Pose> => ({lean: 3, hf: [50 + k, -312], hb: [22 + k, -304]});
+  const up = (x: number, k: number): Partial<Pose> => ({lean: 3, hf: [50 + k, -345], hb: [22 + k, -338]});
   if (t < 5.8) return hh(lerp(640, 690, E(t, 5.6, 5.8)), FLOOR, P0(up(0, 0)));
   if (t < 6.9) {
     const p = E(t, 5.8, 6.9);
-    return hh(lerp(690, 560, p), FLOOR, P0({lean: 4, hf: [-20 - 40 * p, -310], hb: [-40 - 40 * p, -306], nod: -6}), true);
+    return hh(lerp(690, 560, p), FLOOR, P0({lean: 4, hf: [-20 - 40 * p, -343], hb: [-40 - 40 * p, -340], nod: -6}), true);
   }
   if (t < 8.57) return hh(540, FLOOR, P0({lean: 6, nod: -8, hf: [30, -150], hb: [10, -146]}));
   if (t < 11.97) {
     const sag = 110 * E(t, 8.57, 11.5);
-    return hh(540, FLOOR, P0({hip: [0, -96], lean: 14, nod: 14, hf: [30, -(320 - sag) + 6 * Math.sin(t * 20)], hb: [8, -(320 - sag) + 6 * Math.cos(t * 17)]}));
+    return hh(540, FLOOR, P0({hip: [0, -96], lean: 14, nod: 14, hf: [30, -(345 - sag) / 0.9 + 6 * Math.sin(t * 20)], hb: [8, -(345 - sag) / 0.9 + 6 * Math.cos(t * 17)]}));
   }
   if (t < 12.55) {
     const p = E(t, 11.97, 12.55);
-    return hh(lerp(540, 690, p), FLOOR, P0({lean: 3, hf: [50 + 20 * p, -312], hb: [22 + 20 * p, -304]}));
+    return hh(lerp(540, 690, p), FLOOR, P0({lean: 3, hf: [50 + 20 * p, -345], hb: [22 + 20 * p, -338]}));
   }
   if (t < 16.05) {
     const k = Math.floor((t - 12.55) / 0.88);
     const q = ((t - 12.55) % 0.88) / 0.88;
     const sw = Math.sin(Math.min(1, q * 1.4) * Math.PI);
-    return hh(690, FLOOR, P0({lean: 3, hf: [50 - 70 * Math.min(1, q * 1.5), -312 + 6 * sw], hb: [22 - 60 * Math.min(1, q * 1.5), -304]}));
+    return hh(690, FLOOR, P0({lean: 3, hf: [50 - 70 * Math.min(1, q * 1.5), -345 + 6 * sw], hb: [22 - 60 * Math.min(1, q * 1.5), -338]}));
   }
   if (t < 17.2) {
     const p = E(t, 16.1, 17.2);
-    return hh(lerp(690, 520, p), FLOOR, P0({lean: 3, hf: [-20 - 40 * p, -312], hb: [-40 - 30 * p, -304]}), true);
+    return hh(lerp(690, 520, p), FLOOR, P0({lean: 3, hf: [-20 - 40 * p, -345], hb: [-40 - 30 * p, -338]}), true);
   }
   if (t < 17.68) return hh(lerp(520, 480, E(t, 17.2, 17.68)), FLOOR, {...walkPose(t, 3.4), pack: false}, true);
   if (t < 19.65) {
@@ -106,7 +107,7 @@ const heroAt = (t: number): H => {
   if (t < 40.6) return hh(lerp(460, 615, E(t, 40.1, 40.6)), FLOOR, {...walkPose(t, 3.4, 8, 'box'), pack: false});
   if (t < 43.4) {
     const upk = P(t, 40.7, 43.2);
-    return hh(620, FLOOR, P0({lean: 4, hf: [46, lerp(-190, -310, upk)], hb: [28, lerp(-160, -290, upk)]}));
+    return hh(620, FLOOR, P0({lean: 4, hf: [46, lerp(-190, -343, upk)], hb: [28, lerp(-160, -290, upk)]}));
   }
   if (t < 48.33) return hh(580, FLOOR, P0({hf: [54, -144 + Math.sin(t * 4) * 3], hb: [36, -138], nod: 6}));
   if (t < 49.4) return hh(lerp(580, 400, E(t, 48.33, 49.4)), FLOOR, {...walkPose(t, 3.2), pack: false}, true);
@@ -147,10 +148,37 @@ const heroAt = (t: number): H => {
 };
 const standPoseS = (t: number): Pose => ({hip: [0, -116], lean: 4, lf: [18, 0], lb: [-16, 0], hf: [34, -128], hb: [-12, -126], nod: 0});
 
+const stairPts = (t: number) => {
+  const SY = SURF - drift(t);
+  const sd = E(t, 54.2, 56.5), sp = E(t, 56.7, 58.7);
+  const bottom = lerp(FLOOR, FLOOR + 100, sd);
+  const ys = [0, 1, 2, 3].map((j) => SY + ((j + 1) / 4) * (bottom - SY));
+  return {SY, ys, u1: lerp(bottom, FLOOR + 50, sp), u2: lerp(bottom, FLOOR, sp)};
+};
+const stairY = (x: number, t: number) => {
+  const st = stairPts(t);
+  if (x < SX0) return surfAt(x, t);
+  if (x < 220) return st.ys[Math.min(3, Math.floor((x - 100) / 30))];
+  if (x < 240) return st.u1;
+  if (x < 260) return st.u2;
+  return FLOOR;
+};
+const heroAt = (t: number): H => {
+  const h = heroAt0(t);
+  if (t < 5.6) return h;
+  if (t >= 53.74 && t < 54.2) { const x = lerp(X(520), 235, E(t, 53.74, 54.2)); return {...h, x, y: stairY(x, t)}; }
+  if (t >= 54.2 && t < 59.5) return {...h, x: 210, y: stairY(210, t)};
+  if (t >= 59.5 && t < 61.7) { const x = lerp(215, X(470), E(t, 59.5, 61.7)); return {...h, x, y: stairY(x, t), pose: {...walkPose(t, 3.2), pack: false}, flip: false}; }
+  if (t >= 82.6 && t < 83.4) return {...h, x: lerp(X(400), 255, E(t, 82.6, 83.4)), y: FLOOR};
+  if (t >= 83.4 && t < 84.6) { const x = lerp(255, 105, E(t, 83.4, 84.6)); return {...h, x, y: stairY(x, t), pose: {...walkPose(t, 3.0, 16), pack: false}, flip: true}; }
+  if (t >= 84.6 && t < 92.6) return {...h, x: 105, y: surfAt(105, t)};
+  return {...h, x: X(h.x)};
+};
+
 // ---------------- camera ----------------
 type CKS = [number, number, number, number];
 const KEYS: CKS[] = [
-  [2.0, 360, 930, 1.0], [2.55, 430, 980, 1.2], [2.99, 520, 1000, 1.2], [3.0, 540, 1120, 1.3], [5.6, 560, 1110, 1.3],
+  [2.4, 360, 930, 1.1], [2.9, 480, 1000, 1.25], [2.99, 520, 1010, 1.25], [3.0, 540, 1130, 1.25], [5.6, 560, 1110, 1.3],
   [5.7, 610, 1080, 1.35], [6.9, 620, 1060, 1.35],
   [8.1, 540, 1110, 1.25], [8.11, 540, 1110, 1.25], [11.9, 540, 1100, 1.4],
   [11.97, 640, 1070, 1.4], [16.05, 600, 1060, 1.35], [16.06, 560, 1050, 1.35], [17.68, 560, 1050, 1.3],
@@ -167,14 +195,20 @@ const KEYS: CKS[] = [
   [84.61, 300, 860, 1.15], [87.0, 460, 820, 1.0], [87.2, 540, 780, 1.1], [88.3, 640, 800, 1.8],
   [88.37, 665, 830, 2.0], [90.3, 665, 840, 2.15], [92.8, 640, 840, 2.4], [92.9, 650, 830, 2.9], [95.3, 656, 826, 3.1],
 ];
+const ABS: Record<number, [number, number, number]> = {53.74: [170, 1330, 1.9], 56.6: [175, 1410, 2.1], 59.5: [200, 1380, 1.9], 83.4: [230, 1200, 1.4], 84.6: [110, 900, 1.4], 84.61: [150, 860, 1.15]};
+const KEYS2: CKS[] = KEYS.map((k) => {
+  if (k[0] < 2.995) return k;
+  if (ABS[k[0]]) return [k[0], ABS[k[0]][0], ABS[k[0]][1], ABS[k[0]][2]] as CKS;
+  return [k[0], X(k[1]), k[2] + (k[2] > 1100 ? 14 : 0), k[3] > 1.2 && k[0] < 44 || (k[0] > 46.2 && k[0] < 84) ? k[3] * 0.9 : k[3]] as CKS;
+});
 const camAt = (t: number) => {
-  let r = KEYS[KEYS.length - 1].slice(1) as number[];
-  if (t < KEYS[0][0]) r = KEYS[0].slice(1) as number[];
-  else for (let i = 0; i < KEYS.length - 1; i++) {
-    if (t >= KEYS[i][0] && t < KEYS[i + 1][0]) {
-      const d = KEYS[i + 1][0] - KEYS[i][0];
-      const k = d < 0.05 ? 1 : ease((t - KEYS[i][0]) / d);
-      r = [lerp(KEYS[i][1], KEYS[i + 1][1], k), lerp(KEYS[i][2], KEYS[i + 1][2], k), lerp(KEYS[i][3], KEYS[i + 1][3], k)];
+  let r = KEYS2[KEYS2.length - 1].slice(1) as number[];
+  if (t < KEYS2[0][0]) r = KEYS2[0].slice(1) as number[];
+  else for (let i = 0; i < KEYS2.length - 1; i++) {
+    if (t >= KEYS2[i][0] && t < KEYS2[i + 1][0]) {
+      const d = KEYS2[i + 1][0] - KEYS2[i][0];
+      const k = d < 0.05 ? 1 : ease((t - KEYS2[i][0]) / d);
+      r = [lerp(KEYS2[i][1], KEYS2[i + 1][1], k), lerp(KEYS2[i][2], KEYS2[i + 1][2], k), lerp(KEYS2[i][3], KEYS2[i + 1][3], k)];
       break;
     }
   }
@@ -184,7 +218,7 @@ const camAt = (t: number) => {
 
 // ---------------- world ----------------
 const CLOTH = '#d36a2a', CLOTH2 = '#a84f1c';
-const LOGW = 440;
+const LOGW = 580;
 const WALL = '#e4effb';
 const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
   const depth = depthAt(t);
@@ -210,7 +244,7 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
   const boardsAll = E(t, 67.25, 69.8);
   const rugP = E(t, 69.9, 71.8);
   const snowOnRoof = E(t, 17.68, 19.65);
-  const showHero = h.vis && !(t >= 6.9 && t < 8.1) && !(t >= 87.6 && t < 92.6);
+  const showHero = h.vis && !(t >= 87.6 && t < 92.6);
   const ext = t >= 84.6;
   const plateP = E(t, 40.1, 40.6);
   const stoveCarry = t >= 25.1 && t < 27.6;
@@ -219,7 +253,7 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
     const tp = 12.95 + 0.88 * k;
     const p = E(t, tp, tp + 0.55);
     const fin = 540 + 20 * (k % 2 ? -1 : 1);
-    return {p, cx: lerp(965, fin, p), cy: lerp(SURF - 15 - (3 - k) * 29 * 0 - k * 29, roofY0 + 15 - k * 9, p), done: t >= tp + 0.55, started: t >= tp};
+    return {p, cx: lerp(1140, fin, p), cy: lerp(SURF - 15 - (3 - k) * 29 * 0 - k * 29, roofY0 + 15 - k * 9, p), done: t >= tp + 0.55, started: t >= tp};
   };
   const roofY0 = 957;
   // cloth segment
@@ -227,28 +261,28 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
     if (t < 5.8) return null;
     if (t < 12.55) {
       const sl = E(t, 5.8, 6.9);
-      const L = lerp(752, 332, sl);
+      const L = lerp(PX1 + 2, PX0 + 2, sl);
       const pulled = E(t, 11.97, 12.55);
-      return {L: lerp(L, 752, pulled), R: lerp(790, 812, pulled), y: SURF - 3, sag: 110 * E(t, 8.57, 11.5) * (1 - pulled) * (t > 6.9 ? 1 : 0)};
+      return {L: lerp(L, PX1 + 2, pulled), R: lerp(PX1 + 40, PX1 + 62, pulled), y: SURF - 3, sag: 110 * E(t, 8.57, 11.5) * (1 - pulled) * (t > 6.9 ? 1 : 0)};
     }
-    if (t < 16.2) return {L: 752, R: 812, y: SURF - 3, sag: 0};
-    const L = lerp(752, 328, E(t, 16.2, 17.2));
-    return {L, R: 812, y: roofY0 - 6, sag: 0};
+    if (t < 16.2) return {L: PX1 + 2, R: PX1 + 62, y: SURF - 3, sag: 0};
+    const L = lerp(PX1 + 2, PX0 - 4, E(t, 16.2, 17.2));
+    return {L, R: PX1 + 62, y: roofY0 - 6, sag: 0};
   };
   const cs = clothSeg();
-  const stoveX = stoveCarry ? (t < 25.63 ? 400 : h.x + 66) : t < 25.1 ? 400 : t < 27.35 ? 400 : STOVE_X;
+  const stoveX = 0;
   const stoveY = (() => {
     if (t < 25.1) return FY - 4;
     if (t < 25.63) return FY - 4 - 20 * E(t, 25.1, 25.63);
-    if (t < 27.35) return h.y - 78;
-    if (t < 27.6) return lerp(h.y - 78, FY - 4, E(t, 27.35, 27.6));
+    if (t < 27.35) return h.y - 70;
+    if (t < 27.6) return lerp(h.y - 70, FY - 4, E(t, 27.35, 27.6));
     return FY - 4;
   })();
   const stoveCX = (() => {
-    if (t < 25.1) return 400;
-    if (t < 25.63) return lerp(400, h.x - 62, E(t, 25.1, 25.63));
-    if (t < 27.35) return h.x + 56;
-    if (t < 27.6) return lerp(h.x + 56, STOVE_X, E(t, 27.35, 27.6));
+    if (t < 25.1) return X(400);
+    if (t < 25.63) return lerp(X(400), h.x - 56, E(t, 25.1, 25.63));
+    if (t < 27.35) return h.x + 50;
+    if (t < 27.6) return lerp(h.x + 50, STOVE_X, E(t, 27.35, 27.6));
     return STOVE_X;
   })();
   void stoveX;
@@ -260,7 +294,7 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
       <Pine x={-300} y={SY + 8} s={0.7} />
       <Pine x={1180} y={SY + 6} s={0.8} />
       <Pine x={1320} y={SY + 4} s={1.0} />
-      {t > 2.1 && (
+      {t > 2.45 && (
         <g stroke="#cfe0f2" strokeWidth={4} strokeLinecap="round" opacity={0.9}>
           <line x1={-400} y1={SY + 5} x2={Math.min(250, h.x)} y2={SY + 5} />
           <line x1={-400} y1={SY + 12} x2={Math.min(250, h.x)} y2={SY + 12} />
@@ -276,14 +310,24 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
       <rect x={-1200} y={SY} width={3200} height={2000} fill="url(#cut)" />
       {[60, 120, 190, 270, 360, 470, 600].map((d, i) => <path key={i} d={`M-1200 ${SURF + d} Q-400 ${SURF + d + 10} 200 ${SURF + d - 6} T1500 ${SURF + d + 4}`} stroke="#b4cce6" strokeWidth={3} fill="none" opacity={0.7} />)}
       <rect x={-1200} y={SY - 4} width={3200} height={8} fill="#ffffff" opacity={0.9} />
-      {/* shaft */}
-      {shaftOn && (
-        <g>
-          <rect x={SX0} y={SY} width={SX1 - SX0} height={FLOOR + sump - SY} fill={mixc('#8fa8c8', '#2a3c5c', roofDark * 0.4)} />
-          {stepH > 0 && <rect x={SX0 + 60} y={FLOOR + 100 - stepH} width={SX1 - SX0 - 60} height={stepH} fill={WALL} stroke="#b4cce6" strokeWidth={3} />}
-          {sump > 20 && t > 56 && <rect x={SX0} y={FLOOR + 40} width={SX1 - SX0 - 60 + 60 * (1 - stepH / 100)} height={sump - 40 + 0} fill="#69b8ff" opacity={0.28 * E(t, 56.5, 58.5)} />}
-        </g>
-      )}
+      {/* stairs (entrance) */}
+      {shaftOn && (() => {
+        const st = stairPts(t);
+        const y = st.ys;
+        const d = `M${SX0} ${st.SY} L${SX1} ${st.SY} L${SX1} ${st.u2} L240 ${st.u2} L240 ${st.u1} L220 ${st.u1} L220 ${y[3]} L190 ${y[3]} L190 ${y[2]} L160 ${y[2]} L160 ${y[1]} L130 ${y[1]} L130 ${y[0]} L100 ${y[0]} Z`;
+        const prof = `M${SX0} ${y[0]} L130 ${y[0]} L130 ${y[1]} L160 ${y[1]} L160 ${y[2]} L190 ${y[2]} L190 ${y[3]} L220 ${y[3]} L220 ${st.u1} L240 ${st.u1} L240 ${st.u2} L${SX1} ${st.u2}`;
+        return (
+          <g>
+            <defs><clipPath id="stairAir"><path d={d} /></clipPath></defs>
+            <path d={d} fill={mixc('#8fa8c8', '#2a3c5c', roofDark * 0.4)} />
+            <rect x={SX0} y={FLOOR + 25} width={SX1 - SX0} height={200} fill="#69b8ff" opacity={0.3 * E(t, 56.5, 58.5)} clipPath="url(#stairAir)" />
+            <path d={prof} fill="none" stroke="#b4cce6" strokeWidth={5} strokeLinejoin="round" />
+            {[0, 1, 2, 3].map((j) => <rect key={j} x={100 + 30 * j} y={y[j] - 3} width={30} height={7} rx={2} fill="#ffffff" />)}
+            <rect x={220} y={st.u1 - 3} width={20} height={7} rx={2} fill="#ffffff" />
+            <rect x={240} y={st.u2 - 3} width={20} height={7} rx={2} fill="#ffffff" />
+          </g>
+        );
+      })()}
       {/* pit */}
       <rect x={pitL} y={SURF} width={pitR - pitL} height={depth} fill={ic} />
       <rect x={pitL} y={SURF} width={6} height={depth} fill="#000" opacity={0.18} />
@@ -307,7 +351,7 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
             <ellipse cx={540} cy={FY - 3} rx={20 + 140 * wet} ry={5 + 4 * wet} fill="#5aa6e8" opacity={0.65 * (1 - boardsAll * 0.9)} />
             {t > 63 && t < 67.3 && Array.from({length: 4}).map((_, i) => {
               const tt = (t * 1.3 + i * 0.37) % 1;
-              return <circle key={i} cx={440 + i * 70} cy={1020 + tt * 290} r={4} fill="#8ac4ff" opacity={tt < 0.95 ? 0.9 : 0} />;
+              return <circle key={i} cx={330 + i * 110} cy={1020 + tt * 290} r={4} fill="#8ac4ff" opacity={tt < 0.95 ? 0.9 : 0} />;
             })}
           </g>
         )}
@@ -315,31 +359,31 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
         {Array.from({length: 5}).map((_, j) => {
           const tp = 67.25 + 0.5 * j;
           const p = E(t, tp, tp + 0.38);
-          const x = [700, 620, 540, 460, 380][j];
-          const sx = 733 - j * 6;
+          const x = [700, 620, 540, 460, 380].map(X)[j];
+          const sx = X(733) - j * 6;
           if (p <= 0) return <rect key={j} x={sx - 4} y={FY - 150} width={8} height={146} fill="#c99a5a" stroke="#6a4a22" strokeWidth={2} />;
           const px = lerp(sx, x, ease(p));
           const py = lerp(FY - 80, FY - 10, ease(p)) - Math.sin(Math.PI * p) * 60;
           const rot = lerp(90, 0, ease(p));
-          return <g key={j} transform={`translate(${px} ${py}) rotate(${rot})`}><rect x={-38} y={-5} width={76} height={10} rx={2} fill="#c99a5a" stroke="#6a4a22" strokeWidth={2} /></g>;
+          return <g key={j} transform={`translate(${px} ${py}) rotate(${rot})`}><rect x={-50} y={-5} width={100} height={10} rx={2} fill="#c99a5a" stroke="#6a4a22" strokeWidth={2} /></g>;
         })}
         {/* rug */}
         {(() => {
-          const rx = lerp(600, 430, rugP);
+          const rx = lerp(X(600), X(430), rugP);
           return (
             <g>
-              {t < 69.9 && <g><rect x={584} y={FY - 26} width={40} height={24} rx={12} fill="#b8362a" stroke="#6a1a14" strokeWidth={3} /><circle cx={590} cy={FY - 14} r={9} fill="#e4574a" /></g>}
-              {t >= 69.9 && <rect x={rx} y={FY - 16} width={612 - rx} height={8} fill="#c8412e" stroke="#6a1a14" strokeWidth={2} />}
+              {t < 69.9 && <g><rect x={X(584)} y={FY - 26} width={40} height={24} rx={12} fill="#b8362a" stroke="#6a1a14" strokeWidth={3} /><circle cx={X(590)} cy={FY - 14} r={9} fill="#e4574a" /></g>}
+              {t >= 69.9 && <rect x={rx} y={FY - 16} width={X(612) - rx} height={8} fill="#c8412e" stroke="#6a1a14" strokeWidth={2} />}
               {t >= 69.9 && rugP < 1 && <circle cx={rx} cy={FY - 16} r={10} fill="#e4574a" stroke="#6a1a14" strokeWidth={2} />}
               {t >= 69.9 && rugP >= 0.2 && Array.from({length: 4}).map((_, i) => <rect key={i} x={rx + 18 + i * 38} y={FY - 15} width={10} height={6} fill="#ffd23f" opacity={0.8} />)}
             </g>
           );
         })()}
         {/* pipe + plate stored at left wall */}
-        {t < 40.5 && <line x1={352} y1={FY - 4} x2={364} y2={FY - 214} stroke="#8d94a3" strokeWidth={13} strokeLinecap="round" />}
-        {t < 40.1 && <rect x={436} y={FY - 66} width={46} height={62} rx={4} fill="#6a7180" stroke="#2a2d34" strokeWidth={3} />}
+        {t < 40.5 && <line x1={X(352)} y1={FY - 4} x2={X(364)} y2={FY - 214} stroke="#8d94a3" strokeWidth={13} strokeLinecap="round" />}
+        {t < 40.1 && <rect x={X(436)} y={FY - 66} width={46} height={62} rx={4} fill="#6a7180" stroke="#2a2d34" strokeWidth={3} />}
         {/* shovel leaning */}
-        {((t >= 5.6 && t < 17.2) || (t >= 19.65 && t < 53.9)) && <g transform={`translate(${t < 17.5 ? 372 : 372} ${FY}) rotate(8)`}><line x1={0} y1={0} x2={0} y2={-150} stroke="#8a6a3a" strokeWidth={7} strokeLinecap="round" /><path d="M-14 -4 L14 -4 L10 24 L-10 24 Z" fill="#b8c0cc" stroke="#6b7482" strokeWidth={3} /></g>}
+        {((t >= 5.6 && t < 17.2) || (t >= 19.65 && t < 53.9)) && <g transform={`translate(${X(372)} ${FY}) rotate(8)`}><line x1={0} y1={0} x2={0} y2={-150} stroke="#8a6a3a" strokeWidth={7} strokeLinecap="round" /><path d="M-14 -4 L14 -4 L10 24 L-10 24 Z" fill="#b8c0cc" stroke="#6b7482" strokeWidth={3} /></g>}
         {/* stove */}
         <g transform={`translate(${stoveCX} ${stoveY}) scale(0.82) translate(${-stoveCX} ${-stoveY})`}><StoveArt x={stoveCX} y={stoveY} glow={warm} t={t} /></g>
         {warm > 0 && (
@@ -358,7 +402,7 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
       {t >= 40.1 && (
         <g>
           {(() => {
-            const px = lerp(459, STOVE_X, plateP);
+            const px = lerp(X(459), STOVE_X, plateP);
             const py = lerp(FY - 66, roofY0 - 4, plateP) - Math.sin(Math.PI * plateP) * 120;
             return <rect x={px - 28} y={py} width={56} height={66} rx={5} fill="#6a7180" stroke="#2a2d34" strokeWidth={3} />;
           })()}
@@ -402,8 +446,8 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
         <path d="M110 920 Q150 890 190 905 Q160 915 120 940 Z" fill="#9aa5b8" />
       </g>
       {(() => {
-        if (t < 2.55) return null;
-        const sp = E(t, 2.55, 2.85);
+        if (t < 2.7) return null;
+        const sp = E(t, 2.7, 2.9);
         return (
           <g transform={`translate(0 ${SY - SURF})`}>
             {[0, 1].map((i) => (
@@ -416,7 +460,7 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
           </g>
         );
       })()}
-      {t < 2.8 && <g transform={`translate(300 ${SURF}) rotate(-8)`}><line x1={0} y1={0} x2={0} y2={-150} stroke="#8a6a3a" strokeWidth={7} strokeLinecap="round" /><path d="M-14 -4 L14 -4 L10 24 L-10 24 Z" fill="#b8c0cc" stroke="#6b7482" strokeWidth={3} /></g>}
+      {t < 2.85 && <g transform={`translate(300 ${SURF}) rotate(-8)`}><line x1={0} y1={0} x2={0} y2={-150} stroke="#8a6a3a" strokeWidth={7} strokeLinecap="round" /><path d="M-14 -4 L14 -4 L10 24 L-10 24 Z" fill="#b8c0cc" stroke="#6b7482" strokeWidth={3} /></g>}
       {/* smoke inside */}
       {t >= 32.37 && t < 46 && Array.from({length: 46}).map((_, i) => {
         const b = 32.37 + i * 0.22;
@@ -439,19 +483,19 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
       {t >= 50.4 && t < 53.9 && Array.from({length: 40}).map((_, i) => {
         const f = clamp((t - 50.4) / 0.5) * (1 - clamp((t - 53.0) / 0.9));
         const tt = ((t - 50.4) * 0.9 + rnd(i) * 1.5) % 1;
-        const x = 335 + tt * 300;
+        const x = 265 + tt * 540;
         const y = FLOOR - 30 - rnd(i + 2) * 200 + Math.sin(tt * 7 + i) * 18;
         return <g key={i} opacity={f * (1 - tt * 0.5)}><line x1={x} y1={y} x2={x - 40} y2={y + 4} stroke="#5ab4ff" strokeWidth={5} strokeLinecap="round" opacity={0.7} /><circle cx={x - 40} cy={y} r={4} fill="#fff" /></g>;
       })}
       {t >= 50.4 && t < 54 && <rect x={PX0} y={1005} width={PX1 - PX0} height={FLOOR - 1005} fill="#69b8ff" opacity={0.16 * clamp((t - 50.4) / 1.2) * (1 - clamp((t - 53) / 0.9))} />}
-      {t >= 76.29 && t < 79 && Array.from({length: 18}).map((_, i) => <circle key={i} cx={PX0 + 20 + rnd(i) * 380} cy={1010 + ((t * 80 + rnd(i + 3) * 300) % 300)} r={3} fill="#f7fbff" opacity={0.7} />)}
+      {t >= 76.29 && t < 79 && Array.from({length: 18}).map((_, i) => <circle key={i} cx={PX0 + 20 + rnd(i) * 520} cy={1010 + ((t * 80 + rnd(i + 3) * 300) % 300)} r={3} fill="#f7fbff" opacity={0.7} />)}
       {/* exterior after avalanche */}
       {ext && (
         <g>
           <path d={`M-1200 ${surfAt(-1200, t)} ${Array.from({length: 60}).map((_, i) => { const x = -1200 + i * 50; return `L${x} ${surfAt(x, t)}`; }).join(' ')} L1800 2600 L-1200 2600 Z`} fill="#f4f9ff" />
           <path d={`M-1200 ${surfAt(-1200, t)} ${Array.from({length: 60}).map((_, i) => { const x = -1200 + i * 50; return `L${x} ${surfAt(x, t)}`; }).join(' ')}`} fill="none" stroke="#cfe0f2" strokeWidth={6} />
           {[40, 100, 170].map((d, i) => <path key={i} d={`M-1200 ${SY + d + 40} Q-400 ${SY + d + 50} 200 ${SY + d + 34} T1500 ${SY + d + 44}`} stroke="#d9e8f8" strokeWidth={3} fill="none" opacity={0.7} />)}
-          <ellipse cx={270} cy={SY + 4} rx={46} ry={9} fill="#2a3c5c" />
+          <ellipse cx={110} cy={SY + 4} rx={46} ry={9} fill="#2a3c5c" />
           <rect x={STOVE_X - 8} y={pipeTop - 6} width={16} height={SY - pipeTop + 8} fill="#8d94a3" stroke="#3a3f4a" strokeWidth={3} />
           <rect x={STOVE_X - 12} y={pipeTop - 12} width={24} height={12} rx={3} fill="#555c6a" />
           {t >= 90.34 && (() => {
@@ -460,7 +504,7 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
           })()}
         </g>
       )}
-      {showHero && <Skier x={h.x} y={h.y} flip={h.flip} pose={h.pose} />}
+      {showHero && <Skier x={h.x} y={h.y} flip={h.flip} pose={h.pose} s={0.9} />}
       {/* dig snow particles */}
       {(() => {
         const out: React.ReactNode[] = [];
@@ -476,11 +520,11 @@ const World: React.FC<{t: number; h: H; cx: number}> = ({t, h, cx}) => {
         };
         if (t >= 3.0 && t < 5.7) {
           const hx = 540 + widthAt(Math.min(t, 5.6)) / 2 - 110;
-          add(3.0, 3, 0.95, 1, hx + DIG_TIP[0], SURF + depthAt(Math.min(t, 5.6)) + DIG_TIP[1], 1.25);
+          add(3.0, 3, 0.95, 1, hx + DIG_TIP[0] * 0.9, SURF + depthAt(Math.min(t, 5.6)) + DIG_TIP[1] * 0.9, 1.25);
         }
-        if (t >= 17.68 && t < 19.8) add(17.68, 3, 0.8, 1, 580 + DIG_TIP[0], FLOOR + DIG_TIP[1], 1.3);
-        if (t >= 54.2 && t < 56.7) add(54.2, 4, 0.85, 1, 255 + DIG_TIP[0], FLOOR + 100 * E(t, 54.2, 56.5) + DIG_TIP[1]);
-        if (t >= 56.6 && t < 58.8) add(56.6, 3, 0.8, 1, 255 + DIG_TIP[0], FLOOR + 100 + DIG_TIP[1]);
+        if (t >= 17.68 && t < 19.8) add(17.68, 3, 0.8, 1, 580 + DIG_TIP[0] * 0.9, FLOOR + DIG_TIP[1] * 0.9, 1.3);
+        if (t >= 54.2 && t < 56.7) add(54.2, 4, 0.85, 1, 210 + DIG_TIP[0] * 0.9, FLOOR + 100 * E(t, 54.2, 56.5) + DIG_TIP[1] * 0.9);
+        if (t >= 56.6 && t < 58.8) add(56.6, 3, 0.8, 1, 210 + DIG_TIP[0] * 0.9, FLOOR + 100 + DIG_TIP[1] * 0.9);
         return out;
       })()}
       {t < 22 && <SnowParticles t={t} n={t >= 8.57 && t < 11.97 ? 140 : 40} speed={t >= 8.57 && t < 11.97 ? 380 : 80} wind={t >= 8.57 && t < 11.97 ? 380 : 40} op={0.85} w={1700} h={2200} />}
@@ -544,7 +588,7 @@ export const Shelter: React.FC = () => {
     );
   const wind = rampW([[0, 0.05], [8.5, 0.05], [8.7, 0.13], [11.8, 0.13], [12.4, 0.05], [19.6, 0.05], [20.5, 0.02], [50.4, 0.02], [50.6, 0.09], [53.3, 0.09], [53.7, 0.02], [76.3, 0.02], [81.7, 0.02], [82, 0.05], [95, 0.04]]);
   const fire = rampW([[27.8, 0], [29, 0.07], [72, 0.06], [73.3, 0.02], [76.3, 0.05], [81.7, 0.05], [82.5, 0.02], [84.6, 0]]);
-  const music = rampW([[2, 0], [3, 0.05], [90, 0.05], [95, 0]]);
+  const music = rampW([[2.4, 0], [3.4, 0.05], [90, 0.05], [95, 0]]);
   const logTimes = [13.3, 14.2, 15.1, 16.0];
   const boardTimes = [67.25, 67.75, 68.25, 68.75, 69.25];
   return (
@@ -553,8 +597,8 @@ export const Shelter: React.FC = () => {
       <Audio src={staticFile('sfx/mtn.mp3')} volume={music} startFrom={Math.round(OFF * FPSS)} />
       <Audio src={staticFile('sfx/wind.mp3')} volume={wind} loop />
       <Audio src={staticFile('sfx/fire.mp3')} volume={fire} loop />
-      {S(2.0, 1.0, 'whoosh', 0.08)}
-      {S(2.8, 0.5, 'thud', 0.1)}
+      {S(2.4, 0.6, 'whoosh', 0.09)}
+      {S(2.9, 0.5, 'thud', 0.1)}
       {[3.25, 4.2, 5.15].map((d) => S(d, 0.6, 'crunch', 0.09))}
       {[3.1, 4.05, 5.0].map((d) => S(d, 0.7, 'drag', 0.06))}
       {S(5.9, 1.0, 'drag', 0.08)}
@@ -575,7 +619,7 @@ export const Shelter: React.FC = () => {
       {S(94.35, 0.6, 'squeak', 0.1)}
       {[53.9, 56.7].map((d) => S(d, 0.6, 'crunch', 0.08))}
 
-      {!showAv && !(t >= 6.9 && t < 8.1) && (
+      {!showAv && (
         <svg width={1080} height={1920} viewBox="0 0 1080 1920" style={{position: 'absolute', left: 0, top: 0}}>
           <SkierDefs />
           <g transform={`translate(540 960) scale(${cam.s}) translate(${-cam.fx} ${-cam.fy})`}>
@@ -583,7 +627,6 @@ export const Shelter: React.FC = () => {
           </g>
         </svg>
       )}
-      {t >= 6.9 && t < 8.1 && <TopView t={t} />}
       {showAv && (
         <AbsoluteFill>
           <svg width={1080} height={1920} viewBox="0 0 1080 1920">
