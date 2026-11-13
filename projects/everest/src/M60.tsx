@@ -1,7 +1,5 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
-import {AutoSub} from './AutoSub';
-import subsM from './subs_m60.json';
 import {ramp} from './Everest';
 import {clamp, ease, lerp, rnd, mixc, Tx, Glow, Snow, E, P, TempHud, Person, ILYA_OUT, ILYA_IN, DED_IN, DED_OUT, MAX_OUT, poseStand, poseWalk, poseSit, poseCarry, poseShiver, poseReach, Pose, Look} from './M60Base';
 import {Skyline, TrafficLight, CityTop, Jam, Supermarket, GasStation, StreetDE, Airport, DotMap, EuropeMap} from './M60City';
@@ -10,7 +8,8 @@ import {Village, OldHouse, CharSpec, ILYA_HOME_X, SHED_X, CAR_X} from './M60Vill
 import {Kitchen, Room, Cellar, Shed, TableTop} from './M60Rooms';
 
 export const FPSM = 30;
-export const DURATIONM = 490.0;
+const SPEED = 0.92;
+export const DURATIONM = 490.0 / SPEED;
 const KEYS = (k: [number, number][], t: number) => {
   if (t <= k[0][0]) return k[0][1];
   for (let i = 0; i < k.length - 1; i++) if (t < k[i + 1][0]) return lerp(k[i][1], k[i + 1][1], (t - k[i][0]) / (k[i + 1][0] - k[i][0]));
@@ -492,7 +491,7 @@ const dark = darkAt;
 
 export const M60: React.FC = () => {
   const frame = useCurrentFrame();
-  const t = frame / FPSM;
+  const t = (frame / FPSM) * SPEED;
   const idx = SH.findIndex((s) => t >= s.a && t < s.b);
   const sh = SH[Math.max(0, idx)];
   const temp = tempAt(t);
@@ -500,11 +499,11 @@ export const M60: React.FC = () => {
   const hudMode = sh.hud ?? 'out';
   const hudSc = ['village', 'shed', 'kitchen', 'room', 'cellar', 'oldhouse'].includes(sh.sc) && t >= 35.4 && hudMode !== 'none';
   const SFX = (a: number, d: number, src: string, v: number | ((f: number) => number)) => (
-    <Sequence key={`${src}${a}`} from={Math.round(a * FPSM)} durationInFrames={Math.round(d * FPSM)}>
+    <Sequence key={`${src}${a}`} from={Math.round((a / SPEED) * FPSM)} durationInFrames={Math.round(d * FPSM)}>
       <Audio src={staticFile(`sfx/${src}.mp3`)} volume={v} />
     </Sequence>
   );
-  const rampT = (pts: [number, number][]) => ramp(pts);
+  const rampT = (pts: [number, number][]) => ramp(pts.map(([a, v]) => [a / SPEED, v] as [number, number]));
   const music = rampT([[0, 0.055], [27.5, 0.055], [28.6, 0.0], [35.5, 0.0], [36.5, 0.05], [129.3, 0.05], [129.9, 0.012], [135.6, 0.012], [136.5, 0.05], [258.0, 0.05], [259.0, 0], [262.5, 0], [264.5, 0.035], [319.0, 0.035], [319.65, 0], [324, 0], [326, 0.03], [392.2, 0.03], [392.6, 0], [396, 0], [398, 0.03], [425, 0.035], [477.2, 0.035], [478.8, 0], [490, 0]]);
   const wind = rampT([[0, 0.07], [35, 0.07], [36, 0.05], [180.5, 0.05], [182, 0.12], [190, 0.1], [259, 0.06], [260, 0.0], [262.5, 0.03], [320, 0.04], [322.2, 0.02], [324, 0.06], [330, 0.1], [365.5, 0.14], [368, 0.07], [392, 0.1], [430, 0.04], [478, 0.03], [488.3, 0]]);
   const hum = rampT([[0, 0.07], [28, 0.07], [28.6, 0.02], [34, 0.02], [35.5, 0], [259, 0], [260.3, 0.05], [320, 0.05], [322, 0], [412, 0], [414, 0.05], [477, 0.05], [478.8, 0], [482.2, 0.05], [484.5, 0.03], [488.2, 0], [490, 0]]);
@@ -533,8 +532,8 @@ export const M60: React.FC = () => {
   const fadeBlack = t >= 488.24 || (t >= 259.7 && t < 260.35) || (t >= 33.8 && t < 35.45) ? 1 : 0;
   return (
     <AbsoluteFill style={{backgroundColor: '#000'}}>
-      <Audio src={staticFile('voice10.mp3')} volume={1} />
-      <Audio src={staticFile('sfx/m60.mp3')} volume={music} />
+      <Audio src={staticFile('voice10s.mp3')} volume={1} />
+      <Audio src={staticFile('sfx/m60.mp3')} volume={music} loop />
       <Audio src={staticFile('sfx/wind.mp3')} volume={wind} loop />
       <Audio src={staticFile('sfx/drone.mp3')} volume={hum} loop />
       <Audio src={staticFile('sfx/fire.mp3')} volume={fire} loop />
@@ -550,7 +549,6 @@ export const M60: React.FC = () => {
         </AbsoluteFill>
       )}
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(4,8,18,0.5) 100%)'}} />
-      <AutoSub t={t} subs={subsM as any} fs={58} pb={64} w={1500} />
       <AbsoluteFill style={{backgroundColor: '#000', opacity: fadeBlack}} />
     </AbsoluteFill>
   );
