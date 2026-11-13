@@ -181,7 +181,7 @@ export const GreenDoor: React.FC<{t: number; open: number}> = ({t, open}) => (
 );
 // ---------------- station exterior ----------------
 export const StationExt: React.FC<{t: number; dawn?: number; car?: boolean; plaque?: boolean; door?: number}> = ({t, dawn = 0, car = true, door = 0}) => {
-  const sky0 = mixc('#05080f', '#7a8aa8', dawn), sky1 = mixc('#0c1424', '#e8c8a8', dawn);
+  const sky0 = mixc('#0e1728', '#7a8aa8', dawn), sky1 = mixc('#1c2a44', '#e8c8a8', dawn);
   return (
     <g>
       <defs><linearGradient id="stsk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={sky0} /><stop offset="1" stopColor={sky1} /></linearGradient></defs>
