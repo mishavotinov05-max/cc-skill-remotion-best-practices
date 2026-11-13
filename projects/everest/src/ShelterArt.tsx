@@ -338,3 +338,40 @@ export const Avalanche: React.FC<{t: number; a: number; b: number}> = ({t, a, b}
     </g>
   );
 };
+
+// avalanche as pure sweeping snow (no mountains)
+export const SnowRush: React.FC<{t: number; a: number; b: number}> = ({t, a, b}) => {
+  const p = P(t, a, b);
+  const f = ease(p);
+  return (
+    <g>
+      <defs>
+        <linearGradient id="rushbg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#c7d9ee" />
+          <stop offset="1" stopColor="#f2f8ff" />
+        </linearGradient>
+      </defs>
+      <rect width={1080} height={1920} fill="url(#rushbg)" />
+      {Array.from({length: 26}).map((_, i) => {
+        const sp = 1400 + rnd(i) * 1800;
+        const y = ((rnd(i + 3) * 2300 + (t - a) * sp) % 2300) - 200;
+        const x = rnd(i + 9) * 1200 - 60 - (t - a) * 120;
+        return <path key={i} d={`M${x} ${y} l-120 60`} stroke="#fff" strokeWidth={10 + rnd(i + 1) * 26} strokeLinecap="round" opacity={0.45 + 0.4 * f} />;
+      })}
+      {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+        const k = clamp(f * 1.4 - i * 0.1);
+        const x = 100 + i * 150 + Math.sin(t * 3 + i) * 40;
+        const y = -200 + k * 2300;
+        const r = 170 + (i % 3) * 60;
+        return (
+          <g key={i} opacity={Math.min(1, k * 4)}>
+            <ellipse cx={x} cy={y} rx={r * 1.3} ry={r * 0.8} fill="#fff" opacity={0.92} />
+            {Array.from({length: 6}).map((_, q) => <circle key={q} cx={x + (rnd(q + i * 5) - 0.5) * r * 2} cy={y - r * 0.4 - rnd(q + 2 + i) * r * 0.5} r={r * (0.3 + rnd(q + 7 + i) * 0.3)} fill="#fff" />)}
+          </g>
+        );
+      })}
+      {Array.from({length: 90}).map((_, i) => <circle key={i} cx={rnd(i) * 1080} cy={((rnd(i + 5) * 1920 + (t - a) * 900 * (0.5 + rnd(i + 8))) % 2000) - 40} r={3 + rnd(i + 2) * 8} fill="#fff" opacity={0.7} />)}
+      <rect width={1080} height={1920} fill="#fff" opacity={Math.max(0, (f - 0.7) * 3)} />
+    </g>
+  );
+};
