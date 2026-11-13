@@ -9,7 +9,7 @@ import {NightView2, PhotoArt, ForestRoad, VAL_IN} from './M61Art';
 import {ANDREI, Mon, ControlRoom, StationMap, Countdown, SpeakerScene, LeverCabinet, RedButton, Corridor, StairsDown, GreenDoor, StationExt, Plaque, SnowMobile, RideScene, Garage, GearClose, HouseCut, Diagram, ArchiveMon, PhoneMsg, DistantRed} from './M62Art';
 
 export const FPS62 = 30;
-const SPEED = 0.85;
+const SPEED = 0.92;
 const END_WORLD = 664.9;
 export const DUR62 = END_WORLD / SPEED;
 const ILYA_SC: Look = {...ILYA_OUT, scarf: '#8a8f9a'};
