@@ -38,7 +38,7 @@ const NightView: React.FC<{t: number; old: number; cx?: number}> = ({t, old}) =>
 );
 const DoorOpen: React.FC<{t: number; open: number}> = ({t, open}) => (
   <g>
-    <rect x={-100} y={-100} width={1300} height={2200} fill="#2a2018" />
+    <rect x={-4000} y={-100} width={9300} height={2200} fill="#2a2018" />
     <rect x={200} y={300} width={680} height={1400} fill={mixc('#1c1812', '#dfe9f7', open * 0.9)} />
     {open > 0.1 && Array.from({length: 90}).map((_, i) => {
       const tt = ((t * 1.4 + rnd(i) * 2) % 1);
@@ -52,17 +52,17 @@ const DoorOpen: React.FC<{t: number; open: number}> = ({t, open}) => (
 );
 const Door2: React.FC<{t: number; closed: number}> = ({t, closed}) => (
   <g>
-    <rect x={-100} y={-100} width={1300} height={2200} fill="#4a3a30" />
+    <rect x={-4000} y={-100} width={9300} height={2200} fill="#4a3a30" />
     {Array.from({length: 14}).map((_, i) => <rect key={i} x={-100 + i * 90} y={-100} width={3} height={1700} fill="#000" opacity={0.2} />)}
     <rect x={260} y={420} width={560} height={1200} fill="#14100c" />
     <g transform="translate(260 420)"><path d={`M0 0 L${lerp(-200, 560, closed)} ${lerp(30, 0, closed)} L${lerp(-200, 560, closed)} ${lerp(1170, 1200, closed)} L0 1200 Z`} fill="#6a4a30" stroke="#2a1a0e" strokeWidth={6} /></g>
     <circle cx={lerp(60, 520, closed)} cy={1000} r={18} fill="#d9d9d9" />
-    <rect x={-100} y={1620} width={1300} height={500} fill="#3a2a1c" />
+    <rect x={-4000} y={1620} width={9300} height={500} fill="#3a2a1c" />
   </g>
 );
 const Hands: React.FC<{t: number}> = ({t}) => (
   <g>
-    <rect x={-100} y={-100} width={1300} height={2200} fill="#1a2234" />
+    <rect x={-4000} y={-100} width={9300} height={2200} fill="#1a2234" />
     {[0, 1].map((i) => (
       <g key={i} transform={`translate(${i ? 640 : 220} ${900 + Math.sin(t * 40 + i) * 3})`}>
         <rect x={-60} y={-40} width={240} height={90} rx={44} fill="#08090b" />
@@ -76,7 +76,7 @@ const Hands: React.FC<{t: number}> = ({t}) => (
 );
 const Silh: React.FC<{t: number; label?: string; sub?: string}> = ({t, label, sub}) => (
   <g>
-    <rect x={-100} y={-100} width={1300} height={2200} fill="#141a28" />
+    <rect x={-4000} y={-100} width={9300} height={2200} fill="#141a28" />
     <Glow x={540} y={900} r={700} c="#5a7aa8" o={0.35} id="slg" />
     <g transform="translate(540 1500)"><Person x={0} y={0} look={ILYA_OUT} pose={poseStand({nod: 0})} s={2.2} /></g>
     {label && <Tx x={540} y={380} size={110} fill="#fff" ls={6}>{label}</Tx>}
@@ -117,12 +117,12 @@ const SH: Shot[] = [
   S(58.4, 62.2, 'radio', [540, 960, 1.3, 540, 960, 1.0], {needle: [0.55, 0.62, 58.4, 62.2], noise: 0.5}, {hud: 'none'}),
   S(62.2, 68.3, 'eumap', [560, 840, 0.9, 540, 800, 1.15], {drop: [62.2, 67.5]}, {hud: 'none'}),
   S(68.3, 70.7, 'de', [700, 1000, 1.1, 850, 1000, 1.25], {}, {hud: 'none'}),
-  S(70.7, 73.1, 'airport', [700, 900, 1.2, 800, 940, 1.0], {}, {hud: 'none'}),
+  S(70.7, 73.1, 'airport', [700, 820, 1.2, 800, 860, 1.0], {}, {hud: 'none'}),
   S(73.1, 77.3, 'supermarket', [700, 1000, 1.0, 880, 1000, 1.3], {}, {hud: 'none'}),
   S(77.3, 81.0, 'kitchen', [800, 1000, 1.1, 700, 1000, 1.3], {k: 'doubt'}),
   S(81.0, 84.0, 'kitchen', [1150, 1050, 1.2, 1150, 1100, 1.6], {k: 'ded'}),
   S(84.0, 88.1, 'kitchen', [900, 1050, 1.1, 1000, 1050, 1.3], {k: 'point'}),
-  S(88.1, 91.6, 'silh', [540, 1100, 1.0, 540, 1050, 1.12], {label: 'ИЛЬЯ', sub: '19 лет'}, {hud: 'none'}),
+  S(88.1, 91.6, 'silh', [540, 900, 1.0, 540, 900, 1.12], {label: 'ИЛЬЯ', sub: '19 лет'}, {hud: 'none'}),
   S(91.6, 97.2, 'village', [1750, 650, 0.55, 1750, 700, 0.62], {others: 0.4}),
   S(97.2, 99.15, 'village', [800, 1000, 1.2, 2000, 1000, 1.2], {others: 0.4}),
   S(99.15, 101.0, 'village', [2660, 1100, 1.8, 2700, 1100, 2.1], {others: 0.4}),
@@ -333,45 +333,45 @@ const SceneR: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
   const dark = darkAt(t);
   const blizz = p.blizz ?? KEYS([[35, 0.2], [190, 0.5], [330, 1]], t);
   switch (sh.sc) {
-    case 'black': return <rect x={-500} y={-500} width={2500} height={3000} fill="#000" />;
+    case 'black': return <rect x={-4000} y={-500} width={10500} height={3000} fill="#000" />;
     case 'blackmap': {
       const k = E(t, 0, 0.8);
       return (
         <g>
-          <rect x={-500} y={-500} width={2500} height={3000} fill="#000" />
+          <rect x={-4000} y={-500} width={10500} height={3000} fill="#000" />
           <DotMap t={t} reveal={E(t, 1.0, 3.4)} />
           <Tx x={540} y={900} size={190} fill="#fff" o={k} stroke="#000">−60 °C</Tx>
         </g>
       );
     }
-    case 'dotmap': return <g><rect x={-500} y={-500} width={2500} height={3000} fill="#05080f" /><DotMap t={t} reveal={1} /><Tx x={540} y={420} size={120} fill="#9fc4ff" o={0.35}>−60</Tx></g>;
+    case 'dotmap': return <g><rect x={-4000} y={-500} width={10500} height={3000} fill="#05080f" /><DotMap t={t} reveal={1} /><Tx x={540} y={420} size={120} fill="#9fc4ff" o={0.35}>−60</Tx></g>;
     case 'skyline': { const b = p.bo as number[]; return <Skyline t={t} bo={lerp(b[0], b[1], E(t, b[2], b[3]))} cx={lerp(sh.cam[0], sh.cam[3], 0.5)} />; }
     case 'traffic': {
       if (p.tl === 'seq') { const g = t < 13.4 ? 1 : Math.max(0, 1 - (t - 13.4) * 6); const r = t < 13.4 ? 0 : t < 14.9 ? Math.min(1, (t - 13.4) * 6) : Math.max(0, 1 - (t - 14.9) * 12); return <TrafficLight t={t} green={g} red={r} />; }
       const r = t < p.t0 + 0.4 ? 1 : Math.max(0, 1 - (t - p.t0 - 0.4) * 5);
       return <TrafficLight t={t} green={0} red={r} />;
     }
-    case 'jam': return <g><Jam t={t} />{p.snowy && <rect x={-300} y={-300} width={2000} height={2500} fill="#dfe9f7" opacity={0.12} />}</g>;
+    case 'jam': return <g><Jam t={t} />{p.snowy && <rect x={-4000} y={-300} width={10000} height={2500} fill="#dfe9f7" opacity={0.12} />}</g>;
     case 'citytop': { const b = p.prog as number[]; return <CityTop t={t} prog={lerp(b[0], b[1], E(t, b[2], b[3]))} />; }
     case 'gas': return <GasStation t={t} />;
-    case 'supermarket': return <g><Supermarket t={t} />{p.dim && <rect x={-200} y={-200} width={1900} height={2400} fill="#0a1020" opacity={0.35} />}</g>;
+    case 'supermarket': return <g><Supermarket t={t} />{p.dim && <rect x={-4000} y={-200} width={9900} height={2400} fill="#0a1020" opacity={0.35} />}</g>;
     case 'airport': return <Airport t={t} />;
     case 'de': return <StreetDE t={t} />;
     case 'eumap': return <EuropeMap t={t} drop={E(t, p.drop[0], p.drop[1])} />;
-    case 'clock': return <g><rect x={-300} y={-300} width={1700} height={2500} fill="#3a2a1e" />{Array.from({length: 14}).map((_, i) => <rect key={i} x={-100 + i * 90} y={-300} width={3} height={2500} fill="#000" opacity={0.2} />)}<ClockArt x={540} y={900} s={1.5} h={p.h ?? 8} m={p.m ?? 0} t={t} /></g>;
+    case 'clock': return <g><rect x={-4000} y={-300} width={9700} height={2500} fill="#3a2a1e" />{Array.from({length: 14}).map((_, i) => <rect key={i} x={-100 + i * 90} y={-300} width={3} height={2500} fill="#000" opacity={0.2} />)}<ClockArt x={540} y={900} s={1.5} h={p.h ?? 8} m={p.m ?? 0} t={t} /></g>;
     case 'thermo': {
       const v = Array.isArray(p.val) ? lerp(p.val[0], p.val[1], E(t, p.val[2], p.val[3])) : p.val;
       const red = t >= (p.hit ?? 9999) ? 1 : 0;
-      return <g><rect x={-300} y={-300} width={1700} height={2500} fill="#8a96a8" /><rect x={-300} y={-300} width={1700} height={2500} fill="#0a1020" opacity={0.25 + dark * 0.3} /><Snow t={t} n={80} speed={200} wind={160} op={0.8} size={1.6} /><OutThermo x={540} y={960} s={2.0} value={v} red={red} t={t} /></g>;
+      return <g><rect x={-4000} y={-300} width={9700} height={2500} fill="#8a96a8" /><rect x={-4000} y={-300} width={9700} height={2500} fill="#0a1020" opacity={0.25 + dark * 0.3} /><Snow t={t} n={80} speed={200} wind={160} op={0.8} size={1.6} /><OutThermo x={540} y={960} s={2.0} value={v} red={red} t={t} /></g>;
     }
     case 'radio': {
       const nd = p.needle as number[];
       const needle = p.dead ? 0.66 : lerp(nd[0], nd[1], E(t, nd[2], nd[3]));
-      return <g><rect x={-300} y={-300} width={1700} height={2500} fill="#2a1e16" /><Glow x={540} y={900} r={900} c="#ffb04a" o={p.dead ? 0 : 0.25} id="rbg" /><Radio x={540} y={960} s={2.3} t={t} on={p.dead ? 0 : 1} needle={needle} noise={p.noise} /></g>;
+      return <g><rect x={-4000} y={-300} width={9700} height={2500} fill="#2a1e16" /><Glow x={540} y={900} r={900} c="#ffb04a" o={p.dead ? 0 : 0.25} id="rbg" /><Radio x={540} y={960} s={2.3} t={t} on={p.dead ? 0 : 1} needle={needle} noise={p.noise} /></g>;
     }
     case 'phone': {
       const bars = p.bars ? lerp(p.bars[0], p.bars[1], E(t, p.bars[2] ?? 0, p.bars[3] ?? 1)) : 4;
-      return <g><rect x={-300} y={-300} width={1700} height={2500} fill="#0a0e18" /><Glow x={540} y={960} r={800} c="#5a7aa8" o={0.25} id="phg" /><Phone x={540} y={960} s={2.1} mode={p.mode} t={t} bars={Math.round(bars)} />{p.rec && <ViewFinder t={t} />}</g>;
+      return <g><rect x={-4000} y={-300} width={9700} height={2500} fill="#0a0e18" /><Glow x={540} y={960} r={800} c="#5a7aa8" o={0.25} id="phg" /><Phone x={540} y={960} s={2.1} mode={p.mode} t={t} bars={Math.round(bars)} />{p.rec && <ViewFinder t={t} />}</g>;
     }
     case 'tvfull': {
       let mode = tvOf(p, t);
@@ -381,9 +381,9 @@ const SceneR: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
       const bn = p.banner === undefined ? 0 : p.banner === 0 ? 0 : p.banner === 1 ? 1 : E(t, p.banner, p.banner + 0.3);
       return (
         <g>
-          <rect x={-300} y={-300} width={1700} height={2500} fill="#0c0f16" />
+          <rect x={-4000} y={-300} width={9700} height={2500} fill="#0c0f16" />
           <g transform="translate(150 420) scale(2.0)" opacity={flick}><TvScreen2 mode={mode} t={t} banner={bn} turn={turn} /></g>
-          {gl && <rect x={-100} y={700 + (t * 313) % 400} width={1300} height={30} fill="#fff" opacity={0.4} />}
+          {gl && <rect x={-4000} y={700 + (t * 313) % 400} width={9300} height={30} fill="#fff" opacity={0.4} />}
           <Glow x={540} y={760} r={900} c="#9fc4ff" o={0.18 * flick} id="tvbg" />
         </g>
       );
@@ -393,7 +393,7 @@ const SceneR: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
       const on = p.off ? (t < 261.55 ? (Math.sin(t * 50) > 0 ? 1 : 0.1) : 0) : (t < 260.9 ? 1 : flick);
       return (
         <g>
-          <rect x={-300} y={-300} width={2500} height={2500} fill={mixc('#12141c', '#7a6a56', on * 0.5)} />
+          <rect x={-4000} y={-300} width={10500} height={2500} fill={mixc('#12141c', '#7a6a56', on * 0.5)} />
           <line x1={850} y1={-300} x2={850} y2={540} stroke="#222" strokeWidth={5} />
           <circle cx={850} cy={580} r={44} fill={on > 0.2 ? '#fff2b0' : '#4a4a52'} />
           {on > 0.05 && <Glow x={850} y={580} r={900} c="#ffe9a0" o={0.6 * on} id="bgl" />}
@@ -446,8 +446,8 @@ const SceneR: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
       return (
         <g>
           <Village t={t} dark={p.dark ?? darkAt(t)} others={p.nohouses ? 0 : oth} old={stillOld} snowI={blizz} hood={p.hood || (t > 112.1 && t < 114.8)} cx={lerp(sh.cam[0], sh.cam[3], 0.5)} chars={chars} drifts={p.drifts ?? (t > 377 ? 0.4 : 0)} />
-          {p.nohouses && <rect x={-400} y={-400} width={4400} height={2800} fill="#0c1424" opacity={0.55} />}
-          {p.dim && <rect x={-400} y={-400} width={4400} height={2800} fill="#05080f" opacity={0.3} />}
+          {p.nohouses && <rect x={-4000} y={-400} width={12400} height={2800} fill="#0c1424" opacity={0.55} />}
+          {p.dim && <rect x={-4000} y={-400} width={12400} height={2800} fill="#05080f" opacity={0.3} />}
           {p.vf && <ViewFinder t={t} />}
         </g>
       );
@@ -462,6 +462,7 @@ const SceneR: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
 const TvScreen2: React.FC<{mode: TvMode; t: number; banner: number; turn: number}> = ({mode, t, banner, turn}) => <TvSet x={0} y={0} s={1} mode={mode} t={t} banner={banner} turn={turn} />;
 const SceneTint: React.FC<{t: number}> = ({t}) => null;
 
+const FMAP: Record<string, number> = new Proxy({radio: 1.0, tvfull: 0.95, clock: 0.9, bulb: 1.0, dotmap: 0.9, blackmap: 0.9, thermo: 0.5, phone: 0.55, traffic: 0.6, citytop: 0.55, door2: 0.6, dooropen: 0.6, silh: 0.6, airport: 0.7} as any, {get: (o: any, k: string) => o[k] ?? 0.7});
 const ShotView: React.FC<{sh: Shot; t: number; hudOn: boolean}> = ({sh, t, hudOn}) => {
   const k = ease(clamp((t - sh.a) / Math.max(0.01, sh.b - sh.a)));
   const c = sh.cam;
@@ -472,14 +473,14 @@ const ShotView: React.FC<{sh: Shot; t: number; hudOn: boolean}> = ({sh, t, hudOn
   const sn = snowN(t);
   return (
     <AbsoluteFill>
-      <svg width={1080} height={1920} viewBox="0 0 1080 1920" style={{position: 'absolute', left: 0, top: 0}}>
-        <g transform={`translate(${540 + dx} ${960 + dy}) scale(${s}) translate(${-fx} ${-fy})`}>
+      <svg width={1920} height={1080} viewBox="0 0 1920 1080" style={{position: 'absolute', left: 0, top: 0}}>
+        <g transform={`translate(${960 + dx} ${540 + dy}) scale(${s * FMAP[sh.sc]}) translate(${-fx} ${-fy})`}>
           <SceneR sh={sh} t={t} />
         </g>
         {(sh.sc === 'village' || sh.sc === 'shed') && (
           <g>
-            <Snow t={t} n={Math.round(sn * 0.7)} speed={90} wind={70} op={0.7} size={1.0} />
-            <Snow t={t + 5} n={Math.round(sn * 0.35)} speed={260} wind={200} op={0.75} size={2.4} />
+            <Snow t={t} n={Math.round(sn * 1.1)} speed={90} wind={70} op={0.7} size={1.0} w={1920} h={1080} />
+            <Snow t={t + 5} n={Math.round(sn * 0.5)} speed={260} wind={200} op={0.75} size={2.4} w={1920} h={1080} />
           </g>
         )}
         {outdoor && sh.sc === 'village' && dark(t) > 0.5 && null}
@@ -543,13 +544,13 @@ export const M60: React.FC = () => {
       {sh.sc === 'black' ? null : null}
       {hudSc && (
         <AbsoluteFill>
-          <svg width={1080} height={1920} viewBox="0 0 1080 1920">
-            <TempHud value={hudMode === 'home' ? 18 : temp} t={t} mode={hudMode === 'home' ? 'home' : 'out'} red={red} />
+          <svg width={1920} height={1080} viewBox="0 0 1920 1080">
+            <g transform="translate(0 -58)"><TempHud value={hudMode === 'home' ? 18 : temp} t={t} mode={hudMode === 'home' ? 'home' : 'out'} red={red} /></g>
           </svg>
         </AbsoluteFill>
       )}
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(4,8,18,0.5) 100%)'}} />
-      <AutoSub t={t} subs={subsM as any} />
+      <AutoSub t={t} subs={subsM as any} fs={58} pb={64} w={1500} />
       <AbsoluteFill style={{backgroundColor: '#000', opacity: fadeBlack}} />
     </AbsoluteFill>
   );

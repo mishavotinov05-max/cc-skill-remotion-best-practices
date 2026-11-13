@@ -12,9 +12,9 @@ export const Kitchen: React.FC<KP> = ({t, lamp, power, flame, curtain, tv, tvBan
   const dark = mixc('#7a6a56', '#1b1b26', 1 - lightK);
   return (
     <g>
-      <rect x={-200} y={-200} width={KW + 400} height={2400} fill={dark} />
+      <rect x={-4000} y={-200} width={KW + 8000} height={2400} fill={dark} />
       {Array.from({length: 22}).map((_, i) => <rect key={i} x={-200 + i * 90} y={-200} width={3} height={1750} fill="#000" opacity={0.18} />)}
-      <rect x={-200} y={FLOORK} width={KW + 400} height={700} fill={mixc('#6a4a30', '#17120f', 1 - lightK)} />
+      <rect x={-4000} y={FLOORK} width={KW + 8000} height={700} fill={mixc('#6a4a30', '#17120f', 1 - lightK)} />
       {Array.from({length: 10}).map((_, i) => <rect key={i} x={-200} y={FLOORK + i * 60} width={KW + 400} height={3} fill="#000" opacity={0.25} />)}
       {/* window with outdoor blizzard */}
       <g>
@@ -72,8 +72,8 @@ export const Kitchen: React.FC<KP> = ({t, lamp, power, flame, curtain, tv, tvBan
         {bulb > 0.05 && <Glow x={760} y={330} r={760} c="#ffe9a0" o={0.5 * bulb} id="kbulb" />}
       </g>
       <Chars list={chars} />
-      {cold > 0 && <rect x={-200} y={-200} width={KW + 400} height={2400} fill="#4a7ab8" opacity={0.16 * cold} />}
-      <rect x={-200} y={-200} width={KW + 400} height={2400} fill="#06080f" opacity={power * (1 - Math.max(bulb, flame * 0.8)) * 0.35} />
+      {cold > 0 && <rect x={-4000} y={-200} width={KW + 8000} height={2400} fill="#4a7ab8" opacity={0.16 * cold} />}
+      <rect x={-4000} y={-200} width={KW + 8000} height={2400} fill="#06080f" opacity={power * (1 - Math.max(bulb, flame * 0.8)) * 0.35} />
     </g>
   );
 };
@@ -81,9 +81,9 @@ export const Kitchen: React.FC<KP> = ({t, lamp, power, flame, curtain, tv, tvBan
 // ---------------- Ilya's room ----------------
 export const Room: React.FC<{t: number; jacket: 'hang' | 'none'; chars?: CharSpec[]; light?: number; boots?: boolean}> = ({t, jacket, chars, light = 0.8, boots = true}) => (
   <g>
-    <rect x={-200} y={-200} width={1900} height={2400} fill={mixc('#2a2a3a', '#7a6a58', light)} />
+    <rect x={-4000} y={-200} width={9900} height={2400} fill={mixc('#2a2a3a', '#7a6a58', light)} />
     {Array.from({length: 20}).map((_, i) => <rect key={i} x={-200 + i * 90} y={-200} width={3} height={1700} fill="#000" opacity={0.15} />)}
-    <rect x={-200} y={1500} width={1900} height={700} fill={mixc('#1a1a22', '#5a4030', light)} />
+    <rect x={-4000} y={1500} width={9900} height={700} fill={mixc('#1a1a22', '#5a4030', light)} />
     {/* window */}
     <rect x={820} y={400} width={300} height={400} fill="#8fa8c8" stroke="#3a2a1c" strokeWidth={14} />
     <Snow t={t} n={30} speed={220} wind={160} op={0.9} w={300} h={400} size={1.4} x0={820} y0={400} />
@@ -106,9 +106,9 @@ export const Room: React.FC<{t: number; jacket: 'hang' | 'none'; chars?: CharSpe
 // ---------------- cellar ----------------
 export const Cellar: React.FC<{t: number; show?: number; chars?: CharSpec[]}> = ({t, show = 1, chars}) => (
   <g>
-    <rect x={-200} y={-200} width={1900} height={2400} fill="#1c1812" />
+    <rect x={-4000} y={-200} width={9900} height={2400} fill="#1c1812" />
     {Array.from({length: 22}).map((_, i) => <rect key={i} x={-200 + i * 90} y={-200} width={4} height={1700} fill="#000" opacity={0.3} />)}
-    <rect x={-200} y={1500} width={1900} height={700} fill="#2a1f16" />
+    <rect x={-4000} y={1500} width={9900} height={700} fill="#2a1f16" />
     {/* hatch light */}
     <polygon points="1300,-200 1500,-200 1380,1500 1160,1500" fill="#cfd8e4" opacity={0.1} />
     <rect x={1330} y={300} width={22} height={1200} fill="#4a3220" /><rect x={1400} y={300} width={22} height={1200} fill="#4a3220" />
@@ -139,8 +139,8 @@ export const Cellar: React.FC<{t: number; show?: number; chars?: CharSpec[]}> = 
 // ---------------- shed ----------------
 export const Shed: React.FC<{t: number; wood: number; chars?: CharSpec[]; dark?: number}> = ({t, wood, chars, dark = 0.3}) => (
   <g>
-    <rect x={-200} y={-200} width={1900} height={2400} fill={mixc('#8a93a3', '#10182a', dark)} />
-    <rect x={-200} y={1500} width={1900} height={700} fill={mixc('#dbe4f2', '#7f93b3', dark)} />
+    <rect x={-4000} y={-200} width={9900} height={2400} fill={mixc('#8a93a3', '#10182a', dark)} />
+    <rect x={-4000} y={1500} width={9900} height={700} fill={mixc('#dbe4f2', '#7f93b3', dark)} />
     <rect x={100} y={560} width={1100} height={940} fill="#4f3a2a" />
     {Array.from({length: 20}).map((_, i) => <rect key={i} x={100 + i * 58} y={560} width={4} height={940} fill="#000" opacity={0.3} />)}
     <path d="M60 560 L650 400 L1240 560 Z" fill="#eef4fc" />
@@ -159,7 +159,7 @@ export const Shed: React.FC<{t: number; wood: number; chars?: CharSpec[]; dark?:
 // ---------------- top-down table ----------------
 export const TableTop: React.FC<{t: number; n: number}> = ({t, n}) => (
   <g>
-    <rect x={-200} y={-200} width={1500} height={2400} fill="#3a2818" />
+    <rect x={-4000} y={-200} width={9500} height={2400} fill="#3a2818" />
     {Array.from({length: 14}).map((_, i) => <rect key={i} x={-200 + i * 110} y={-200} width={4} height={2400} fill="#000" opacity={0.25} />)}
     <rect x={90} y={250} width={900} height={1400} rx={12} fill="#6a4a2a" stroke="#2a1a0e" strokeWidth={10} />
     {Array.from({length: 22}).map((_, i) => {

@@ -7,7 +7,7 @@ type B = {x: number; w: number; h: number; col: string};
 const layer = (n: number, seed: number, wmin: number, wr: number, hmin: number, hr: number, col: string): B[] => {
   const out: B[] = [];
   const step = WORLD_W / n;
-  for (let i = 0; i < n; i++) out.push({x: i * step + (rnd(i + seed) - 0.5) * step * 0.3, w: wmin + rnd(i + seed + 10) * wr, h: hmin + rnd(i + seed + 20) * hr, col});
+  for (let i = -Math.round(n * 0.6); i < n + Math.round(n * 0.6); i++) out.push({x: i * step + (rnd(i + seed + 100) - 0.5) * step * 0.3, w: wmin + rnd(i + seed + 10) * wr, h: hmin + rnd(i + seed + 20) * hr, col});
   return out;
 };
 const LAYERS = [
@@ -23,11 +23,11 @@ export const Skyline: React.FC<{t: number; bo: number; cx?: number; ground?: num
         <stop offset="1" stopColor="#223149" />
       </linearGradient>
     </defs>
-    <rect x={-200} y={-300} width={WORLD_W + 400} height={2400} fill="url(#skyc)" />
+    <rect x={-4000} y={-300} width={WORLD_W + 8000} height={2400} fill="url(#skyc)" />
     {LAYERS.map((L, li) => (
       <g key={li} transform={`translate(${-(cx - 1200) * L.k} 0)`}>
         {L.bs.map((b, bi) => {
-          const th = (b.x / WORLD_W) * 0.78 + rnd(bi + li * 50) * 0.14 + 0.06;
+          const th = clamp(b.x / WORLD_W, -0.2, 1.2) * 0.78 + rnd(bi + li * 50) * 0.14 + 0.06;
           const cols = Math.floor(b.w / (L.ww + 10));
           const rows = Math.floor(b.h / (L.wh + 12));
           return (
@@ -53,11 +53,11 @@ export const Skyline: React.FC<{t: number; bo: number; cx?: number; ground?: num
         })}
       </g>
     ))}
-    <rect x={-200} y={ground} width={WORLD_W + 400} height={500} fill="#101726" />
-    <rect x={-200} y={ground} width={WORLD_W + 400} height={12} fill="#2c3a55" />
+    <rect x={-4000} y={ground} width={WORLD_W + 8000} height={500} fill="#101726" />
+    <rect x={-4000} y={ground} width={WORLD_W + 8000} height={12} fill="#2c3a55" />
     {/* street lamps */}
-    {Array.from({length: 12}).map((_, i) => {
-      const x = 100 + i * 200;
+    {Array.from({length: 26}).map((_, i) => {
+      const x = -1300 + i * 200;
       const th = (x / WORLD_W) * 0.78 + 0.12;
       const on = bo < th ? 1 : 0;
       return (
@@ -69,8 +69,8 @@ export const Skyline: React.FC<{t: number; bo: number; cx?: number; ground?: num
       );
     })}
     {/* cars with headlights always on */}
-    {Array.from({length: 7}).map((_, i) => {
-      const x = ((i * 380 + t * (30 + i * 6)) % (WORLD_W + 200)) - 100;
+    {Array.from({length: 14}).map((_, i) => {
+      const x = ((i * 380 + t * (30 + i * 6)) % (WORLD_W + 2800)) - 1400;
       return (
         <g key={i} transform={`translate(${x} ${ground + 70 + (i % 2) * 50})`}>
           <rect x={-60} y={-34} width={120} height={34} rx={10} fill="#1c2434" />
@@ -87,7 +87,7 @@ export const Skyline: React.FC<{t: number; bo: number; cx?: number; ground?: num
 // ---------------- traffic light closeup ----------------
 export const TrafficLight: React.FC<{t: number; green: number; red: number; yellow?: number}> = ({t, green, red, yellow = 0}) => (
   <g>
-    <rect x={-100} y={-100} width={1300} height={2200} fill="#0e1524" />
+    <rect x={-4000} y={-100} width={9300} height={2200} fill="#0e1524" />
     {Array.from({length: 14}).map((_, i) => <circle key={i} cx={rnd(i) * 1080} cy={300 + rnd(i + 3) * 1000} r={30 + rnd(i + 5) * 60} fill={['#ffd27a', '#bfe0ff', '#ff6a4a'][i % 3]} opacity={0.08 + 0.1 * ((green + red) > 0 ? 1 : 0.3)} />)}
     <rect x={500} y={900} width={80} height={1100} fill="#1a2234" />
     <rect x={380} y={200} width={320} height={780} rx={40} fill="#0a0d14" stroke="#2a3246" strokeWidth={10} />
@@ -110,7 +110,7 @@ export const TrafficLight: React.FC<{t: number; green: number; red: number; yell
 // ---------------- top-down city, lamps going out ----------------
 export const CityTop: React.FC<{t: number; prog: number}> = ({t, prog}) => (
   <g>
-    <rect x={-300} y={-300} width={1700} height={2500} fill="#0b1120" />
+    <rect x={-4000} y={-300} width={9700} height={2500} fill="#0b1120" />
     {Array.from({length: 4}).map((_, r) => Array.from({length: 3}).map((_, c) => (
       <g key={`${r}${c}`}>
         <rect x={c * 380 + 70} y={r * 540 + 60} width={290} height={430} fill={['#141c2e', '#101728', '#18213a'][(r + c) % 3]} />
@@ -159,15 +159,15 @@ const Car: React.FC<{x: number; y: number; col: string; door?: boolean; s?: numb
 );
 export const StreetBase: React.FC<{t: number; sky?: string; ground?: number; children?: React.ReactNode}> = ({t, sky = '#3a4660', ground = 1450, children}) => (
   <g>
-    <rect x={-300} y={-300} width={2000} height={2500} fill={sky} />
-    {[0, 1, 2, 3].map((i) => (
+    <rect x={-4000} y={-300} width={10000} height={2500} fill={sky} />
+    {[-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((i) => (
       <g key={i}>
-        <rect x={-100 + i * 420} y={ground - 900 - (i % 2) * 160} width={380} height={900 + (i % 2) * 160 + 400} fill={['#232c42', '#2b354e', '#1f283c', '#27304a'][i]} />
+        <rect x={-100 + i * 420} y={ground - 900 - (i % 2) * 160} width={380} height={900 + (i % 2) * 160 + 400} fill={['#232c42', '#2b354e', '#1f283c', '#27304a'][((i % 4) + 4) % 4]} />
         {Array.from({length: 18}).map((_, k) => <rect key={k} x={-80 + i * 420 + (k % 3) * 120} y={ground - 860 - (i % 2) * 160 + Math.floor(k / 3) * 130} width={70} height={90} fill={rnd(k + i * 9) > 0.7 ? '#ffd27a' : '#141a2a'} opacity={0.85} />)}
       </g>
     ))}
-    <rect x={-300} y={ground} width={2000} height={600} fill="#2e3548" />
-    <rect x={-300} y={ground} width={2000} height={10} fill="#c9d6e8" opacity={0.6} />
+    <rect x={-4000} y={ground} width={10000} height={600} fill="#2e3548" />
+    <rect x={-4000} y={ground} width={10000} height={10} fill="#c9d6e8" opacity={0.6} />
     {Array.from({length: 8}).map((_, i) => <rect key={i} x={i * 240 - 40} y={ground + 140} width={130} height={10} fill="#d9d9d9" opacity={0.6} />)}
     {children}
     <Snow t={t} n={70} speed={110} wind={70} op={0.75} w={1700} h={1920} size={1.3} />
@@ -187,8 +187,8 @@ export const Supermarket: React.FC<{t: number}> = ({t}) => {
   const fl = Math.sin(t * 13) > 0.85 ? 0.6 : 1;
   return (
     <g>
-      <rect x={-200} y={-200} width={1800} height={2400} fill="#cfd8e4" />
-      <rect x={-200} y={1400} width={1800} height={700} fill="#9aa5b6" />
+      <rect x={-4000} y={-200} width={9800} height={2400} fill="#cfd8e4" />
+      <rect x={-4000} y={1400} width={9800} height={700} fill="#9aa5b6" />
       {[0, 1, 2].map((r) => <rect key={r} x={-200} y={1400 + r * 90} width={1800} height={3} fill="#8794a8" />)}
       {[0, 1, 2].map((i) => (
         <g key={i} transform={`translate(${60 + i * 520} 0)`}>
@@ -203,14 +203,14 @@ export const Supermarket: React.FC<{t: number}> = ({t}) => {
         {Array.from({length: 6}).map((_, k) => <line key={k} x1={-60 + k * 24} y1={-36} x2={-60 + k * 24} y2={36} stroke="#7a1f16" strokeWidth={4} />)}
       </g>
       {[0, 1, 2].map((i) => <rect key={i} x={120 + i * 520} y={160} width={380} height={24} rx={8} fill="#fff" opacity={0.9 * fl} />)}
-      <rect x={-200} y={-200} width={1800} height={2400} fill="#000" opacity={0.18 + (1 - fl) * 0.4} />
+      <rect x={-4000} y={-200} width={9800} height={2400} fill="#000" opacity={0.18 + (1 - fl) * 0.4} />
     </g>
   );
 };
 export const GasStation: React.FC<{t: number}> = ({t}) => (
   <StreetBase t={t} sky="#34405a" ground={1480}>
-    <rect x={-100} y={560} width={1500} height={90} fill="#c0392b" />
-    <rect x={-100} y={650} width={1500} height={24} fill="#fff" opacity={0.85} />
+    <rect x={-4000} y={560} width={9500} height={90} fill="#c0392b" />
+    <rect x={-4000} y={650} width={9500} height={24} fill="#fff" opacity={0.85} />
     {[300, 800, 1200].map((x) => <rect key={x} x={x - 14} y={674} width={28} height={806} fill="#8794a8" />)}
     {[420, 960].map((x) => (
       <g key={x} transform={`translate(${x} 1480)`}>
@@ -224,7 +224,7 @@ export const GasStation: React.FC<{t: number}> = ({t}) => (
 );
 export const StreetDE: React.FC<{t: number}> = ({t}) => (
   <g>
-    <rect x={-300} y={-300} width={2000} height={2500} fill="#56637d" />
+    <rect x={-4000} y={-300} width={10000} height={2500} fill="#56637d" />
     {[0, 1, 2].map((i) => (
       <g key={i} transform={`translate(${-60 + i * 480} 0)`}>
         <rect x={0} y={420 + (i % 2) * 90} width={440} height={1100} fill={['#8a6a5a', '#6a7a8a', '#9a8a6a'][i]} />
@@ -232,7 +232,7 @@ export const StreetDE: React.FC<{t: number}> = ({t}) => (
         {[0, 1, 2, 3].map((r) => [0, 1].map((c) => <rect key={`${r}${c}`} x={50 + c * 200} y={520 + (i % 2) * 90 + r * 220} width={130} height={150} fill="#2a3448" stroke="#e8f0fb" strokeWidth={8} />))}
       </g>
     ))}
-    <rect x={-300} y={1500} width={2000} height={600} fill="#aebbd0" />
+    <rect x={-4000} y={1500} width={10000} height={600} fill="#aebbd0" />
     {[0, 1].map((i) => <Car key={i} x={280 + i * 600} y={1640} col={['#5a6a7a', '#7a4a4a'][i]} />)}
     {[160, 760, 1300].map((x) => <g key={x}><rect x={x - 4} y={1000} width={8} height={500} fill="#2a3246" /><circle cx={x} cy={990} r={12} fill="#ffe9a8" /><Glow x={x} y={990} r={140} c="#ffe9a8" o={0.35} id={`de${x}`} /></g>)}
     <Snow t={t} n={90} speed={110} wind={70} op={0.8} w={1700} size={1.5} />
@@ -240,8 +240,8 @@ export const StreetDE: React.FC<{t: number}> = ({t}) => (
 );
 export const Airport: React.FC<{t: number}> = ({t}) => (
   <g>
-    <rect x={-200} y={-200} width={1800} height={2400} fill="#26324a" />
-    <rect x={-200} y={1100} width={1800} height={900} fill="#3a4660" />
+    <rect x={-4000} y={-200} width={9800} height={2400} fill="#26324a" />
+    <rect x={-4000} y={1100} width={9800} height={900} fill="#3a4660" />
     {/* glass terminal */}
     <rect x={0} y={460} width={1400} height={640} fill="#3a4a68" opacity={0.85} />
     {Array.from({length: 8}).map((_, i) => <rect key={i} x={i * 175} y={460} width={6} height={640} fill="#1a2234" />)}
@@ -302,7 +302,7 @@ export const EuropeMap: React.FC<{t: number; drop: number}> = ({t, drop}) => {
   ];
   return (
     <g>
-      <rect x={-200} y={-200} width={1700} height={2400} fill="#0d1526" />
+      <rect x={-4000} y={-200} width={9700} height={2400} fill="#0d1526" />
       <path d="M200 1180 L220 1000 L290 920 L330 780 L410 760 L430 680 L360 560 L420 440 L520 380 L610 420 L700 540 L800 560 L940 620 L980 760 L900 880 L760 920 L690 1020 L600 1140 L480 1120 L360 1200 Z" fill="#1e2c48" stroke="#4a6aa0" strokeWidth={5} />
       {cities.map((c, i) => {
         const v = lerp(c.t0, c.t1, drop);

@@ -56,7 +56,7 @@ export const Village: React.FC<VP> = ({t, dark, others, old, snowI, hood, cx = 1
       <defs>
         <linearGradient id="vsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={sky0} /><stop offset="1" stopColor={sky1} /></linearGradient>
       </defs>
-      <rect x={-400} y={-2400} width={VW + 800} height={4700} fill="url(#vsky)" />
+      <rect x={-4000} y={-2400} width={VW + 8000} height={4700} fill="url(#vsky)" />
       {/* clouds */}
       <g opacity={0.45 + dark * 0.2}>{Array.from({length: 9}).map((_, i) => <ellipse key={i} cx={i * 420 + ((t * 8 * (1 + rnd(i))) % 420)} cy={200 + rnd(i) * 360} rx={320} ry={80} fill={mixc('#8a93a3', '#0a0f1c', dark)} />)}</g>
       {/* far forest + hills */}
@@ -65,8 +65,8 @@ export const Village: React.FC<VP> = ({t, dark, others, old, snowI, hood, cx = 1
         {Array.from({length: 46}).map((_, i) => <g key={i} transform={`translate(${i * 78 - 200} ${GROUND - 110 - rnd(i) * 70}) scale(${0.5 + rnd(i + 2) * 0.5})`}><path d="M-34 0 L0 -110 L34 0 Z" fill={mixc('#33463f', '#0a1018', dark)} /><path d="M-22 -40 L0 -110 L22 -40 Z" fill="#dde8f6" opacity={0.7 - dark * 0.3} /></g>)}
       </g>
       {/* ground */}
-      <rect x={-400} y={GROUND - 10} width={VW + 800} height={800} fill={mixc('#dbe4f2', '#7f93b3', dark * 0.85)} />
-      <rect x={-400} y={GROUND + 150} width={VW + 800} height={190} fill={mixc('#c4cfdf', '#667a9c', dark * 0.85)} />
+      <rect x={-4000} y={GROUND - 10} width={VW + 8000} height={800} fill={mixc('#dbe4f2', '#7f93b3', dark * 0.85)} />
+      <rect x={-4000} y={GROUND + 150} width={VW + 8000} height={190} fill={mixc('#c4cfdf', '#667a9c', dark * 0.85)} />
       <path d={`M-400 ${GROUND + 180} Q800 ${GROUND + 130} 1800 ${GROUND + 190} T3600 ${GROUND + 150}`} stroke="#9fb0c8" strokeWidth={5} fill="none" opacity={0.7} />
       {/* poles & wires */}
       {[260, 740, 1240, 1700, 2200, 2700, 3200].map((x, i) => (
@@ -122,7 +122,7 @@ export const Village: React.FC<VP> = ({t, dark, others, old, snowI, hood, cx = 1
         {old > 0.02 && <Glow x={3423} y={GROUND - 85} r={170} c="#ffd25a" o={0.55 * old} id="oldfar" />}
       </g>
       {/* night shade */}
-      <rect x={-400} y={-400} width={VW + 800} height={2700} fill="#04070f" opacity={nightK * 0.0} />
+      <rect x={-4000} y={-400} width={VW + 8000} height={2700} fill="#04070f" opacity={nightK * 0.0} />
       {lampsOn > 0 && [520, 1500, 2300].map((x, i) => <g key={i}><rect x={x - 3} y={GROUND - 300} width={6} height={300} fill="#2a2e38" /><Glow x={x} y={GROUND - 300} r={180} c="#ffd27a" o={0.35 * lampsOn * (0.3 + dark)} id={`vl${i}`} /></g>)}
       {drifts > 0 && Array.from({length: 14}).map((_, i) => <ellipse key={i} cx={100 + i * 250} cy={GROUND + 20} rx={150} ry={30 + 55 * drifts} fill="#eef4fc" opacity={0.9} />)}
     </g>
@@ -132,15 +132,15 @@ export const Village: React.FC<VP> = ({t, dark, others, old, snowI, hood, cx = 1
 // ---------------- old house closeup ----------------
 export const OldHouse: React.FC<{t: number; lit: number; top: number; shadow?: number; cx?: number}> = ({t, lit, top, shadow = 0, cx = 540}) => (
   <g>
-    <rect x={-300} y={-600} width={1700} height={3200} fill="#080d18" />
-    <rect x={-300} y={-600} width={1700} height={1400} fill="#101a2c" />
+    <rect x={-4000} y={-600} width={9700} height={3200} fill="#080d18" />
+    <rect x={-4000} y={-600} width={9700} height={1400} fill="#101a2c" />
     {/* forest */}
     <g transform={`translate(${-(cx - 540) * 0.2} 0)`}>
       {Array.from({length: 26}).map((_, i) => <g key={i} transform={`translate(${i * 70 - 300} ${1720 - rnd(i) * 80}) scale(${1 + rnd(i + 1) * 1.2})`}><path d="M-60 0 L0 -260 L60 0 Z" fill="#0a1420" /><path d="M-40 -90 L0 -260 L40 -90 Z" fill="#c9d6e8" opacity={0.25} /></g>)}
     </g>
     {/* ground */}
-    <rect x={-300} y={1700} width={1700} height={900} fill="#9fb0c8" />
-    <rect x={-300} y={1700} width={1700} height={16} fill="#dfe9f7" />
+    <rect x={-4000} y={1700} width={9700} height={900} fill="#9fb0c8" />
+    <rect x={-4000} y={1700} width={9700} height={16} fill="#dfe9f7" />
     {/* house */}
     <rect x={160} y={1060} width={760} height={650} fill="#2a2018" />
     {Array.from({length: 30}).map((_, i) => <rect key={i} x={160 + i * 26} y={1060} width={3} height={650} fill="#000" opacity={0.4} />)}
