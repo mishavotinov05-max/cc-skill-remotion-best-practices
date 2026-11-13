@@ -7,11 +7,11 @@ import subsS from './subs_shelter.json';
 import {SnowRush, digPose, DIG_TIP, E, FONT, Log, LogEnd, mixc, Mountains, P, Pine, Pose, shivPose, Skier, SkierDefs, SnowParticles, Squirrel, StoveArt, TempHUD, V, walkPose} from './ShelterArt';
 
 export const FPSS = 30;
-export const DURATIONS = 92.9;
+export const DURATIONS = 92.3;
 const SURF = 1000, FLOOR = 1345, PX0 = 260, PX1 = 820, SX0 = 100, SX1 = 260;
 const X = (x: number) => 540 + ((x - 540) * 4) / 3;
 const STOVE_X = Math.round(X(665));
-const OFF = 2.4;
+const OFF = 3.0;
 const depthAt = (t: number) => (t < 3.0 ? 205 : 205 + 140 * E(t, 3.0, 5.6));
 const widthAt = (t: number) => 520 + 40 * E(t, 3.0, 5.6);
 
@@ -588,7 +588,7 @@ export const Shelter: React.FC = () => {
     );
   const wind = rampW([[0, 0.05], [8.5, 0.05], [8.7, 0.13], [11.8, 0.13], [12.4, 0.05], [19.6, 0.05], [20.5, 0.02], [50.4, 0.02], [50.6, 0.09], [53.3, 0.09], [53.7, 0.02], [76.3, 0.02], [81.7, 0.02], [82, 0.05], [95, 0.04]]);
   const fire = rampW([[27.8, 0], [29, 0.07], [72, 0.06], [73.3, 0.02], [76.3, 0.05], [81.7, 0.05], [82.5, 0.02], [84.6, 0]]);
-  const music = rampW([[2.4, 0], [3.4, 0.05], [90, 0.05], [95, 0]]);
+  const music = rampW([[3.0, 0], [4.0, 0.05], [90, 0.05], [95, 0]]);
   const logTimes = [13.3, 14.2, 15.1, 16.0];
   const boardTimes = [67.25, 67.75, 68.25, 68.75, 69.25];
   return (
