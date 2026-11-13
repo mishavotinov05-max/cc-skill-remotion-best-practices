@@ -1,6 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {ramp} from './Everest';
+import {RubikSub} from './RubikSub';
+import subsR from './subs_s1.json';
 import {clamp, ease, lerp, rnd, mixc, Tx, Glow, Snow, E, P, TempHud, Person, ILYA_OUT, ILYA_IN, DED_IN, DED_OUT, MAX_OUT, poseStand, poseWalk, poseSit, poseCarry, poseShiver, poseReach, Pose, Look} from './M60Base';
 import {Skyline, TrafficLight, CityTop, Jam, Supermarket, GasStation, StreetDE, Airport, DotMap, EuropeMap} from './M60City';
 import {Radio, TvSet, TvMode, Phone, PhoneMode, OutThermo, HomeThermo, ClockArt} from './M60Items';
@@ -550,6 +552,7 @@ export const M60: React.FC = () => {
       )}
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(4,8,18,0.5) 100%)'}} />
       <AbsoluteFill style={{backgroundColor: '#000', opacity: fadeBlack}} />
+      <RubikSub t={t} subs={subsR as any} />
     </AbsoluteFill>
   );
 };
