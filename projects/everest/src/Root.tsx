@@ -11,6 +11,7 @@ import {FloodPreview} from './FloodStyle';
 import {Flood, FPSF, DURATIONF} from './Flood';
 import {Auto, FPSA, DURATIONA} from './Auto';
 import {Shelter, FPSS, DURATIONS} from './Shelter';
+import {M60, FPSM as FPS60, DURATIONM as DUR60} from './M60';
 
 export const Root: React.FC = () => (
   <>
@@ -25,6 +26,7 @@ export const Root: React.FC = () => (
   <Composition id="FloodPreview" component={FloodPreview} durationInFrames={1} fps={30} width={1080} height={1920} />
   <Composition id="Auto" component={Auto} durationInFrames={Math.round(DURATIONA * FPSA)} fps={FPSA} width={1080} height={1920} />
   <Composition id="Shelter" component={Shelter} durationInFrames={Math.round(DURATIONS * FPSS)} fps={FPSS} width={1080} height={1920} />
+  <Composition id="M60" component={M60} durationInFrames={Math.round(DUR60 * FPS60)} fps={FPS60} width={1080} height={1920} />
   <Composition id="Flood" component={Flood} durationInFrames={Math.round(DURATIONF * FPSF)} fps={FPSF} width={1080} height={1920} />
   </>
 );

@@ -16,7 +16,7 @@ export const mixc = (c1: string, c2: string, k: number) => {
 // ============================ skier rig (IK) ============================
 export type Pose = {hip: V; lean: number; lf: V; lb: V; hf: V; hb: V; nod?: number; ski?: boolean; shovel?: {hb: V; th: number} | null; hold?: React.ReactNode; pack?: boolean};
 type Pref = (a: V, b: V) => boolean;
-const ik2 = (s: V, t: V, l1: number, l2: number, pref: Pref) => {
+export const ik2 = (s: V, t: V, l1: number, l2: number, pref: Pref) => {
   let dx = t[0] - s[0], dy = t[1] - s[1];
   let d = Math.hypot(dx, dy);
   const mx = l1 + l2 - 0.5;
