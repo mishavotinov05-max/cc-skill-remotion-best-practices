@@ -440,7 +440,7 @@ export const M64: React.FC = () => {
   const tod = interp(TOD, t);
   const SFX = (a: number, d: number, src: string, v: number | ((f: number) => number)) => (
     <Sequence key={`${src}${a}`} from={Math.round(a * FPS64)} durationInFrames={Math.max(1, Math.round(d * FPS64))}>
-      <Audio src={staticFile(`sfx/${src}.mp3`)} volume={v} />
+      <Audio src={staticFile(`sfx/${src}.mp3`)} volume={typeof v === 'number' ? v * 0.68 : v} />
     </Sequence>
   );
   const rampT = (pts: [number, number][]) => ramp(pts);
@@ -463,13 +463,13 @@ export const M64: React.FC = () => {
   return (
     <AbsoluteFill style={{backgroundColor: '#000'}}>
       <Audio src={staticFile('voice14.mp3')} volume={1} />
-      <Audio src={staticFile('sfx/m64calm.mp3')} volume={calm} loop />
-      <Audio src={staticFile('sfx/m64tense.mp3')} volume={tense} loop />
-      <Audio src={staticFile('sfx/birds.mp3')} volume={birds} loop />
-      <Audio src={staticFile('sfx/wind.mp3')} volume={wind} loop />
-      <Audio src={staticFile('sfx/steps.mp3')} volume={steps} loop />
-      <Audio src={staticFile('sfx/breath.mp3')} volume={breath} loop />
-      <Audio src={staticFile('sfx/runsfx.mp3')} volume={run} loop />
+      <Audio src={staticFile('sfx/m64calm.mp3')} volume={(f: number) => calm(f) * 0.68} loop />
+      <Audio src={staticFile('sfx/m64tense.mp3')} volume={(f: number) => tense(f) * 0.68} loop />
+      <Audio src={staticFile('sfx/birds.mp3')} volume={(f: number) => birds(f) * 0.68} loop />
+      <Audio src={staticFile('sfx/wind.mp3')} volume={(f: number) => wind(f) * 0.68} loop />
+      <Audio src={staticFile('sfx/steps.mp3')} volume={(f: number) => steps(f) * 0.68} loop />
+      <Audio src={staticFile('sfx/breath.mp3')} volume={(f: number) => breath(f) * 0.68} loop />
+      <Audio src={staticFile('sfx/runsfx.mp3')} volume={(f: number) => run(f) * 0.68} loop />
       {ev}
       <ShotView sh={sh} t={t} />
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 60%, rgba(8,6,2,0.4) 100%)'}} />
