@@ -14,6 +14,7 @@ import {Shelter, FPSS, DURATIONS} from './Shelter';
 import {M60, FPSM as FPS60, DURATIONM as DUR60} from './M60';
 import {M61, FPS61, DUR61} from './M61';
 import {M62, FPS62, DUR62} from './M62';
+import {M63, FPS63, DUR63} from './M63';
 
 export const Root: React.FC = () => (
   <>
@@ -31,6 +32,7 @@ export const Root: React.FC = () => (
   <Composition id="M60" component={M60} durationInFrames={Math.round(DUR60 * FPS60)} fps={FPS60} width={1920} height={1080} />
   <Composition id="M61" component={M61} durationInFrames={Math.round(DUR61 * FPS61)} fps={FPS61} width={1920} height={1080} />
   <Composition id="M62" component={M62} durationInFrames={Math.round(DUR62 * FPS62)} fps={FPS62} width={1920} height={1080} />
+  <Composition id="M63" component={M63} durationInFrames={Math.round(DUR63 * FPS63)} fps={FPS63} width={1920} height={1080} />
   <Composition id="Flood" component={Flood} durationInFrames={Math.round(DURATIONF * FPSF)} fps={FPSF} width={1080} height={1920} />
   </>
 );

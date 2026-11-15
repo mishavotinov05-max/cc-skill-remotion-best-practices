@@ -13,7 +13,7 @@ export const Tx: React.FC<{x: number; y: number; size?: number; fill?: string; a
 );
 
 // ====================== people (faceless silhouettes) ======================
-export type Look = {jacket: string; jacket2: string; pants: string; glove: string; boot: string; hood?: boolean; goggles?: boolean; hat?: 'fur' | 'beanie' | 'none' | 'kerchief'; scarf?: string; blanket?: string; hatCol?: string; beard?: boolean; hair?: string; skin?: string; fat?: number; pack?: boolean; stubble?: boolean; old?: boolean};
+export type Look = {jacket: string; jacket2: string; pants: string; glove: string; boot: string; hood?: boolean; goggles?: boolean; hat?: 'fur' | 'beanie' | 'none' | 'kerchief'; scarf?: string; blanket?: string; hatCol?: string; beard?: boolean; hair?: string; skin?: string; fat?: number; pack?: boolean; stubble?: boolean; old?: boolean; arm?: string; plaid?: string};
 export const ILYA_OUT: Look = {jacket: '#33425e', jacket2: '#445678', pants: '#2c3a56', glove: '#1f2430', boot: '#3a2e28', hat: 'beanie', hatCol: '#1f2430', hair: '#2a2420', skin: '#e2ad86', hood: false, goggles: false, pack: false};
 export const ILYA_IN: Look = {jacket: '#5b6676', jacket2: '#6e7a8c', pants: '#2c3a56', glove: '#5b6676', boot: '#3a2e28', hood: false, goggles: false, hair: '#2a2420', skin: '#e2ad86'};
 export const DED_IN: Look = {old: true, jacket: '#6a5038', jacket2: '#80634a', pants: '#3a3d46', glove: '#6a5038', boot: '#5a4632', hat: 'none', beard: true, hair: '#b8b8c0', skin: '#d6a07c', fat: 1.12};
@@ -43,11 +43,12 @@ export const Person: React.FC<{x: number; y: number; look: Look; pose: Pose; fli
       {shadow && <ellipse cx={0} cy={4} rx={70} ry={8} fill="#000" opacity={0.28} />}
       <Seg a={[hip[0] - 6, hip[1]]} b={lgB.j} c={lgB.e} w={34 * fat} col={look.pants} />
       {boot(lgB.e)}
-      <Seg a={[sh[0] - 4, sh[1] + 6]} b={ar2.j} c={ar2.e} w={24 * fat} col={look.jacket} />
+      <Seg a={[sh[0] - 4, sh[1] + 6]} b={ar2.j} c={ar2.e} w={24 * fat} col={look.arm ?? look.jacket} />
       <circle cx={ar2.e[0]} cy={ar2.e[1]} r={12} fill={look.glove} />
       <g transform={`translate(${hip[0]} ${hip[1]}) rotate(${lean})`}>
         {look.pack && <rect x={-54} y={-92} width={30} height={74} rx={12} fill="#2a303b" />}
         <rect x={-27 * fat} y={-108} width={54 * fat} height={112} rx={24} fill={look.jacket} />
+        {look.plaid && <g opacity={0.55}>{[-18, -6, 6, 18].map((x) => <rect key={x} x={x * fat - 2} y={-106} width={4} height={108} fill={look.plaid} />)}{[-90, -70, -50, -30, -10].map((y) => <rect key={y} x={-27 * fat} y={y} width={54 * fat} height={4} fill={look.plaid} />)}</g>}
         {look.blanket && <path d="M-34 -104 Q0 -126 36 -104 L44 -10 Q0 8 -42 -10 Z" fill={look.blanket} stroke="#000" strokeOpacity={0.25} strokeWidth={3} />}
         <rect x={-27 * fat} y={-108} width={20 * fat} height={112} rx={10} fill={look.jacket2} opacity={0.35} />
         <rect x={-3} y={-100} width={5} height={92} rx={2} fill="#000" opacity={0.25} />
@@ -93,7 +94,7 @@ export const Person: React.FC<{x: number; y: number; look: Look; pose: Pose; fli
           </g>
         )}
       </g>
-      <Seg a={[sh[0] + 4, sh[1] + 6]} b={ar1.j} c={ar1.e} w={26 * fat} col={look.jacket} />
+      <Seg a={[sh[0] + 4, sh[1] + 6]} b={ar1.j} c={ar1.e} w={26 * fat} col={look.arm ?? look.jacket} />
       <circle cx={ar1.e[0]} cy={ar1.e[1]} r={13} fill={look.glove} />
       {hold}
     </g>
