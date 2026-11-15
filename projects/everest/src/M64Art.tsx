@@ -79,7 +79,7 @@ export const Bear: React.FC<{b: BearP}> = ({b}) => {
   const mood = mode === 'sniff' || mode === 'sniffwalk' ? 'sniff' : mode === 'alert' || mode === 'charge' || mode === 'run' ? 'alert' : mode === 'huff' || mode === 'sway' ? 'huff' : 'calm';
   const bodyRot = rise * -52;
   return (
-    <g transform={`translate(${x} ${G + y}) scale(${face * -sc} ${sc})`}>
+    <g transform={`translate(${x} ${G + y}) scale(${face * sc} ${sc})`}>
       <ellipse cx={0} cy={2} rx={200} ry={14} fill="#000" opacity={0.3} />
       <g transform={`rotate(${bodyRot} -120 0)`}>
         {leg(-118, Math.PI, false, FUR2)}
@@ -207,13 +207,16 @@ export const Forest: React.FC<FP> = ({tod, cx, loc = 'clearing', t}) => {
   );
 };
 
-export const BearHeadClose: React.FC<{t: number; mood: string; tod: number}> = ({t, mood, tod}) => (
-  <g>
-    <Forest tod={tod} cx={960} loc="clearing" t={t} />
-    <rect x={-2000} y={-1200} width={9000} height={2400} fill="#1a2a18" opacity={0.55} />
-    <g transform={`translate(1000 ${600 + Math.sin(t * 1.4) * 6}) scale(3.3)`}><BearHead t={t} mood={mood} /></g>
-  </g>
-);
+export const BearHeadClose: React.FC<{t: number; mood: string; tod: number}> = ({t, mood, tod}) => {
+  const mode = mood === 'sniff' ? 'sniff' : mood === 'alert' ? 'alert' : mood === 'huff' ? 'huff' : 'idle';
+  return (
+    <g>
+      <Forest tod={tod} cx={960} loc="clearing" t={t} />
+      <rect x={-2000} y={-1200} width={9000} height={2400} fill="#1a2a18" opacity={0.2} />
+      <g transform={`translate(0 ${Math.sin(t * 1.4) * 5})`}><Bear b={{x: 1650, y: 160, s: 3.2, face: -1, mode, t}} /></g>
+    </g>
+  );
+};
 
 export const PawsClose: React.FC<{t: number; speed: number; tod: number}> = ({t, speed, tod}) => {
   const leg = (cx: number, ph: number, sc: number, shade: string, dark: string, key: number) => {

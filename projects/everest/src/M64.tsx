@@ -324,7 +324,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
         if (v.pose === 'kneelup') { const k = E(t, v.rise[0], v.rise[1]); pose = k > 0.5 ? poseStand({mood: 'scared'}) : poseKneel(); lie = lerp(60, 0, ease(clamp(k * 2))); }
         const flip = !!v.flip;
         const sit = v.pose === 'sit';
-        ents.push(<Vasya key="v" v={{x: vx, y: vy + (sit ? 20 : 0), pose, flip, lie, s: 0.95}} />);
+        ents.push(<Vasya key="v" v={{x: vx, y: vy + (sit ? 20 : 0) - (lie ? 70 : 0), pose, flip, lie, s: 0.95}} />);
       }
       const e = p.e;
       const bears: {x: number; y: number; z: number; node: React.ReactNode}[] = [];
