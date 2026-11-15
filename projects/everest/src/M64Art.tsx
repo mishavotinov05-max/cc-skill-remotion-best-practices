@@ -215,26 +215,39 @@ export const BearHeadClose: React.FC<{t: number; mood: string; tod: number}> = (
   </g>
 );
 
-export const PawsClose: React.FC<{t: number; speed: number; tod: number}> = ({t, speed, tod}) => (
-  <g>
-    <Forest tod={tod} cx={960} loc="clearing" t={t} />
-    <rect x={-2000} y={600} width={9000} height={800} fill="#3a2a1a" opacity={0.0} />
-    {[0, 1, 2, 3].map((i) => {
-      const ph = (t * speed + i * 0.25) % 1;
-      const x = 300 + i * 420 - ph * 120;
-      const lift = Math.max(0, Math.sin(ph * Math.PI)) * 90;
-      return (
-        <g key={i} transform={`translate(${x} ${980 - lift})`}>
-          <ellipse cx={0} cy={lift} rx={120} ry={20} fill="#000" opacity={0.25} />
-          <rect x={-70} y={-300} width={140} height={300} rx={60} fill={i % 2 ? FUR2 : FUR} />
-          <ellipse cx={0} cy={-6} rx={110} ry={46} fill="#2a1a10" />
-          {[-60, -30, 0, 30, 60].map((cxk) => <ellipse key={cxk} cx={cxk} cy={22} rx={9} ry={17} fill="#e8dcc4" />)}
-        </g>
-      );
-    })}
-    {ease(clamp(t % 1)) > 0.0 && [0, 1, 2].map((i) => <circle key={i} cx={300 + i * 600} cy={1010} r={8 + ((t * 40 + i * 20) % 30)} fill="#6a5238" opacity={0.3} />)}
-  </g>
-);
+export const PawsClose: React.FC<{t: number; speed: number; tod: number}> = ({t, speed, tod}) => {
+  const leg = (cx: number, ph: number, sc: number, shade: string, dark: string, key: number) => {
+    const p = (t * speed + ph) % 1;
+    const lift = Math.max(0, Math.sin(p * Math.PI * 2)) * 70 * sc;
+    const fwd = Math.sin(p * Math.PI * 2) * 40 * sc;
+    const x = cx + fwd;
+    return (
+      <g key={key} transform={`translate(${x} ${1010 - lift}) scale(${sc})`}>
+        <ellipse cx={0} cy={lift / sc} rx={190} ry={22} fill="#000" opacity={0.28} />
+        {/* forearm with fur */}
+        <path d="M-150 -1800 L-150 -700 C-160 -520 -100 -300 -78 -120 L78 -120 C104 -300 160 -520 150 -700 L150 -1800 Z" fill={shade} />
+        <path d="M-90 -700 C-110 -500 -70 -300 -50 -140 L-20 -140 C-40 -300 -70 -520 -50 -700 Z" fill="#000" opacity={0.16} />
+        {[0, 1, 2, 3, 4, 5].map((k) => <path key={k} d={`M${-80 + k * 28} ${-560 + (k % 2) * 40} l8 40 l8 -40`} fill={dark} opacity={0.5} />)}
+        {/* wrist fur and wide flat paw */}
+        <path d="M-96 -130 C-130 -70 -150 -20 -140 6 L140 6 C150 -20 130 -70 96 -130 Z" fill={dark} />
+        <path d="M-140 6 C-150 34 -110 48 0 48 C110 48 150 34 140 6 Z" fill="#241408" />
+        {[-96, -48, 0, 48, 96].map((cxk) => <polygon key={cxk} points={`${cxk - 12},34 ${cxk + 12},34 ${cxk + 4},84`} fill="#efe4cc" />)}
+      </g>
+    );
+  };
+  return (
+    <g>
+      <Forest tod={tod} cx={960} loc="clearing" t={t} />
+      <rect x={-2000} y={-1200} width={9000} height={2400} fill="#1a2a18" opacity={0.18} />
+      {leg(560, 0.5, 0.62, '#3a2416', '#2a180e', 0)}
+      {leg(1360, 0.0, 0.62, '#3a2416', '#2a180e', 1)}
+      {leg(300, 0.0, 0.9, FUR2, FUR, 2)}
+      {leg(960, 0.5, 0.9, FUR, '#3a2416', 3)}
+      {leg(1620, 0.5, 0.9, FUR2, FUR, 4)}
+      {[0, 1, 2].map((i) => <circle key={i} cx={300 + i * 700} cy={1010} r={8 + ((t * 40 + i * 20) % 30)} fill="#6a5238" opacity={0.28} />)}
+    </g>
+  );
+};
 
 export const PhoneGround: React.FC<{t: number; ring: boolean}> = ({t, ring}) => (
   <g>
