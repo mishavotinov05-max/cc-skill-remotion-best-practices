@@ -27,17 +27,25 @@ export const BearHead: React.FC<{t: number; mood: string; col?: string; sn?: str
   const sniff = mood === 'sniff' ? Math.sin(t * 14) * 3 : 0;
   const huff = mood === 'huff' ? Math.max(0, Math.sin(t * 5)) : 0;
   const earBack = mood === 'alert' ? 1 : 0;
+  const dark = '#2e1c10';
   return (
     <g transform={`scale(${k})`}>
-      <ellipse cx={-22} cy={-34} rx={21} ry={22} fill={col} transform={`rotate(${earBack * -30} -22 -34)`} /><ellipse cx={-22} cy={-34} rx={11} ry={12} fill="#7a5a44" transform={`rotate(${earBack * -30} -22 -34)`} />
-      <ellipse cx={0} cy={0} rx={66} ry={54} fill={col} />
-      <ellipse cx={64} cy={14 + sniff * 0.3} rx={52} ry={31} fill={sn} />
-      <ellipse cx={104} cy={4 + sniff} rx={15} ry={11} fill="#1a1210" />
-      <ellipse cx={100} cy={0 + sniff} rx={5} ry={3} fill="#fff" opacity={0.25} />
-      {huff > 0.3 ? <path d="M70 30 Q95 44 112 30" stroke="#2a1410" strokeWidth={4} fill="#5a2a2a" /> : <path d="M66 34 Q90 40 108 30" stroke="#2a1410" strokeWidth={4} fill="none" strokeLinecap="round" />}
-      <ellipse cx={34} cy={-12} rx={8} ry={7} fill="#fff" /><circle cx={36} cy={-11} r={4.5} fill="#1a1210" />
-      <path d={`M24 ${-26 + earBack * 4} L48 ${-20 + earBack * 8}`} stroke="#2a1a10" strokeWidth={5} strokeLinecap="round" />
-      {huff > 0.3 && [0, 1, 2].map((i) => <circle key={i} cx={124 + i * 16} cy={4 - i * 6} r={8 + i * 5} fill="#fff" opacity={0.35 - i * 0.1} />)}
+      {/* ears (small, set back) */}
+      <ellipse cx={-34} cy={-50} rx={15} ry={16} fill={col} transform={`rotate(${earBack * -40} -34 -50)`} /><ellipse cx={-34} cy={-50} rx={7} ry={8} fill="#6a4a38" transform={`rotate(${earBack * -40} -34 -50)`} />
+      {/* skull with sloping forehead and heavy jaw */}
+      <path d="M-66 -6 C-68 -46 -30 -62 8 -58 C46 -54 74 -34 84 -10 C92 14 70 38 30 44 C-20 50 -66 32 -66 -6 Z" fill={col} />
+      {/* cheek fur tufts */}
+      <polygon points="-62,6 -86,22 -58,24" fill={col} /><polygon points="-52,24 -70,46 -36,34" fill={col} />
+      {/* long snout */}
+      <path d="M38 -18 C78 -28 126 -14 138 6 C144 26 112 40 66 40 C44 38 30 8 38 -18 Z" fill={sn} />
+      <path d="M44 16 C70 28 110 30 136 18" stroke="#00000033" strokeWidth={6} fill="none" />
+      <ellipse cx={132} cy={2 + sniff} rx={15} ry={11} fill="#1a1210" /><ellipse cx={127} cy={-2 + sniff} rx={5} ry={3} fill="#fff" opacity={0.25} />
+      {/* mouth */}
+      {huff > 0.3 ? <path d="M70 36 Q104 52 128 32" stroke="#2a1410" strokeWidth={4} fill="#5a2a2a" /> : <path d="M70 36 Q100 42 124 30" stroke="#2a1410" strokeWidth={4} fill="none" strokeLinecap="round" />}
+      {/* brow ridge + eye */}
+      <path d="M12 -34 C34 -44 56 -36 64 -22 L58 -16 C46 -26 28 -28 12 -22 Z" fill={dark} />
+      <ellipse cx={38} cy={-14} rx={7} ry={6} fill="#f2e8d0" /><circle cx={40} cy={-13} r={4.2} fill="#140c08" />
+      {huff > 0.3 && [0, 1, 2].map((i) => <circle key={i} cx={152 + i * 16} cy={2 - i * 6} r={8 + i * 5} fill="#fff" opacity={0.35 - i * 0.1} />)}
     </g>
   );
 };
@@ -50,36 +58,43 @@ export const Bear: React.FC<{b: BearP}> = ({b}) => {
   const hz = run ? 2.6 : walk ? 1.05 : 0;
   const g = t * hz * Math.PI * 2;
   const bounce = run ? Math.abs(Math.sin(g)) * 14 : walk ? Math.abs(Math.sin(g)) * 4 : Math.sin(t * 2) * 1.5;
-  const amp = run ? 74 : walk ? 36 : 2;
-  const lift = run ? 38 : walk ? 16 : 0;
+  const amp = run ? 80 : walk ? 40 : 2;
+  const lift = run ? 42 : walk ? 18 : 0;
+  const dk = '#2a1a10';
   const leg = (hx: number, ph: number, front: boolean, shade: string) => {
+    const hy = -118 - bounce;
     const fx = hx + Math.sin(g + ph) * amp, fy = -Math.max(0, Math.cos(g + ph)) * lift;
-    const j = ik2([hx, -130 - bounce], [fx, fy], 78, 74, (a, c) => a[0] < c[0] === front);
+    const j = ik2([hx, hy], [fx, fy], 78, 78, (aa, c) => aa[0] < c[0] === front);
     return (
       <g>
-        <polyline points={`${hx},${-130 - bounce} ${j.j} ${j.e}`} stroke={shade} strokeWidth={front ? 44 : 50} strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <ellipse cx={j.e[0] + 8} cy={j.e[1] - 4} rx={24} ry={12} fill="#2a1a10" />
+        <circle cx={hx} cy={hy + 6} r={front ? 62 : 58} fill={shade} />
+        <polyline points={`${hx},${hy} ${j.j}`} stroke={shade} strokeWidth={front ? 66 : 62} strokeLinecap="round" fill="none" />
+        <polyline points={`${j.j} ${j.e}`} stroke={shade} strokeWidth={42} strokeLinecap="round" fill="none" />
+        <ellipse cx={j.e[0] + 12} cy={j.e[1] - 6} rx={36} ry={15} fill={dk} />
+        {[0, 1, 2].map((k2) => <polygon key={k2} points={`${j.e[0] + 38 + k2 * 4},${j.e[1] - 14 + k2 * 6} ${j.e[0] + 38 + k2 * 4},${j.e[1] - 4 + k2 * 6} ${j.e[0] + 54 + k2 * 3},${j.e[1] - 6 + k2 * 6}`} fill="#e8dcc4" />)}
       </g>
     );
   };
-  const pitch = mode === 'sniff' || mode === 'sniffwalk' ? 28 + Math.sin(t * 3) * 4 : mode === 'alert' || mode === 'charge' || mode === 'run' ? 26 : mode === 'huff' ? -12 + Math.sin(t * 5) * 8 : mode === 'sway' ? 20 + Math.sin(t * 4) * 12 : mode === 'up' ? -16 : Math.sin(t * 1.2) * 3;
+  const pitch = mode === 'sniff' || mode === 'sniffwalk' ? 30 + Math.sin(t * 3) * 4 : mode === 'alert' || mode === 'charge' || mode === 'run' ? 26 : mode === 'huff' ? -10 + Math.sin(t * 5) * 8 : mode === 'sway' ? 22 + Math.sin(t * 4) * 12 : mode === 'up' ? -18 : Math.sin(t * 1.2) * 3 + 6;
   const mood = mode === 'sniff' || mode === 'sniffwalk' ? 'sniff' : mode === 'alert' || mode === 'charge' || mode === 'run' ? 'alert' : mode === 'huff' || mode === 'sway' ? 'huff' : 'calm';
   const bodyRot = rise * -52;
   return (
     <g transform={`translate(${x} ${G + y}) scale(${face * -sc} ${sc})`}>
-      <ellipse cx={0} cy={2} rx={190} ry={14} fill="#000" opacity={0.3} />
-      <g transform={`rotate(${bodyRot} -110 0)`}>
-        {leg(-110, Math.PI, false, FUR2)}
-        {leg(110, 0, true, FUR2)}
-        <g transform={`translate(0 ${-bounce}) rotate(${run ? Math.sin(g) * 2 : 0})`}>
-          <path d="M-176 -140 C-180 -236 -60 -238 -10 -226 C30 -276 120 -270 156 -216 C196 -196 200 -140 174 -104 L-150 -92 C-188 -96 -184 -122 -176 -140 Z" fill={col} />
-          <path d="M-170 -112 C-120 -100 100 -100 170 -118 L174 -104 L-150 -92 Z" fill="#000" opacity={0.18} />
-          <path d="M-20 -224 C30 -274 120 -268 154 -214 C100 -240 20 -236 -20 -224 Z" fill="#7a5238" opacity={0.7} />
-          <ellipse cx={-178} cy={-150} rx={18} ry={14} fill={col} />
-          <g transform={`translate(172 ${-174}) rotate(${pitch}) scale(0.92)`}><BearHead t={t} mood={mood} col={col} sn={sn} /></g>
+      <ellipse cx={0} cy={2} rx={200} ry={14} fill="#000" opacity={0.3} />
+      <g transform={`rotate(${bodyRot} -120 0)`}>
+        {leg(-118, Math.PI, false, FUR2)}
+        {leg(116, 0, true, FUR2)}
+        <g transform={`translate(0 ${-bounce}) rotate(${run ? Math.sin(g) * 2.5 : 0})`}>
+          {/* torso: low rump, high shoulder hump, deep chest */}
+          <path d="M-182 -112 C-198 -176 -150 -204 -92 -200 C-42 -196 8 -206 40 -256 C72 -290 126 -282 156 -246 C182 -224 202 -200 206 -168 L196 -112 C186 -92 140 -84 100 -84 L-122 -80 C-166 -82 -186 -92 -182 -112 Z" fill={col} />
+          <path d="M-176 -104 C-120 -94 100 -92 196 -112 L186 -96 C140 -78 -120 -72 -166 -84 Z" fill="#000" opacity={0.22} />
+          <path d="M30 -250 C70 -288 128 -280 154 -246 C112 -262 66 -258 30 -250 Z" fill="#8a6040" opacity={0.75} />
+          <path d="M-150 -190 C-110 -200 -60 -196 -20 -190" stroke="#00000030" strokeWidth={5} fill="none" />
+          <ellipse cx={-190} cy={-132} rx={16} ry={13} fill={col} />
+          <g transform={`translate(190 ${-176}) rotate(${pitch}) scale(1.1)`}><BearHead t={t} mood={mood} col={col} sn={sn} /></g>
         </g>
-        {leg(-80, 0, false, col)}
-        {leg(140, Math.PI, true, col)}
+        {leg(-78, 0, false, col)}
+        {leg(146, Math.PI, true, col)}
       </g>
     </g>
   );
