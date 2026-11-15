@@ -86,22 +86,41 @@ export const Bear: React.FC<{b: BearP}> = ({b}) => {
 };
 
 export const BearFront: React.FC<{t: number; s: number}> = ({t, s}) => {
-  const sw = Math.sin(t * 3.2);
+  const sw = Math.sin(t * 3.0);
+  const bob = Math.abs(sw) * 10;
+  const claws = (cx: number, cy: number, w: number) => [-0.6, -0.2, 0.2, 0.6].map((k) => <polygon key={k} points={`${cx + k * w - 6},${cy} ${cx + k * w + 6},${cy} ${cx + k * w},${cy + 26}`} fill="#e8dcc4" />);
   return (
-    <g transform={`translate(960 ${G + 140}) scale(${s})`}>
-      <ellipse cx={0} cy={4} rx={260} ry={22} fill="#000" opacity={0.3} />
-      <rect x={-170} y={-150 + (sw > 0 ? 0 : 14)} width={80} height={152} rx={36} fill={FUR2} />
-      <rect x={90} y={-150 + (sw > 0 ? 14 : 0)} width={80} height={152} rx={36} fill={FUR2} />
-      <ellipse cx={0} cy={-210 + sw * 5} rx={250} ry={200} fill={FUR} />
-      <ellipse cx={0} cy={-300} rx={160} ry={90} fill="#7a5238" opacity={0.5} />
-      <g transform={`translate(${sw * 10} ${-330 + Math.abs(sw) * -6})`}>
-        <circle cx={-92} cy={-72} r={36} fill={FUR} /><circle cx={-92} cy={-72} r={19} fill="#7a5a44" /><circle cx={92} cy={-72} r={36} fill={FUR} /><circle cx={92} cy={-72} r={19} fill="#7a5a44" />
-        <ellipse cx={0} cy={0} rx={116} ry={98} fill={FUR} />
-        <ellipse cx={0} cy={36} rx={62} ry={46} fill={SNOUT} />
-        <ellipse cx={0} cy={18} rx={24} ry={16} fill="#1a1210" />
-        <path d="M-22 56 Q0 70 22 56" stroke="#2a1410" strokeWidth={5} fill="none" strokeLinecap="round" />
-        <ellipse cx={-48} cy={-18} rx={12} ry={10} fill="#fff" /><circle cx={-48} cy={-16} r={6} fill="#1a1210" /><ellipse cx={48} cy={-18} rx={12} ry={10} fill="#fff" /><circle cx={48} cy={-16} r={6} fill="#1a1210" />
-        <path d="M-70 -42 L-28 -32 M70 -42 L28 -32" stroke="#2a1a10" strokeWidth={8} strokeLinecap="round" />
+    <g transform={`translate(960 ${G + 150}) scale(${s})`}>
+      <ellipse cx={0} cy={6} rx={300} ry={26} fill="#000" opacity={0.32} />
+      {/* back legs hints */}
+      <rect x={-210} y={-120} width={90} height={120} rx={40} fill="#3a2314" />
+      <rect x={120} y={-120} width={90} height={120} rx={40} fill="#3a2314" />
+      {/* shoulder hump behind head */}
+      <path d={`M-290 -90 C-310 -250 -250 -400 -120 -470 C-40 -510 40 -510 120 -470 C250 -400 310 -250 290 -90 Z`} fill={FUR} transform={`translate(0 ${-bob * 0.5})`} />
+      <path d="M-200 -420 C-120 -500 120 -500 200 -420 C120 -460 -120 -460 -200 -420 Z" fill="#7a5238" opacity={0.7} transform={`translate(0 ${-bob * 0.5})`} />
+      <path d="M-120 -150 C-60 -90 60 -90 120 -150 L110 -60 C40 -30 -40 -30 -110 -60 Z" fill="#5e3d27" opacity={0.85} />
+      {/* front legs */}
+      <g transform={`translate(-150 ${sw > 0 ? -22 : 0})`}>
+        <path d="M-60 -300 C-80 -160 -70 -60 -64 0 L64 0 C70 -60 80 -160 60 -300 Z" fill={FUR2} />
+        <ellipse cx={0} cy={4} rx={86} ry={32} fill="#2a1a10" />{claws(0, 12, 120)}
+      </g>
+      <g transform={`translate(150 ${sw > 0 ? 0 : -22})`}>
+        <path d="M-60 -300 C-80 -160 -70 -60 -64 0 L64 0 C70 -60 80 -160 60 -300 Z" fill={FUR2} />
+        <ellipse cx={0} cy={4} rx={86} ry={32} fill="#2a1a10" />{claws(0, 12, 120)}
+      </g>
+      {/* neck fur + head */}
+      <g transform={`translate(${sw * 8} ${-470 - bob * 0.6 + 40}) rotate(${sw * 2}) scale(1.25)`}>
+        <path d="M-120 20 L-170 70 L-110 60 L-90 110 L-40 70 L0 120 L40 70 L90 110 L110 60 L170 70 L120 20 Z" fill={FUR} />
+        <ellipse cx={-96} cy={-70} rx={34} ry={36} fill={FUR} /><ellipse cx={-96} cy={-70} rx={17} ry={19} fill="#7a5a44" />
+        <ellipse cx={96} cy={-70} rx={34} ry={36} fill={FUR} /><ellipse cx={96} cy={-70} rx={17} ry={19} fill="#7a5a44" />
+        <path d="M-118 -10 C-118 -90 -70 -118 0 -118 C70 -118 118 -90 118 -10 C118 50 70 80 0 80 C-70 80 -118 50 -118 -10 Z" fill={FUR} />
+        <path d="M-80 -74 L-26 -50 M80 -74 L26 -50" stroke="#1a0f08" strokeWidth={10} strokeLinecap="round" />
+        <ellipse cx={-48} cy={-38} rx={13} ry={11} fill="#f2e8d0" /><circle cx={-48} cy={-36} r={7} fill="#140c08" />
+        <ellipse cx={48} cy={-38} rx={13} ry={11} fill="#f2e8d0" /><circle cx={48} cy={-36} r={7} fill="#140c08" />
+        <path d="M-52 4 C-52 -20 52 -20 52 4 C58 54 40 88 0 92 C-40 88 -58 54 -52 4 Z" fill={SNOUT} />
+        <path d="M-34 -2 C-34 -18 34 -18 34 -2 C34 14 14 22 0 22 C-14 22 -34 14 -34 -2 Z" fill="#1a1210" />
+        <ellipse cx={-10} cy={-8} rx={8} ry={3.5} fill="#fff" opacity={0.25} />
+        <path d="M0 22 L0 52 M-34 68 Q0 90 34 68" stroke="#2a1410" strokeWidth={6} fill="none" strokeLinecap="round" />
       </g>
     </g>
   );
