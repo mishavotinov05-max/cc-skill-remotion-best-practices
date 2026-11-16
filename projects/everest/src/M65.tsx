@@ -8,7 +8,24 @@ import {Full, Man, MAXIM, GENN, Corridor, DoorClose, PlayRoom, Canteen, ChairBac
 import subs from './subs_s6.json';
 
 export const FPS65 = 30;
-export const DUR65 = 785.2;
+const SPEED = 0.9;
+const RAWG: [number, number][] = [[9.96, 10.8], [221.94, 222.3], [346.95, 347.38], [483.33, 483.7], [629.5, 629.94]];
+const INS: [number, number, number, number][] = RAWG.map(([e, s]) => [((e + s) / 2) / SPEED, 2.2 - (s - e) / SPEED, e / SPEED, s / SPEED]); // [P', d', e', s'] in slowed time
+const SH_TOTAL = INS.reduce((s, i) => s + i[1], 0);
+export const DUR65 = 785.2 / SPEED + SH_TOTAL;
+const W = (o: number) => o / SPEED + INS.reduce((s, i) => (i[0] <= o / SPEED ? s + i[1] : s), 0);
+const U = (t: number): {o: number; ti: number} => {
+  let shift = 0;
+  for (let i = 0; i < INS.length; i++) {
+    const a = INS[i][0] + shift;
+    if (t < a) return {o: (t - shift) * SPEED, ti: -1};
+    if (t < a + INS[i][1]) return {o: INS[i][0] * SPEED, ti: i};
+    shift += INS[i][1];
+  }
+  return {o: (t - shift) * SPEED, ti: -1};
+};
+const TITLES = ['РАБОТА', 'ПЕРВЫЕ СТРАННОСТИ', 'СЕМЬ ПРАВИЛ', 'ОН УЖЕ ЗДЕСЬ', 'ПОСЛЕДНЯЯ СМЕНА'];
+const titleStart = (i: number) => W(RAWG[i][0]) + 0.1;
 const END_VOICE = 782.4;
 
 type Cam = [number, number, number, number, number, number];
@@ -97,7 +114,7 @@ const SH: Shot[] = [
   S(342.0, 347.0, 'clock', C0, {text: '23:55'}),
   S(347.0, 353.0, 'fuse', C0, {sw: [0, 1, 350, 350.6]}),
   S(353.0, 357.0, 'post', C(640, 330, 1.5, 1.8), {clock: '00:00', chars: 'sit', feeds: {light: 0}, dark: 0.5}),
-  S(357.0, 364.0, 'corr', C(2000, 450, 1.1, 1.2), {lights: 0, dark: 0.82, cctv: 2, patter: 1}, 0),
+  S(357.0, 364.0, 'corr', C(2000, 450, 1.1, 1.2), {lights: 0, dark: 0.82, cctv: 2, patter: 1, runKids: 1}, 1),
   S(364.0, 369.0, 'clock', C0, {timer: 1, red: 0.2}),
   S(369.0, 371.0, 'corr', C(2800, 450, 1.3, 1.5), {lights: 0, dark: 0.9, cctv: 2}),
   S(371.0, 378.0, 'door', C(960, 540, 1.0, 1.15), {knocks: [], handle: 0, dark: 0.7}),
@@ -191,7 +208,7 @@ const stamp = (t: number) => {
 const knockVal = (t: number, ks: number[]) => ks.reduce((mx, k) => (t >= k ? Math.max(mx, Math.exp(-(t - k) * 14)) : mx), 0);
 const timerSec = (t: number) => interp([[355, 120], [359, 90], [370, 60], [374, 45], [383, 20], [391, 0]], t);
 const fmtTimer = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-const GLITCH: [number, number, number][] = [[8.4, 10.8, 0.9], [5.0, 5.3, 0.5], [268.0, 268.6, 1], [425.1, 425.5, 0.6], [536.0, 546.0, 0.9], [596.5, 597.2, 0.7], [610.0, 610.5, 1], [779.2, 785.2, 1], [538.0, 538.5, 1]];
+const GLITCH: [number, number, number][] = [[8.4, 10.8, 0.9], [5.0, 5.3, 0.5], [268.0, 268.6, 1], [425.1, 425.5, 0.6], [536.0, 546.0, 0.9], [596.5, 597.2, 0.7], [610.0, 610.5, 1], [779.2, 785.2, 1], [538.0, 538.5, 1], ...[13.9, 33, 59.5, 76, 99, 143, 189, 227, 277, 302, 402, 441, 555, 614, 682, 700, 727, 766].map((x) => [x, x + 0.2, 0.75] as [number, number, number])];
 
 const Mx: React.FC<{x: number; y: number; pose: Pose; flip?: boolean; s?: number}> = ({x, y, pose, flip, s = 1.4}) => <Man x={x} y={y} pose={pose} flip={flip} s={s} />;
 
@@ -221,12 +238,18 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
         <g>
           <Corridor t={t} lights={p.lights ?? 1} dark={p.dark ?? 0} bike={p.gone ? -1 : bk} bikeDir={p.bikeDir ?? 1} fp={fp} flick={p.flick ?? 0} />
           {p.pale && <rect x={-1000} y={-200} width={6400} height={1400} fill="#c8d8e8" opacity={0.1} />}
+          {p.runKids && Array.from({length: 7}).map((_, i) => {
+            const kx = 4200 - (((t - a) * (520 + i * 70) + i * 430) % 4600);
+            const sw = Math.sin(t * 16 + i);
+            return <g key={'rk' + i} transform={`translate(${kx} ${745 + (i % 2) * 14}) scale(0.9)`} opacity={0.5}><rect x={-20} y={-130} width={40} height={90} rx={18} fill="#010203" /><circle cx={0} cy={-150} r={22} fill="#010203" /><rect x={-16 + sw * 8} y={-48} width={13} height={48} fill="#010203" /><rect x={4 - sw * 8} y={-48} width={13} height={48} fill="#010203" /></g>;
+          })}
           {mv !== null && <>
             <Mx x={mv} y={1010} pose={pose(p.run ? 'run' : 'walk')} flip={!!p.flip} />
             {p.flash && <polygon points={`${mv + (p.flip ? -70 : 70)},700 ${mv + (p.flip ? -640 : 640)},560 ${mv + (p.flip ? -640 : 640)},900`} fill="#fff6c8" opacity={0.16 + 0.04 * Math.sin(t * 20)} />}
           </>}
           {both !== null && <><Mx x={both} y={1010} pose={pose('walk')} /><Man x={both - 130} y={1010} pose={poseWalk(t + 0.3, 2.2, 4)} look={GENN} s={1.4} /></>}
           {sh1 !== null && <g transform={`translate(${sh1} 1010)`}><rect x={-46} y={-420} width={92} height={330} rx={44} fill="#010203" /><circle cx={0} cy={-450} r={44} fill="#010203" /><rect x={-42} y={-110} width={30} height={110} fill="#010203" /><rect x={12} y={-110} width={30} height={110} fill="#010203" /></g>}
+          {!p.cctv && [0, 1, 2, 3, 4, 5].map((k) => <rect key={'pl' + k} x={k * 1300 - 200 + (fx - 960) * -0.4} y={-300} width={130} height={1500} fill="#02050a" opacity={0.7} />)}
           {g !== null && <g><Man x={3420} y={1000} pose={poseStand({nod: g > 0 ? 8 + 6 * Math.sin(t * 0.6) : 0, lean: g > 0 ? 2 : 0})} look={GENN} s={1.5} /><path d={`M3396 626 Q3420 ${638 + g * 10} 3448 626 `} stroke="#fff" strokeWidth={3} fill="none" opacity={g * 0.7} /><rect x={3392} y={624} width={56} height={3 + g * 14} rx={5} fill="#000" opacity={g} /></g>}
         </g>
       );
@@ -332,12 +355,13 @@ const ShotView: React.FC<{sh: Shot; t: number; frame: number}> = ({sh, t, frame}
   const gl = GLITCH.reduce((mx, [a, b, v]) => (t >= a && t < b ? Math.max(mx, v) : mx), sh.p?.glitch && !Array.isArray(sh.p.glitch) ? sh.p.glitch * 0.4 : 0);
   const jit = gl > 0 ? (rnd(frame * 3 + 1) - 0.5) * 60 * gl : 0;
   const fixed = ['door', 'chair', 'paper', 'phone', 'clock', 'fuse'].includes(sh.sc);
+  const sx = Math.sin(t * 0.83) * 5 + Math.sin(t * 2.1) * 1.5, sy = Math.cos(t * 0.71) * 4, rot = Math.sin(t * 0.5) * 0.35;
   const tf = fixed
-    ? `translate(${shk * Math.sin(t * 61) + jit} ${shk * Math.cos(t * 53)}) translate(960 540) scale(${s}) translate(${-fx} ${-fy})`
-    : `translate(${960 + shk * Math.sin(t * 61) + jit} ${540 + shk * Math.cos(t * 53)}) scale(${s}) translate(${-fx} ${-fy})`;
+    ? `translate(${shk * Math.sin(t * 61) + jit + sx * 0.5} ${shk * Math.cos(t * 53) + sy * 0.5}) translate(960 540) scale(${s}) translate(${-fx} ${-fy})`
+    : `translate(${960 + shk * Math.sin(t * 61) + jit + sx} ${540 + shk * Math.cos(t * 53) + sy}) rotate(${rot}) scale(${s}) translate(${-fx} ${-fy})`;
   const cctv = sh.p?.cctv;
   return (
-    <AbsoluteFill style={{filter: cctv ? 'grayscale(0.75) contrast(1.15) brightness(1.05)' : 'saturate(0.8)'}}>
+    <AbsoluteFill style={{filter: (cctv ? 'grayscale(0.75) contrast(1.15) brightness(1.05)' : 'saturate(0.8)') + (gl > 0.3 ? ' drop-shadow(7px 0 0 rgba(255,40,40,0.55)) drop-shadow(-7px 0 0 rgba(40,220,255,0.5))' : '')}}>
       <svg width={1920} height={1080} viewBox="0 0 1920 1080" style={{position: 'absolute', left: 0, top: 0}}>
         <g transform={tf}><Scene sh={sh} t={t} fx={fx} /></g>
         {cctv && <rect width={1920} height={1080} fill="#4aff9a" opacity={0.1} />}
@@ -380,34 +404,97 @@ const TimerHud: React.FC<{t: number}> = ({t}) => {
   const s = timerSec(t);
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <div style={{position: 'absolute', right: 44, top: 28, fontFamily: 'monospace', fontWeight: 700, fontSize: 56, color: s < 25 ? '#ff4a4a' : '#8affb0', textShadow: '0 0 10px rgba(0,0,0,0.9)', background: 'rgba(0,0,0,0.45)', padding: '4px 20px', borderRadius: 8}}>{fmtTimer(s)}</div>
+      <div style={{position: 'absolute', right: 44, top: 92, fontFamily: 'monospace', fontWeight: 700, fontSize: 56, color: s < 25 ? '#ff4a4a' : '#8affb0', textShadow: '0 0 10px rgba(0,0,0,0.9)', background: 'rgba(0,0,0,0.45)', padding: '4px 20px', borderRadius: 8}}>{fmtTimer(s)}</div>
+    </AbsoluteFill>
+  );
+};
+
+
+const Dust: React.FC<{t: number}> = ({t}) => (
+  <AbsoluteFill style={{pointerEvents: 'none'}}>
+    <svg width={1920} height={1080} viewBox="0 0 1920 1080">
+      {Array.from({length: 34}).map((_, i) => <circle key={i} cx={(rnd(i) * 1920 + t * (6 + rnd(i + 3) * 12) + Math.sin(t * 0.6 + i) * 30) % 1920} cy={(rnd(i + 9) * 1080 + t * (4 + rnd(i + 5) * 8)) % 1080} r={1.5 + rnd(i + 7) * 2.6} fill="#d8e8c8" opacity={0.12 + 0.16 * rnd(i + 2) * (0.5 + 0.5 * Math.sin(t * 1.3 + i))} />)}
+    </svg>
+  </AbsoluteFill>
+);
+const TrackBand: React.FC<{t: number}> = ({t}) => (
+  <AbsoluteFill style={{pointerEvents: 'none'}}>
+    <div style={{position: 'absolute', left: 0, right: 0, top: ((t * 70) % 1500) - 200, height: 70, background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(210,230,255,0.05) 50%, rgba(255,255,255,0) 100%)'}} />
+  </AbsoluteFill>
+);
+const RULESTAMP: [number, string, string][] = [[143, '1', '22:30'], [153, '2', '23:00'], [161, '3', '00:00'], [169, '4', '01:15'], [180, '5', '02:00'], [189, '6', '03:30'], [196, '7', '05:55']];
+const RuleStamp: React.FC<{t: number}> = ({t}) => {
+  const r = RULESTAMP.find((x) => t >= x[0] && t < x[0] + 5.5);
+  if (!r) return null;
+  const u = t - r[0];
+  const pop = 1 + 0.5 * Math.max(0, 1 - u * 6) ;
+  const o = Math.min(clamp(u / 0.15), clamp((5.5 - u) / 0.5));
+  const fl = Math.sin(u * 40) > 0.85 ? 0.45 : 1;
+  return (
+    <AbsoluteFill style={{pointerEvents: 'none'}}>
+      <div style={{position: 'absolute', left: 60, top: 150, opacity: o * fl, transform: `scale(${pop}) rotate(-3deg)`, transformOrigin: 'left center', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, color: '#FF3535', textShadow: '0 0 20px rgba(255,53,53,0.55), 0 4px 0 #000', border: '6px solid #FF3535', padding: '8px 26px', fontSize: 58, letterSpacing: 4, background: 'rgba(8,2,2,0.55)'}}>
+        {`ПРАВИЛО ${r[1]}`}<span style={{fontSize: 34, marginLeft: 22, color: '#ffd0d0'}}>{r[2]}</span>
+      </div>
+    </AbsoluteFill>
+  );
+};
+const StoryClock: React.FC<{t: number; sc: string; cctv: boolean}> = ({t, sc, cctv}) => {
+  if (t < 218 || t > 679 || cctv || ['clock', 'paper', 'phone', 'door', 'chair'].includes(sc)) return null;
+  const m = interp(clockMin, t), h = Math.floor(m / 60) % 24, mm = Math.floor(m % 60);
+  const fl = Math.sin(t * 17) > 0.93 ? 0.4 : 1;
+  return (
+    <AbsoluteFill style={{pointerEvents: 'none'}}>
+      <div style={{position: 'absolute', right: 44, top: 28, opacity: fl, fontFamily: 'monospace', fontWeight: 700, fontSize: 44, color: '#8affb0', textShadow: '0 0 10px rgba(0,0,0,0.9)', background: 'rgba(0,0,0,0.38)', padding: '2px 16px', borderRadius: 8}}>{`${String(h).padStart(2, '0')}:${String(mm).padStart(2, '0')}`}</div>
+    </AbsoluteFill>
+  );
+};
+const TitleCard: React.FC<{i: number; u: number; frame: number}> = ({i, u, frame}) => {
+  const a = Math.min(clamp(u / 0.35), clamp((2.0 - u) / 0.35));
+  const name = TITLES[i];
+  return (
+    <AbsoluteFill style={{background: '#020305', opacity: Math.min(1, clamp((u + 0.1) / 0.1) * clamp((2.1 - u) / 0.1)), justifyContent: 'center', alignItems: 'center'}}>
+      <div style={{opacity: a, textAlign: 'center', transform: `translateX(${(rnd(frame) - 0.5) * (u < 0.4 ? 24 : 3)}px) scale(${1 + 0.05 * (1 - clamp(u / 1.2))})`}}>
+        <div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 46, letterSpacing: 16, color: '#FF3535', textShadow: '0 0 24px rgba(255,53,53,0.7)', marginBottom: 26}}>{`ЭПИЗОД ${i + 1}`}</div>
+        <div style={{width: 380, height: 4, margin: '0 auto 34px', background: '#FF3535', opacity: 0.8}} />
+        <div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 118, letterSpacing: 4, color: '#fff', textShadow: '0 0 30px rgba(255,255,255,0.35), 5px 0 0 rgba(255,40,40,0.35), -5px 0 0 rgba(40,220,255,0.3)', maxWidth: 1700}}>
+          {name.split('').map((ch, k) => <span key={k} style={{opacity: rnd(frame * 7 + k * 13) > 0.93 ? 0.25 : 1}}>{ch}</span>)}
+        </div>
+      </div>
+      {Array.from({length: 5}).map((_, k) => <div key={k} style={{position: 'absolute', left: 0, right: 0, top: ((frame * 23 + k * 211) % 1080), height: 3 + (k % 3) * 3, background: 'rgba(255,255,255,0.07)', opacity: a}} />)}
     </AbsoluteFill>
   );
 };
 
 export const M65: React.FC = () => {
   const frame = useCurrentFrame();
-  const t = frame / FPS65;
+  const tn = frame / FPS65;
+  const {o: t} = U(tn);
+  const ti = INS.findIndex((_, i) => tn >= titleStart(i) - 0.1 && tn < titleStart(i) + 2.1);
   const idx = SH.findIndex((s) => t >= s.a && t < s.b);
   const sh = SH[Math.max(0, idx)];
   const V = 0.6;
   const SFX = (a: number, d: number, src: string, v: number | ((f: number) => number)) => (
-    <Sequence key={`${src}${a}`} from={Math.round(a * FPS65)} durationInFrames={Math.max(1, Math.round(d * FPS65))}>
+    <Sequence key={`${src}${a}`} from={Math.round(W(a) * FPS65)} durationInFrames={Math.max(1, Math.round(d * FPS65))}>
       <Audio src={staticFile(`sfx/${src}.mp3`)} volume={typeof v === 'number' ? v * V : v} />
     </Sequence>
   );
-  const rampT = (pts: [number, number][]) => { const f = ramp(pts); return (fr: number) => f(fr) * V; };
+  const rampT = (pts: [number, number][]) => { const f = ramp(pts.map(([a, v]) => [W(a), v] as [number, number])); return (fr: number) => f(fr) * V; };
   const drone = rampT([[0, 0.08], [3, 0.09], [8, 0.0], [10, 0.05], [75, 0.06], [95, 0.04], [215, 0.05], [220, 0.07], [270, 0.08], [345, 0.05], [349, 0.02], [391, 0.02], [395, 0.08], [440, 0.09], [545, 0.1], [555, 0.07], [635, 0.09], [668, 0.02], [672, 0.0], [679, 0.0], [683, 0.04], [700, 0.04], [727, 0.07], [775, 0.09], [779, 0.0], [785, 0]]);
   const heart = rampT([[355, 0], [358, 0.06], [391, 0.08], [392, 0], [425, 0], [426, 0.07], [434, 0.05], [436, 0], [530, 0], [534, 0.05], [546, 0], [630, 0], [633, 0.07], [668, 0.08], [670, 0], [770, 0], [772, 0.1], [779, 0]]);
   const laugh = rampT([[277, 0], [278, 0.07], [296, 0.07], [297, 0.0]]);
-  const bike = rampT([[0, 0.0], [0.3, 0.09], [3.5, 0.08], [4, 0], [304, 0], [304.5, 0.08], [319, 0.08], [319.5, 0], [337, 0], [337.5, 0.07], [344, 0.07], [344.5, 0]]);
+  const bike = rampT([[0, 0.0], [0.3, 0.07], [3.5, 0.06], [4, 0], [304, 0], [304.5, 0.06], [319, 0.06], [319.5, 0], [337, 0], [337.5, 0.05], [344, 0.05], [344.5, 0]]);
   const patter = rampT([[357, 0], [358, 0.1], [368.5, 0.1], [369, 0]]);
   const whisper = rampT([[370, 0], [372, 0.04], [390, 0.05], [391, 0]]);
   const wind = rampT([[76, 0.0], [77, 0.06], [118, 0.06], [119, 0], [688, 0], [689, 0.08], [699, 0.06], [700, 0], [780, 0.0]]);
   const swing = rampT([[99, 0], [100, 0.05], [118, 0.05], [119, 0], [688, 0], [689, 0.04], [695, 0.04], [696, 0]]);
   const hum = rampT([[118, 0], [119, 0.04], [180, 0.04], [181, 0], [222, 0], [223, 0.04], [440, 0.05], [441, 0]]);
-  const ticks = rampT([[201, 0], [202, 0.06], [207, 0.06], [207.5, 0], [621, 0], [621.5, 0.07], [626, 0.07], [626.5, 0], [630, 0], [630.5, 0.08], [634, 0.08], [634.5, 0], [651, 0], [651.5, 0.07], [657, 0.07], [657.5, 0], [673, 0], [673.5, 0.08], [679, 0.08], [679.2, 0]]);
+  const dread = rampT([[270, 0], [275, 0.07], [338, 0.08], [345, 0], [424, 0], [427, 0.07], [440, 0.07], [443, 0], [484, 0], [488, 0.07], [535, 0.09], [546, 0], [630, 0], [634, 0.07], [664, 0.1], [668, 0], [727, 0], [732, 0.06], [764, 0.08], [772, 0.0]]);
+  const choir = rampT([[524, 0], [528, 0.05], [544, 0.06], [546, 0], [572, 0], [578, 0.05], [607, 0.07], [610, 0], [640, 0], [648, 0.05], [667, 0.07], [668, 0], [776, 0], [777, 0.06], [779, 0]]);
+  const pulse = rampT([[354, 0], [358, 0.05], [390, 0.08], [391.5, 0], [634, 0], [638, 0.06], [666, 0.1], [668, 0], [14, 0], [16, 0.04], [30, 0.04], [33, 0]]);
+  const calmM = rampT([[682, 0], [686, 0.06], [724, 0.05], [727, 0]]);
   const ev: React.ReactNode[] = [
+    SFX(337.5, 9.5, 'm65riser', 0.09), SFX(416, 9.5, 'm65riser', 0.09), SFX(587, 9.5, 'm65riser', 0.08), SFX(657.5, 10.5, 'm65riser', 0.09), SFX(764, 9.5, 'm65riser', 0.09),
+    ...INS.map((_, i) => <Sequence key={'tt' + i} from={Math.round((titleStart(i) + 0.05) * FPS65)} durationInFrames={50}><Audio src={staticFile('sfx/thump.mp3')} volume={0.2} /></Sequence>),
     ...[4.1, 4.6, 5.1, 320.6, 321.5, 322.4, 326, 484.4, 485.3, 486.2, 546.5, 547.5, 548.6, 549.6, 550.4, 645.5, 647, 649, 774.2, 775, 775.8].map((k) => SFX(k, 0.5, 'knock', 0.1)),
     SFX(5.0, 2.5, 'stinger', 0.1), SFX(268.1, 2.5, 'stinger', 0.1), SFX(425.2, 2.5, 'stinger', 0.1), SFX(530, 3, 'stinger', 0.08), SFX(596.2, 2.5, 'stinger', 0.1), SFX(779.3, 3, 'stinger', 0.12),
     SFX(8.4, 2.4, 'glitch', 0.07), SFX(263, 4.5, 'glitch', 0.05), SFX(536, 10, 'glitch', 0.04), SFX(609.8, 1, 'glitch', 0.08),
@@ -417,17 +504,20 @@ export const M65: React.FC = () => {
   ];
   return (
     <AbsoluteFill style={{backgroundColor: '#000'}}>
-      <Audio src={staticFile('voice15.mp3')} volume={1} />
+      <Audio src={staticFile('voice17.mp3')} volume={1} />
       <Audio src={staticFile('sfx/m65drone.mp3')} volume={drone} loop />
       <Audio src={staticFile('sfx/heart.mp3')} volume={heart} loop />
       <Audio src={staticFile('sfx/laugh.mp3')} volume={laugh} loop />
-      <Audio src={staticFile('sfx/bikeroll.mp3')} volume={bike} loop />
+      <Audio src={staticFile('sfx/roll.mp3')} volume={bike} loop />
       <Audio src={staticFile('sfx/patter.mp3')} volume={patter} loop />
       <Audio src={staticFile('sfx/whisper.mp3')} volume={whisper} loop />
       <Audio src={staticFile('sfx/wind.mp3')} volume={wind} loop />
       <Audio src={staticFile('sfx/creak.mp3')} volume={swing} loop />
       <Audio src={staticFile('sfx/hum.mp3')} volume={hum} loop />
-      <Audio src={staticFile('sfx/tick.mp3')} volume={ticks} loop />
+      <Audio src={staticFile('sfx/m65dread.mp3')} volume={dread} loop />
+      <Audio src={staticFile('sfx/m65choir.mp3')} volume={choir} loop />
+      <Audio src={staticFile('sfx/m65pulse.mp3')} volume={pulse} loop />
+      <Audio src={staticFile('sfx/m65calm.mp3')} volume={calmM} loop />
       {ev}
       <ShotView sh={sh} t={t} frame={frame} />
       {/* VHS grain + scanlines + vignette */}
@@ -436,8 +526,13 @@ export const M65: React.FC = () => {
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 48%, rgba(0,4,8,0.62) 100%)', pointerEvents: 'none'}} />
       <AbsoluteFill style={{background: 'rgba(30,70,90,0.07)', mixBlendMode: 'screen', pointerEvents: 'none'}} />
       {sh.p?.cctv && <CctvHud t={t} cam={sh.p.cctv} />}
+      <Dust t={tn} />
+      <TrackBand t={tn} />
+      <RuleStamp t={t} />
+      <StoryClock t={t} sc={sh.sc} cctv={!!sh.p?.cctv} />
       <TimerHud t={t} />
       <Subs t={t} />
+      {ti >= 0 && <TitleCard i={ti} u={tn - titleStart(ti)} frame={frame} />}
       <AbsoluteFill style={{backgroundColor: '#000', opacity: t >= 780.6 ? clamp((t - 780.6) / 1.6) : 0, pointerEvents: 'none'}} />
     </AbsoluteFill>
   );
