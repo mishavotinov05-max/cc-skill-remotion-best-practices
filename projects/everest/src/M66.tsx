@@ -9,7 +9,7 @@ import {Full, Man, VASYA, VASYA_PK, ANDREY, NEIGH, WOMAN, FIREMAN, WORKER, CityN
 import subs from './subs_s7.json';
 
 export const FPS66 = 30;
-const SPEED = 0.8;
+const SPEED = 0.975;
 export const DUR66 = 850.6 / SPEED;
 const W = (o: number) => o / SPEED;
 
