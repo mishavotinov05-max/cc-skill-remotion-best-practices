@@ -131,15 +131,26 @@ export const CarSide: React.FC<{t: number; x: number; y: number; k?: number; doo
     <path d="M-250 -80 L282 -72" stroke="#fff" strokeOpacity={0.12} strokeWidth={4} />
     {/* roof highlight */}
     <path d="M-110 -218 Q-30 -226 120 -224" stroke="#fff" strokeOpacity={0.25} strokeWidth={4} fill="none" />
+    <defs><clipPath id="cwin"><path d="M0 -212 L116 -212 Q168 -208 200 -148 L0 -148 Z" /></clipPath></defs>
     {/* windows */}
     <path d="M-132 -146 Q-110 -206 -46 -212 L-20 -212 L-20 -146 Z" fill="#0c1218" />
     <path d="M0 -212 L116 -212 Q168 -208 200 -148 L0 -148 Z" fill="#0c1218" />
     <path d="M-132 -146 Q-110 -206 -46 -212 L-20 -212 L-20 -146 Z" fill="#6a8ab0" opacity={0.18} /><path d="M0 -212 L116 -212 Q168 -208 200 -148 L0 -148 Z" fill="#6a8ab0" opacity={0.18} />
-    {people && <>
-      <ProfileHead x={-72} y={-170} k={0.78} who="oleg" />
-      {leraIn && <ProfileHead x={86} y={-170} k={0.8} who="lera" />}
-      <path d="M-100 -148 Q-72 -160 -48 -148 L-40 -146 L-100 -146 Z" fill="#3a3226" />{leraIn && <path d="M58 -148 Q86 -160 114 -148 L122 -146 L58 -146 Z" fill="#6a2a3a" />}
-    </>}
+    {people && <g clipPath="url(#cwin)">
+      {/* far occupant (driver), dimmer and a bit behind */}
+      <g opacity={0.9}>
+        <rect x={104} y={-196} width={46} height={60} rx={14} fill="#1a1c20" />
+        <ellipse cx={128} cy={-150} rx={30} ry={16} fill="#3a3226" />
+        <ProfileHead x={128} y={-176} k={0.52} who="oleg" />
+      </g>
+      {/* near occupant */}
+      {leraIn && <g>
+        <rect x={32} y={-198} width={44} height={64} rx={14} fill="#24272c" />
+        <ellipse cx={86} cy={-148} rx={34} ry={17} fill="#6a2a3a" />
+        <ProfileHead x={88} y={-177} k={0.56} who="lera" />
+      </g>}
+    </g>}
+    <path d="M0 -212 L116 -212 Q168 -208 200 -148 L0 -148 Z" fill="#6a8ab0" opacity={0.16} />
     {/* pillar + door lines + handles */}
     <rect x={-22} y={-214} width={22} height={150} fill={body} /><path d="M-22 -214 L-22 -30 M154 -150 L154 -30 M-168 -140 L-168 -30" stroke="#000" strokeOpacity={0.5} strokeWidth={3} />
     <rect x={-10} y={-106} width={34} height={8} rx={4} fill="#aab2ba" /><rect x={116} y={-108} width={34} height={8} rx={4} fill="#aab2ba" />

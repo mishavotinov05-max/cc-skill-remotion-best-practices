@@ -274,7 +274,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
         <g>
           <ForestDark t={t} cx={fx} road={!!p.road} dusk={p.dusk ?? 0.5} fog={0.6} suv={!!p.suv} />
           {p.carFar && <g transform="translate(3100 920)"><rect x={-60} y={-60} width={120} height={60} rx={14} fill="#1a1c22" /><circle cx={60} cy={-30} r={10} fill="#fff3b0" /><polygon points="60,-30 300,-80 300,20" fill="#fff3b0" opacity={0.12} /></g>}
-          {p.carNear && <CarSide t={t} x={2900} y={970} k={1.15} flip doorOpen={p.doorOpen ?? 0} />}
+          {p.carNear && <CarSide t={t} x={3000} y={985} k={1.5} flip doorOpen={p.doorOpen ?? 0} />}
           {wx !== null && (p.v ? <PersonV look={ARTEM} x={wx} y={1010 + (p.vs ? lerp(0, 30, E(t, p.walk[0], p.walk[1])) : 0)} view={p.v} mode={still ? 'stand' : p.walk[4] === 'run' ? 'run' : 'walk'} t={t} s={p.vs ? lerp(p.vs[0], p.vs[1], E(t, p.walk[0], p.walk[1])) : 1.4} mood="scared" /> : <Man x={wx} y={1010} pose={still ? poseStand({mood: 'scared'}) : wk} s={1.4} />)}
           {br !== null && <Man x={br} y={1015} pose={p.brother[4] === 'run' ? poseRun(t + 0.2) : poseStand({mood: 'neutral', hf: p.smoke ? [60, -150] : [30, -128]})} look={BROTHER} flip s={1.4} />}
           {p.smoke && br !== null && <g>{[0, 1, 2, 3].map((i) => <ellipse key={i} cx={br - 60 + Math.sin(t + i) * 14} cy={600 - i * 40 - ((t * 24) % 40)} rx={22 + i * 8} ry={12 + i * 4} fill="#c8c8d0" opacity={0.16 - i * 0.03} />)}<circle cx={br - 78} cy={640} r={5} fill="#ff6a2a" /></g>}
@@ -315,7 +315,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
       return (
         <g>
           <ShopExt t={t} car={false} cops={tw(p.cops ?? 0, t)} />
-          {p.car && <CarSide t={t} x={2300} y={940} k={1.05} people={!(p.walk)} leraIn={false} lights={0.5} />}
+          {p.car && <CarSide t={t} x={2350} y={950} k={1.35} people={!(p.walk)} leraIn={false} lights={0.5} />}
           {wx !== null && <Man x={wx} y={1010} pose={run ? poseRun(t) : poseWalk(t, 2.2, 8)} s={1.35} flip />}
           {lx !== null && <Man x={lx} y={1016} pose={run ? poseRun(t + 0.3) : poseWalk(t, 2.2, 8)} look={LERA} flip s={1.3} />}
           {p.oleg && t >= p.oleg[0] && t < p.oleg[1] && <Man x={2150} y={1010} pose={poseStand({mood: 'neutral'})} look={OLEG} flip s={1.4} />}
