@@ -258,7 +258,26 @@ export const Alley: React.FC<{t: number; man?: number}> = ({t, man = 0}) => (
     <g transform="translate(1050 0)"><rect x={-8} y={200} width={16} height={570} fill="#0a0c10" /><rect x={-60} y={180} width={120} height={30} rx={10} fill="#0a0c10" /><circle cx={0} cy={216} r={16} fill="#ffe8b0" /></g>
     <Glow x={1050} y={230} r={800} c="#ffd890" o={0.5} id="al1" />
     <polygon points="1000,230 1100,230 1400,780 700,780" fill="#ffe0a0" opacity={0.1} />
-    {man > 0 && <g opacity={man}><Maniac x={1900 - E(t, 0, 5) * 80} y={820} s={1.15} t={t} /><circle cx={1830 - E(t, 0, 5) * 80} cy={480} r={5} fill="#ff6a2a" /><Glow x={1830 - E(t, 0, 5) * 80} y={480} r={60} c="#ff6a2a" o={0.7} id="cig" />{[0, 1, 2, 3].map((i) => <ellipse key={i} cx={1830 - i * 14 + Math.sin(t * 2 + i) * 8} cy={440 - i * 40 - ((t * 20) % 40)} rx={20 + i * 6} ry={10 + i * 3} fill="#c8c8d0" opacity={0.2 - i * 0.04} />)}</g>}
+    {(() => {
+      // absolute time t (voice time): 10..14.7 Artem walks in, 14.7..16.4 notices, 16.4..18 grabbed and dragged off
+      const ax0 = lerp(160, 960, E(t, 10, 14.6));
+      const mx0 = 2150 - E(t, 12.2, 15) * 260;                // maniac creeps from the right edge
+      const grab = E(t, 15.6, 16.5), drag = E(t, 17.0, 18.0);
+      const mx = mx0 - grab * 780 + drag * 700;               // reaches Artem, then drags him away
+      const ax = ax0 + drag * 700 - (grab > 0.99 ? 0 : 0);
+      const walking = t < 14.7;
+      const struggling = t >= 16.2;
+      const jit = struggling ? Math.sin(t * 38) * 7 : 0;
+      const pose = walking ? poseWalk(t, 2.0, 8) : struggling ? poseReach(70, -170 + Math.sin(t * 20) * 14, {lean: -14, mood: 'scared'}) : poseStand({mood: 'scared', lean: -8, nod: -4, hf: [30, -130]});
+      const hot = 1900 - 0; void hot;
+      return (
+        <g>
+          {t > 12.2 && <Maniac x={mx} y={820} s={0.98} t={t} flip arm={clamp((t - 15.4) / 0.8) * (t < 18 ? 1 : 0)} />}
+          {t > 12.2 && <g><circle cx={mx - 70} cy={485} r={5} fill="#ff6a2a" /><Glow x={mx - 70} y={485} r={60} c="#ff6a2a" o={0.7} id="cig" />{[0, 1, 2, 3].map((k) => <ellipse key={k} cx={mx - 70 - k * 14 + Math.sin(t * 2 + k) * 8} cy={440 - k * 40 - ((t * 20) % 40)} rx={20 + k * 6} ry={10 + k * 3} fill="#c8c8d0" opacity={0.2 - k * 0.04} />)}</g>}
+          {t >= 10 && <Man x={ax + jit} y={820} pose={pose} look={ARTEM} s={1.45} />}
+        </g>
+      );
+    })()}
     <Dust t={t} x={0} y={100} w={2000} h={700} n={30} />
     <rect x={-300} y={-100} width={3600} height={1300} fill="#02040a" opacity={0.2} />
   </g>

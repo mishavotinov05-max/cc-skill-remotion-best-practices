@@ -23,8 +23,8 @@ const SH: Shot[] = [
   B(C(900, 560, 0.85, 0.95, 1100), 0, 4, {art: 'lie', dark: 0.6}),
   S(4, 7, 'sheet', C0, {k: [0.1, 0.35, 4, 7], hl: 0}),
   B(C(1150, 760, 1.2, 1.35), 7, 10, {art: 'sit', dark: 0.5}),
-  S(10, 15, 'alley', C(900, 560, 0.95, 1.1, 1000), {man: 0}),
-  S(15, 18, 'alley', C(1300, 600, 1.1, 1.3, 1700), {man: [0, 1, 15, 17]}),
+  S(10, 14.7, 'alley', C(1000, 560, 1.0, 1.1, 1000), {}),
+  S(14.7, 18, 'alley', C(1100, 470, 1.05, 1.3, 1100), {}),
   S(18, 20, 'black', C0, {}),
   B(C(1150, 800, 1.3, 1.5), 20, 23, {art: 'lie2sit', dark: 0.5}),
   B(C(1150, 880, 2.2, 2.4), 23, 25, {art: 'sit', dark: 0.5}),
@@ -251,7 +251,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
     }
     case 'face': return <ManiacFace t={t} light={p.light ?? 1} look={tw(p.look ?? 0, t)} smoke={p.smoke ?? 0} />;
     case 'sheet': return <RulesSheet t={t} k={tw(p.k ?? 1, t)} hl={p.hl ?? 0} />;
-    case 'alley': return <Alley t={t - a} man={tw(p.man ?? 0, t)} />;
+    case 'alley': return <Alley t={t} man={1} />;
     case 'lock': return <LockClose t={t} k={tw(p.k ?? 0, t)} />;
     case 'step': return <StepClose t={t} k={tw(p.k ?? 0, t)} />;
     case 'token': return <TokenClose t={t} side={tw(p.side ?? 0, t)} />;
