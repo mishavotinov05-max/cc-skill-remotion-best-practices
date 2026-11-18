@@ -344,19 +344,21 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
   }
 };
 
-const ShotView: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
+const ZV: Record<string, number> = {sheet: 0.8, lock: 0.85, step: 0.85, token: 0.85, desk: 0.8, face: 1.0, flash: 0.9, pov: 1.0, black: 1};
+const ShotView: React.FC<{sh: Shot; t: number; vert?: boolean}> = ({sh, t, vert}) => {
+  const cx0 = vert ? 540 : 960, cy0 = vert ? 550 : 540, zm = vert ? (ZV[sh.sc] ?? 1.02) : 1;
   const k = ease(clamp((t - sh.a) / Math.max(0.01, sh.b - sh.a)));
   const c = sh.cam;
-  const fx = lerp(c[0], c[3], k), fy = lerp(c[1], c[4], k), s = lerp(c[2], c[5], k);
+  const fx = lerp(c[0], c[3], k), fy = lerp(c[1], c[4], k), s = lerp(c[2], c[5], k) * zm;
   const shk = sh.shake ?? 0;
   const fixed = ['sheet', 'lock', 'step', 'token', 'flash', 'desk', 'face', 'pov'].includes(sh.sc);
   const sx = Math.sin(t * 0.83) * 4, sy = Math.cos(t * 0.71) * 3, rot = Math.sin(t * 0.5) * 0.25;
   const tf = fixed
-    ? `translate(${shk * Math.sin(t * 61) + sx * 0.5} ${shk * Math.cos(t * 53) + sy * 0.5}) translate(960 540) scale(${s}) translate(${-fx} ${-fy})`
-    : `translate(${960 + shk * Math.sin(t * 61) + sx} ${540 + shk * Math.cos(t * 53) + sy}) rotate(${rot}) scale(${s}) translate(${-fx} ${-fy})`;
+    ? `translate(${shk * Math.sin(t * 61) + sx * 0.5} ${shk * Math.cos(t * 53) + sy * 0.5}) translate(${cx0} ${cy0}) scale(${s}) translate(${-fx} ${-fy})`
+    : `translate(${cx0 + shk * Math.sin(t * 61) + sx} ${cy0 + shk * Math.cos(t * 53) + sy}) rotate(${rot}) scale(${s}) translate(${-fx} ${-fy})`;
   return (
     <AbsoluteFill style={{filter: 'saturate(0.85) contrast(1.05)'}}>
-      <svg width={1920} height={1080} viewBox="0 0 1920 1080" style={{position: 'absolute', left: 0, top: 0}}>
+      <svg width={vert ? 1080 : 1920} height={vert ? 1100 : 1080} viewBox={vert ? '0 0 1080 1100' : '0 0 1920 1080'} style={{position: 'absolute', left: 0, top: 0}}>
         <g transform={tf}><Scene sh={sh} t={t} fx={fx} /></g>
       </svg>
     </AbsoluteFill>
@@ -364,23 +366,23 @@ const ShotView: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
 };
 
 type RW = [string, number, number];
-const Subs: React.FC<{t: number}> = ({t}) => {
+const Subs: React.FC<{t: number; vert?: boolean}> = ({t, vert}) => {
   let p: [number, number, RW[], number] | undefined;
   for (const x of subs as any) if (t >= x[0] - 0.04 && t < x[1] + 0.1) p = x;
   if (!p) return null;
   const k = clamp((t - p[0] + 0.04) / 0.1);
   const o = Math.min(k, clamp((p[1] + 0.1 - t) / 0.06));
   return (
-    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 62}}>
-      <div style={{opacity: o, transform: `translateY(${(1 - k) * 8}px)`, width: 1700, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 52, lineHeight: 1.15, textTransform: 'uppercase', WebkitTextStroke: '7px #05070f', paintOrder: 'stroke fill', textShadow: '0 5px 0 rgba(0,0,0,0.4)'}}>
-        {p[2].map(([w], i) => <span key={i} style={{display: 'inline-block', color: i === p![3] ? '#FF2A2A' : '#ffffff', margin: '0 14px', textShadow: i === p![3] ? '0 0 22px rgba(255,42,42,0.6), 0 5px 0 rgba(0,0,0,0.4)' : undefined}}>{w}</span>)}
+    <AbsoluteFill style={vert ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: 1480} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 62}}>
+      <div style={{opacity: o, transform: `translateY(${(1 - k) * 8}px)`, width: vert ? 980 : 1700, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: vert ? 66 : 52, lineHeight: 1.15, textTransform: 'uppercase', WebkitTextStroke: '7px #05070f', paintOrder: 'stroke fill', textShadow: '0 5px 0 rgba(0,0,0,0.4)'}}>
+        {p[2].map(([w], i) => <span key={i} style={{display: 'inline-block', color: i === p![3] ? '#FF2A2A' : '#ffffff', margin: vert ? '0 12px' : '0 14px', textShadow: i === p![3] ? '0 0 22px rgba(255,42,42,0.6), 0 5px 0 rgba(0,0,0,0.4)' : undefined}}>{w}</span>)}
       </div>
     </AbsoluteFill>
   );
 };
 
 const EPS: [number, string, string, number][] = [[1, 'ПРОБУЖДЕНИЕ', 'ПРОБУЖДЕНИЕ', 6.2], [2, 'ПЕРВЫЙ ', 'ПОБЕГ', 199.2], [3, 'ЧУЖАЯ ', 'СЕМЬЯ', 385.2], [4, 'НИКОМУ НЕ ', 'ВЕРЬ', 588.7], [5, 'ПОСЛЕДНИЙ ', 'ШАНС', 779.2]];
-const EpTitle: React.FC<{t: number; frame: number}> = ({t, frame}) => {
+const EpTitle: React.FC<{t: number; frame: number; vert?: boolean}> = ({t, frame, vert}) => {
   const e = EPS.find((x) => t >= x[3] && t < x[3] + 2.05);
   if (!e) return null;
   const u = t - e[3];
@@ -390,8 +392,8 @@ const EpTitle: React.FC<{t: number; frame: number}> = ({t, frame}) => {
     <AbsoluteFill style={{pointerEvents: 'none', justifyContent: 'center', alignItems: 'center'}}>
       <div style={{position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.55), rgba(0,0,0,0.25) 70%, rgba(0,0,0,0))', opacity: a}} />
       <div style={{opacity: a, textAlign: 'center', transform: `translateX(${jit}px) scale(${1 + 0.04 * (1 - clamp(u / 1.5))})`}}>
-        <div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 40, letterSpacing: 16, color: '#cfd4de', marginBottom: 14}}>{`ЭПИЗОД ${e[0]}`}</div>
-        <div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 124, letterSpacing: 4, color: '#fff', textShadow: '0 0 40px rgba(0,0,0,0.9)'}}>
+        <div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: vert ? 34 : 40, letterSpacing: vert ? 12 : 16, color: '#cfd4de', marginBottom: 14}}>{`ЭПИЗОД ${e[0]}`}</div>
+        <div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: vert ? 84 : 124, letterSpacing: vert ? 2 : 4, color: '#fff', textShadow: '0 0 40px rgba(0,0,0,0.9)'}}>
           {e[0] === 1 ? <span style={{color: '#fff'}}>ПРОБУДИ<span style={{color: '#ff2a2a'}}>ТЕЛЬНО</span></span> : <>{e[1]}<span style={{color: '#ff2a2a', textShadow: '0 0 30px rgba(255,42,42,0.6)'}}>{e[2]}</span></>}
         </div>
       </div>
@@ -400,7 +402,23 @@ const EpTitle: React.FC<{t: number; frame: number}> = ({t, frame}) => {
   );
 };
 
-export const M67: React.FC = () => {
+
+const TopBar: React.FC<{t: number}> = ({t}) => {
+  let ep = 1;
+  for (const e of EPS) if (t >= e[3]) ep = e[0] as number;
+  return (
+    <AbsoluteFill style={{background: 'linear-gradient(#0b0d14, #05060a)', pointerEvents: 'none'}}>
+      <div style={{position: 'absolute', top: 70, left: 0, right: 0, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 84, lineHeight: 1, letterSpacing: 4, color: '#fff'}}>ПОДВАЛ</div>
+      <div style={{position: 'absolute', top: 160, left: 0, right: 0, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 84, lineHeight: 1, letterSpacing: 4, color: '#ff2a2a', textShadow: '0 0 30px rgba(255,42,42,0.5)'}}>МАНЬЯКА</div>
+      <div style={{position: 'absolute', top: 262, left: 0, right: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 14}}>
+        <span style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 28, letterSpacing: 8, color: '#cfd4de', marginRight: 16}}>{`ЭПИЗОД ${ep}`}</span>
+        {[1, 2, 3, 4, 5].map((n) => <div key={n} style={{width: n === ep ? 54 : 26, height: 8, borderRadius: 4, background: n <= ep ? '#ff2a2a' : '#2a2e38'}} />)}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+const M67Inner: React.FC<{vert?: boolean}> = ({vert}) => {
   const frame = useCurrentFrame();
   const t = (frame / FPS67) * SPEED;
   const idx = SH.findIndex((s) => t >= s.a && t < s.b);
@@ -435,13 +453,31 @@ export const M67: React.FC = () => {
       <Audio src={staticFile('sfx/steps.mp3')} volume={steps} loop />
       <Audio src={staticFile('sfx/heart.mp3')} volume={heart} loop />
       {ev}
+      {vert ? (
+        <>
+          <TopBar t={t} />
+          <div style={{position: 'absolute', left: 0, top: 330, width: 1080, height: 1100, overflow: 'hidden'}}>
+            <ShotView sh={sh} t={t} vert />
+            <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,2,6,0.5) 100%)', pointerEvents: 'none'}} />
+            <EpTitle t={t} frame={frame} vert />
+          </div>
+          <AbsoluteFill style={{background: 'linear-gradient(rgba(5,6,10,0) 0, rgba(5,6,10,0) 0)', pointerEvents: 'none'}} />
+          <Subs t={t} vert />
+        </>
+      ) : (
+        <>
       <ShotView sh={sh} t={t} />
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 50%, rgba(0,2,6,0.5) 100%)', pointerEvents: 'none'}} />
       <AbsoluteFill style={{backgroundImage: 'url(' + staticFile('noise.png') + ')', backgroundSize: '256px 256px', backgroundPosition: `${(frame * 37) % 256}px ${(frame * 91) % 256}px`, opacity: 0.09, mixBlendMode: 'overlay', pointerEvents: 'none'}} />
       <Subs t={t} />
       <EpTitle t={t} frame={frame} />
+        </>
+      )}
       <AbsoluteFill style={{backgroundColor: '#000', opacity: t < 0.6 ? 1 - t / 0.6 : t >= 1040 ? clamp((t - 1040) / 3) : 0, pointerEvents: 'none'}} />
-      {t >= 1043.5 && <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', opacity: clamp((t - 1043.5) / 1.2)}}><div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 96, letterSpacing: 18, color: '#fff'}}>КОНЕЦ <span style={{color: '#ff2a2a'}}>СЕЗОНА</span></div></AbsoluteFill>}
+      {t >= 1043.5 && <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', opacity: clamp((t - 1043.5) / 1.2)}}><div style={{fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: vert ? 64 : 96, letterSpacing: vert ? 8 : 18, color: '#fff'}}>КОНЕЦ <span style={{color: '#ff2a2a'}}>СЕЗОНА</span></div></AbsoluteFill>}
     </AbsoluteFill>
   );
 };
+
+export const M67: React.FC = () => <M67Inner />;
+export const M67V: React.FC = () => <M67Inner vert />;
