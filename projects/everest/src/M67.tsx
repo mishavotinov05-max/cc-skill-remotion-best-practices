@@ -355,7 +355,7 @@ const Subs: React.FC<{t: number}> = ({t}) => {
   const o = Math.min(k, clamp((p[1] + 0.1 - t) / 0.06));
   return (
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 62}}>
-      <div style={{opacity: o, transform: `translateY(${(1 - k) * 8}px)`, width: 1700, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 62, lineHeight: 1.15, textTransform: 'uppercase', WebkitTextStroke: '8px #05070f', paintOrder: 'stroke fill', textShadow: '0 5px 0 rgba(0,0,0,0.4)'}}>
+      <div style={{opacity: o, transform: `translateY(${(1 - k) * 8}px)`, width: 1700, textAlign: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 52, lineHeight: 1.15, textTransform: 'uppercase', WebkitTextStroke: '7px #05070f', paintOrder: 'stroke fill', textShadow: '0 5px 0 rgba(0,0,0,0.4)'}}>
         {p[2].map(([w], i) => <span key={i} style={{display: 'inline-block', color: i === p![3] ? '#FF2A2A' : '#ffffff', margin: '0 14px', textShadow: i === p![3] ? '0 0 22px rgba(255,42,42,0.6), 0 5px 0 rgba(0,0,0,0.4)' : undefined}}>{w}</span>)}
       </div>
     </AbsoluteFill>
