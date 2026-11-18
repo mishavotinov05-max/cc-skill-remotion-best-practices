@@ -6,9 +6,41 @@ import {clamp, ease, lerp, rnd, mixc, Tx, Glow, Person, Look, Pose, poseStand, p
 
 export const Full: React.FC<{c: string; o?: number}> = ({c, o = 1}) => <rect x={-3000} y={-2000} width={14000} height={6000} fill={c} opacity={o} />;
 const TEXS = ['concrete', 'rust', 'wood', 'dirt', 'leather', 'wallpaper', 'tile', 'asphalt', 'paper', 'metal', 'fog'];
+
+// clean vector surfaces (no blotchy photo textures)
+const cleanTex = (n: string): React.ReactNode => {
+  const blocks = (base: string, joint: string, hi: string, bw: number, bh: number) => (
+    <g>
+      <rect width={512} height={512} fill={base} />
+      {Array.from({length: 512 / bh}).map((_, r) => Array.from({length: 512 / bw + 1}).map((__, c) => {
+        const x = c * bw - (r % 2 ? bw / 2 : 0), y = r * bh, sh = ((r * 7 + c * 13) % 5) * 0.012;
+        return <g key={`${r}-${c}`}><rect x={x} y={y} width={bw} height={bh} fill="#fff" opacity={sh} /><rect x={x} y={y} width={bw} height={3} fill={hi} opacity={0.25} /></g>;
+      }))}
+      {Array.from({length: 512 / bh}).map((_, r) => <rect key={`h${r}`} x={0} y={r * bh + bh - 3} width={512} height={3} fill={joint} />)}
+      {Array.from({length: 512 / bh}).map((_, r) => Array.from({length: 512 / bw + 1}).map((__, c) => <rect key={`v${r}-${c}`} x={c * bw - (r % 2 ? bw / 2 : 0)} y={r * bh} width={3} height={bh} fill={joint} />))}
+    </g>
+  );
+  const planks = (base: string, line: string, w: number) => (
+    <g><rect width={512} height={512} fill={base} />{Array.from({length: 512 / w}).map((_, i) => <g key={i}><rect x={i * w} y={0} width={3} height={512} fill={line} /><rect x={i * w + 3} y={0} width={w - 3} height={512} fill="#fff" opacity={(i % 3) * 0.018} /></g>)}</g>
+  );
+  switch (n) {
+    case 'concrete': return blocks('#3d4650', '#1b2128', '#8a96a2', 128, 64);
+    case 'dirt': return <g><rect width={512} height={512} fill="#3a342f" />{Array.from({length: 4}).map((_, i) => <rect key={i} x={0} y={i * 128 + 124} width={512} height={4} fill="#1a1613" />)}{Array.from({length: 4}).map((_, i) => <rect key={`v${i}`} x={i * 128 + (i % 2) * 64} y={0} width={4} height={512} fill="#1a1613" opacity={0.7} />)}</g>;
+    case 'asphalt': return <rect width={512} height={512} fill="#2c3037" />;
+    case 'tile': return blocks('#586068', '#262c32', '#9aa4ae', 128, 128);
+    case 'wood': return planks('#6e4a2c', '#2a1a0e', 64);
+    case 'rust': return <g><rect width={512} height={512} fill="#6a4030" /><rect width={512} height={512} fill="#000" opacity={0.08} /></g>;
+    case 'leather': return <rect width={512} height={512} fill="#3e2c22" />;
+    case 'metal': return <g><rect width={512} height={512} fill="#6a727c" /><rect width={512} height={6} fill="#9aa4ae" opacity={0.4} /></g>;
+    case 'paper': return <rect width={512} height={512} fill="#d9d0b0" />;
+    case 'wallpaper': return <g><rect width={512} height={512} fill="#6a5a40" />{Array.from({length: 16}).map((_, i) => <rect key={i} x={i * 32} y={0} width={16} height={512} fill="#000" opacity={0.07} />)}</g>;
+    case 'fog': return <rect width={512} height={512} fill="#bfc6d0" />;
+    default: return <rect width={512} height={512} fill="#333" />;
+  }
+};
 export const Defs: React.FC = () => (
   <defs>
-    {TEXS.map((n) => <pattern key={n} id={`t-${n}`} patternUnits="userSpaceOnUse" width={512} height={512}><image href={staticFile(`tex/${n}.png`)} width={512} height={512} /></pattern>)}
+    {TEXS.map((n) => <pattern key={n} id={`t-${n}`} patternUnits="userSpaceOnUse" width={512} height={512}>{cleanTex(n)}</pattern>)}
     <linearGradient id="vgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#000" stopOpacity={0.85} /><stop offset="0.5" stopColor="#000" stopOpacity={0} /><stop offset="1" stopColor="#000" stopOpacity={0.7} /></linearGradient>
   </defs>
 );

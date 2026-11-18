@@ -424,7 +424,7 @@ export const M67: React.FC = () => {
       <Audio src={staticFile('sfx/heart.mp3')} volume={heart} loop />
       {ev}
       <ShotView sh={sh} t={t} />
-      <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 50%, rgba(0,2,6,0.7) 100%)', pointerEvents: 'none'}} />
+      <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 50%, rgba(0,2,6,0.5) 100%)', pointerEvents: 'none'}} />
       <AbsoluteFill style={{backgroundImage: 'url(' + staticFile('noise.png') + ')', backgroundSize: '256px 256px', backgroundPosition: `${(frame * 37) % 256}px ${(frame * 91) % 256}px`, opacity: 0.09, mixBlendMode: 'overlay', pointerEvents: 'none'}} />
       <Subs t={t} />
       <EpTitle t={t} frame={frame} />
