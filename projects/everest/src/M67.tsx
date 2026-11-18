@@ -4,7 +4,7 @@ import '@fontsource/montserrat/latin-800.css';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {ramp} from './Everest';
 import {clamp, ease, lerp, rnd, Tx, E, Pose, poseStand, poseWalk, poseSit, poseReach} from './M60Base';
-import {Full, Man, ARTEM, OLEG, BROTHER, GRAN, LERA, SELLER, Maniac, Basement, Alley, TokenClose, LockClose, StepClose, RulesSheet, Kitchen, ForestDark, HouseExt, LivingRoom, Garden, CarInside, ShopExt, ShopInt, Desk, AptHall} from './M67Art';
+import {Full, Man, ARTEM, OLEG, BROTHER, GRAN, LERA, SELLER, Maniac, ManiacFace, Basement, Alley, TokenClose, LockClose, StepClose, RulesSheet, Kitchen, ForestDark, HouseExt, LivingRoom, Garden, CarInside, ShopExt, ShopInt, Desk, AptHall} from './M67Art';
 import subs from './subs_s8.json';
 
 export const FPS67 = 30;
@@ -53,14 +53,14 @@ const SH: Shot[] = [
   S(109, 113, 'lock', C0, {k: [0, 1, 109, 112]}),
   B(C(600, 650, 1.1, 1.3), 113, 118, {art: 'sit', door: [0, 1, 113, 116], man: [330, 330, 114, 118, 0], dark: 0.5}),
   B(C(520, 640, 1.5, 1.7), 118, 122, {art: 'sit', door: 1, man: [330, 380, 118, 122, 0.3], dark: 0.45}),
-  B(C(450, 560, 2.0, 2.2), 122, 127, {art: 'sit', door: 1, man: [380, 400, 122, 127, 0.3], dark: 0.45}),
+  S(122, 127, 'face', C(960, 540, 1.0, 1.12), {look: [0, 1, 122, 126], smoke: 1}),
   S(127, 131, 'alley', C(1500, 600, 1.2, 1.4), {man: 1}),
   B(C(900, 700, 1.1, 1.2), 131, 137, {art: 'sit', door: 1, man: [400, 900, 131, 137, 1, 1], plate: 1, dark: 0.45}),
   B(C(1100, 600, 1.3, 1.4), 137, 142, {art: 'sit', door: 1, man: [900, 1000, 137, 142, 0.2, 1], plate: 1, dark: 0.42}),
   B(C(900, 800, 1.5, 1.6), 142, 146, {art: 'sit', door: 1, man: [1000, 800, 142, 146, 0.5, 1], plate: 1, plank: [143, 144.5], dark: 0.45}),
   B(C(1000, 700, 1.2, 1.3), 146, 151, {art: 'sit', door: 1, man: [800, 800, 146, 151, 0.2, 1], plate: 1, dark: 0.45}),
   B(C(1000, 760, 1.6, 1.8), 151, 158, {art: 'beg', door: 1, man: [800, 800, 151, 158, 0.2, 1], plate: 1, dark: 0.42}),
-  B(C(800, 560, 1.9, 2.1), 158, 163, {art: 'sit', door: 1, man: [800, 800, 158, 163, 0.1, 1], plate: 1, dark: 0.4}),
+  S(158, 163, 'face', C(960, 540, 1.05, 1.2), {look: 1}),
   B(C(600, 640, 1.3, 1.4), 163, 168, {art: 'sit', door: [1, 0.2, 166, 168], man: [800, 340, 163, 167, 0.8, 1], plate: 1, dark: 0.45}),
   B(C(450, 740, 1.5, 1.7), 168, 178, {art: 'sit', door: 0.1, man: [340, 340, 168, 178, 0], token: [174, 178], plate: 1, dark: 0.5, stairLit: 0.3}),
   B(C(600, 860, 1.4, 1.5), 178, 185, {art: 'walk', artX: [1000, 650, 178, 184], token: 1, plate: 1, dark: 0.5}),
@@ -88,7 +88,7 @@ const SH: Shot[] = [
   S(280, 283, 'step', C0, {k: [0, 1, 280, 283]}),
   B(C(2200, 660, 1.1, 1.2), 283, 287, {art: 'fake', artX: 2250, bucket: 1, door: [0, 1, 284, 285], man: [330, 700, 284, 287, 1, 1], plate: 1, dark: 0.45}),
   B(C(2100, 700, 1.3, 1.4), 287, 291, {art: 'fake', artX: 2250, bucket: 1, door: 1, man: [700, 2000, 287, 291, 0.7, 1], plate: 1, dark: 0.42}),
-  B(C(2200, 740, 1.5, 1.6), 291, 294, {art: 'fake', artX: 2250, bucket: 1, door: 1, man: [2000, 2000, 291, 294, 0.1, 1], arm: 1, plate: 1, dark: 0.4}, 1),
+  S(291, 294, 'face', C(960, 540, 1.1, 1.3), {look: 0.5}, 1),
   B(C(2300, 420, 1.3, 1.5), 294, 298, {art: 'fake', artX: 2250, bucket: 1, door: 1, man: [2000, 2000, 294, 298, 0.1, 1], water: 1.5, pipeShake: 3, plate: 1, dark: 0.35}, 5),
   B(C(2200, 740, 1.3, 1.5, 1600), 298, 302, {art: 'jump', artX: [2250, 1800, 298, 302], bucket: 1, door: 1, man: [2000, 2250, 298, 302, 0.1, 1], plate: 1, water: 1.5, pipeShake: 3, dark: 0.4}, 4),
   B(C(1500, 720, 1.2, 1.4, 700), 302, 305, {art: 'run', artX: [1800, 900, 302, 305], door: 1, man: [2250, 1700, 302, 305, 1, 1], plate: 1, dark: 0.42}, 3),
@@ -105,7 +105,7 @@ const SH: Shot[] = [
   S(350, 358, 'forest', C(4300, 640, 1.2, 1.3), {dusk: 0.5, road: 1, suv: 1, walk: [350, 358, 4200, 4200], brother: [4350, 4350]}),
   S(358, 363, 'forest', C(4700, 640, 1.2, 1.3, 5100), {dusk: 0.55, road: 1, walk: [358, 363, 4400, 5000, 'walk'], brother: [4550, 5150, 358, 363], lighter: 360}),
   S(363, 370, 'forest', C(5100, 640, 1.7, 1.9), {dusk: 0.55, road: 1, walk: [363, 370, 5000, 5000], brother: [5150, 5150], smoke: 1}),
-  S(370, 375, 'flash', C0, {kind: 'maniac'}),
+  S(370, 375, 'face', C(960, 540, 1.0, 1.1), {look: 0.6, smoke: 0.6}),
   S(375, 379, 'forest', C(5000, 640, 1.5, 1.7), {dusk: 0.55, road: 1, walk: [375, 379, 5000, 4850, 'back'], brother: [5150, 5150], smoke: 1}),
   S(379, 388, 'forest', C(5050, 640, 1.8, 2.0), {dusk: 0.55, road: 1, walk: [379, 388, 4850, 4850], brother: [5150, 5150], smoke: 1}, 1),
   // ===== EPISODE 3 =====
@@ -249,6 +249,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
         </g>
       );
     }
+    case 'face': return <ManiacFace t={t} light={p.light ?? 1} look={tw(p.look ?? 0, t)} smoke={p.smoke ?? 0} />;
     case 'sheet': return <RulesSheet t={t} k={tw(p.k ?? 1, t)} hl={p.hl ?? 0} />;
     case 'alley': return <Alley t={t - a} man={tw(p.man ?? 0, t)} />;
     case 'lock': return <LockClose t={t} k={tw(p.k ?? 0, t)} />;
@@ -331,7 +332,7 @@ const ShotView: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
   const c = sh.cam;
   const fx = lerp(c[0], c[3], k), fy = lerp(c[1], c[4], k), s = lerp(c[2], c[5], k);
   const shk = sh.shake ?? 0;
-  const fixed = ['sheet', 'lock', 'step', 'token', 'flash', 'desk'].includes(sh.sc);
+  const fixed = ['sheet', 'lock', 'step', 'token', 'flash', 'desk', 'face'].includes(sh.sc);
   const sx = Math.sin(t * 0.83) * 4, sy = Math.cos(t * 0.71) * 3, rot = Math.sin(t * 0.5) * 0.25;
   const tf = fixed
     ? `translate(${shk * Math.sin(t * 61) + sx * 0.5} ${shk * Math.cos(t * 53) + sy * 0.5}) translate(960 540) scale(${s}) translate(${-fx} ${-fy})`

@@ -46,9 +46,84 @@ export const Maniac: React.FC<{x: number; y: number; s?: number; flip?: boolean;
         <path d={`M-52 -480 Q-96 -380 ${-70 + arm * 40} ${-230 - arm * 110}`} stroke="#14161c" strokeWidth={30} strokeLinecap="round" fill="none" />
         <path d={`M60 -480 Q108 -380 ${86 + arm * 60} ${-250 - arm * 120}`} stroke="#14161c" strokeWidth={30} strokeLinecap="round" fill="none" />
         <circle cx={-70 + arm * 40} cy={-228 - arm * 110} r={16} fill="#2a2420" /><circle cx={86 + arm * 60} cy={-248 - arm * 120} r={16} fill="#2a2420" />
-        {/* head bowed in shadow */}
-        <g transform="translate(14 -560) rotate(18)"><ellipse cx={0} cy={0} rx={38} ry={46} fill="#0a0a0e" /><ellipse cx={6} cy={12} rx={24} ry={20} fill="#1a1612" opacity={0.7} /><path d="M-32 -22 Q0 -58 36 -20 Q10 -30 -32 -22 Z" fill="#050507" /></g>
+        {/* gaunt head, bowed, face half in shadow */}
+        <g transform="translate(14 -566) rotate(14)">
+          <path d="M-30 -20 Q-34 -58 2 -60 Q38 -58 34 -18 Q36 14 22 36 Q4 58 -14 36 Q-30 12 -30 -20 Z" fill="#8e7c6c" />
+          <path d="M-30 -20 Q-34 -58 2 -60 Q38 -58 34 -18 Q36 14 22 36 Q4 58 -14 36 Q-30 12 -30 -20 Z" fill="#000" opacity={0.28} />
+          <ellipse cx={-14} cy={-10} rx={11} ry={9} fill="#14100e" /><ellipse cx={16} cy={-10} rx={11} ry={9} fill="#14100e" />
+          <circle cx={-13} cy={-8} r={3.4} fill="#e8e0cc" /><circle cx={17} cy={-8} r={3.4} fill="#e8e0cc" /><circle cx={-13} cy={-8} r={1.4} fill="#0a0a0a" /><circle cx={17} cy={-8} r={1.4} fill="#0a0a0a" />
+          <path d="M-26 -22 L-6 -17 M28 -22 L8 -17" stroke="#1a1410" strokeWidth={5} strokeLinecap="round" />
+          <path d="M2 -6 L-2 14 L6 16" stroke="#3a2a20" strokeWidth={3} fill="none" />
+          <path d="M-12 30 Q2 34 14 28" stroke="#2a1610" strokeWidth={3} fill="none" strokeLinecap="round" />
+          <path d="M-20 12 Q-24 26 -10 40 M26 10 Q30 26 14 42" stroke="#000" strokeWidth={8} opacity={0.3} fill="none" />
+          <path d="M-32 -46 Q-8 -78 30 -52 Q4 -60 -32 -46 Z" fill="#1a1410" />
+        </g>
       </g>
+    </g>
+  );
+};
+
+
+// ===== big face close-up (scary but not supernatural) =====
+export const ManiacFace: React.FC<{t: number; light?: number; look?: number; smoke?: number}> = ({t, light = 1, look = 0, smoke = 0}) => {
+  const breathe = 1 + Math.sin(t * 1.6) * 0.006;
+  const blink = (Math.sin(t * 0.9) > 0.985) ? 0.15 : 1;
+  const ey = -40 - look * 6;
+  return (
+    <g>
+      <Defs />
+      <defs>
+        <radialGradient id="mfskin" cx="0.42" cy="0.35" r="0.75"><stop offset="0" stopColor="#c0a994" /><stop offset="0.6" stopColor="#8a7664" /><stop offset="1" stopColor="#3a2e26" /></radialGradient>
+        <clipPath id="mfclip"><path d="M-190 -110 Q-196 -250 0 -262 Q196 -250 190 -110 Q198 60 120 160 Q60 230 0 232 Q-60 230 -120 160 Q-198 60 -190 -110 Z" /></clipPath>
+        <linearGradient id="mfshade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#000" stopOpacity={0.0} /><stop offset="0.55" stopColor="#000" stopOpacity={0.25} /><stop offset="1" stopColor="#000" stopOpacity={0.88} /></linearGradient>
+      </defs>
+      <rect x={-100} y={-100} width={2200} height={1300} fill="#07090c" /><rect x={-100} y={-100} width={2200} height={1300} fill={P('concrete')} opacity={0.35} />
+      <Glow x={700} y={200} r={900} c="#ffc880" o={0.35 * light} id="mf1" />
+      <g transform={`translate(960 600) scale(${breathe * 1.5})`}>
+        {/* neck + apron strap */}
+        <path d="M-130 300 L-110 140 L110 140 L140 300 Z" fill="#6a5a4c" /><path d="M-130 300 L-110 140 L-60 140 L-80 300 Z" fill="#000" opacity={0.4} />
+        <path d="M-120 330 L-60 150 L-30 150 L-70 330 Z" fill={P('leather')} /><path d="M120 330 L60 150 L30 150 L70 330 Z" fill={P('leather')} />
+        <path d="M-70 150 L-60 250 M-40 150 L-36 260 M30 150 L34 270 M62 150 L70 250" stroke="#2a1e16" strokeWidth={8} opacity={0.6} />
+        {/* ears */}
+        <ellipse cx={-205} cy={-10} rx={26} ry={44} fill="#7e6a5a" /><ellipse cx={205} cy={-10} rx={26} ry={44} fill="#6a5848" />
+        {/* skull / gaunt face */}
+        <path d="M-190 -110 Q-196 -250 0 -262 Q196 -250 190 -110 Q198 60 120 160 Q60 230 0 232 Q-60 230 -120 160 Q-198 60 -190 -110 Z" fill="url(#mfskin)" />
+        {/* hair (thin, greasy) */}
+        <path d="M-196 -120 Q-200 -280 0 -290 Q200 -280 196 -120 Q150 -200 90 -214 Q0 -230 -90 -214 Q-150 -200 -196 -120 Z" fill="#17120e" />
+        {Array.from({length: 14}).map((_, k) => <path key={k} d={`M${-170 + k * 26} -200 Q${-160 + k * 26} -170 ${-150 + k * 26} -140`} stroke="#0a0806" strokeWidth={5} fill="none" opacity={0.8} />)}
+        {/* sunken cheeks and temples */}
+        <ellipse cx={-120} cy={70} rx={52} ry={90} fill="#000" opacity={0.32} /><ellipse cx={120} cy={70} rx={52} ry={90} fill="#000" opacity={0.4} />
+        <ellipse cx={-120} cy={-70} rx={50} ry={46} fill="#000" opacity={0.18} />
+        {/* brow ridge */}
+        <path d="M-150 -84 Q-80 -92 -16 -36 L-16 -18 Q-80 -62 -150 -56 Z" fill="#1c1510" /><path d="M150 -84 Q80 -92 16 -36 L16 -18 Q80 -62 150 -56 Z" fill="#1c1510" />
+        {/* eyes sunken */}
+        {[-82, 82].map((cx, i) => (
+          <g key={i} transform={`translate(${cx} ${ey})`}>
+            <ellipse cx={0} cy={4} rx={48} ry={32} fill="#1a120e" opacity={0.85} />
+            <ellipse cx={0} cy={0} rx={34} ry={15 * blink} fill="#d8cfba" />
+            <ellipse cx={0} cy={0} rx={34} ry={15 * blink} fill="#c04a3a" opacity={0.25} />
+            <circle cx={look * 8} cy={-2 - look * 4} r={13 * blink} fill="#3a2a18" /><circle cx={look * 8} cy={-2 - look * 4} r={5.5 * blink} fill="#050505" />
+            <path d="M-36 6 Q0 30 36 6" stroke="#2a1a14" strokeWidth={4} fill="none" opacity={0.8} />
+          </g>
+        ))}
+        {/* scar through left brow and cheek */}
+        <path d="M-130 -78 Q-100 -20 -118 50" stroke="#7a3a34" strokeWidth={6} fill="none" opacity={0.85} /><path d="M-138 -60 l16 6 M-128 -30 l16 6 M-122 4 l16 6 M-122 30 l16 4" stroke="#6a2a26" strokeWidth={3} opacity={0.7} />
+        {/* long nose */}
+        <path d="M-6 -30 Q-18 60 -34 100 Q0 124 36 100 Q24 60 10 -30" fill="#7a6858" opacity={0.7} />
+        <path d="M6 -10 Q22 70 30 98" stroke="#2a1e16" strokeWidth={6} fill="none" opacity={0.6} />
+        <ellipse cx={-14} cy={104} rx={9} ry={5} fill="#0a0604" /><ellipse cx={20} cy={104} rx={9} ry={5} fill="#0a0604" />
+        {/* thin cruel mouth, stubble */}
+        <path d="M-64 150 Q-6 164 64 146" stroke="#1a0c08" strokeWidth={9} fill="none" strokeLinecap="round" /><path d="M-60 150 Q-6 138 60 144" stroke="#4a2a20" strokeWidth={4} fill="none" opacity={0.7} />
+        <path d="M-64 150 Q-76 166 -72 182 M64 146 Q76 160 72 176" stroke="#2a1a14" strokeWidth={5} fill="none" opacity={0.7} />
+        {Array.from({length: 120}).map((_, k) => { const r1 = rnd(k), r2 = rnd(k + 9); const x = (r1 - 0.5) * 250, y = 100 + r2 * 120 - Math.abs(x) * 0.25; return <circle key={k} cx={x} cy={y} r={1.6} fill="#1a1410" opacity={0.6} />; })}
+        {/* forehead creases */}
+        <path d="M-90 -140 Q0 -156 90 -140 M-70 -116 Q0 -128 70 -116" stroke="#3a2a20" strokeWidth={5} fill="none" opacity={0.55} />
+        {/* lighting: half face in shadow */}
+        <g clipPath="url(#mfclip)"><rect x={-210} y={-300} width={420} height={560} fill="url(#mfshade)" opacity={0.95} /><ellipse cx={0} cy={-20} rx={230} ry={300} fill="none" stroke="#000" strokeWidth={90} opacity={0.35} /></g>
+      </g>
+      {smoke > 0 && Array.from({length: 7}).map((_, i) => <ellipse key={i} cx={1250 + Math.sin(t + i) * 30 + i * 14} cy={880 - ((t * 36 + i * 70) % 500)} rx={50 + i * 16} ry={28 + i * 6} fill="#c8c8d0" opacity={0.1 * smoke} />)}
+      <Dust t={t} x={0} y={100} w={1900} h={900} n={26} />
+      <rect x={-100} y={-100} width={2200} height={1300} fill="url(#vgrad)" opacity={0.5} />
     </g>
   );
 };
