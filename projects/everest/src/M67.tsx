@@ -4,6 +4,8 @@ import '@fontsource/montserrat/latin-800.css';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {ramp} from './Everest';
 import {clamp, ease, lerp, rnd, Tx, E, Pose, poseStand, poseWalk, poseSit, poseReach} from './M60Base';
+import {PersonV} from './M67Fig';
+import {poseRun, PhotoWall, HouseExt2, CarSide, CarInside2, PovRun} from './M67Art2';
 import {Full, Man, ARTEM, OLEG, BROTHER, GRAN, LERA, SELLER, Maniac, ManiacFace, Basement, Alley, TokenClose, LockClose, StepClose, RulesSheet, Kitchen, ForestDark, HouseExt, LivingRoom, Garden, CarInside, ShopExt, ShopInt, Desk, AptHall} from './M67Art';
 import subs from './subs_s8.json';
 
@@ -27,7 +29,7 @@ const SH: Shot[] = [
   S(14.7, 18, 'alley', C(1100, 470, 1.05, 1.3, 1100), {}),
   S(18, 20, 'black', C0, {}),
   B(C(1150, 800, 1.3, 1.5), 20, 23, {art: 'lie2sit', dark: 0.5}),
-  B(C(1150, 880, 2.2, 2.4), 23, 25, {art: 'sit', dark: 0.5}),
+  B(C(1150, 880, 2.2, 2.4), 23, 25, {v: 'front', art: 'sit', dark: 0.5}),
   S(25, 28, 'lock', C0, {k: 0}),
   B(C(1100, 520, 1.1, 1.4, 1400), 28, 32, {art: 'sit', photos: 1, crossed: 0, dark: 0.45}),
   B(C(1350, 520, 1.4, 1.6), 32, 34, {art: 'sit', photos: 1, crossed: [0, 1, 32, 34], dark: 0.45}),
@@ -36,7 +38,7 @@ const SH: Shot[] = [
   B(C(1240, 400, 3.2, 3.3), 38, 39, {art: 'sit', photos: 1, crossed: 1, dark: 0.4}),
   B(C(1430, 400, 3.2, 3.3), 39, 41, {art: 'sit', photos: 1, crossed: 1, dark: 0.4}),
   B(C(1150, 800, 1.5, 1.6), 41, 44, {art: 'sit', dark: 0.5}),
-  B(C(1150, 840, 2.2, 2.4), 44, 49, {art: 'hands', dark: 0.62}),
+  B(C(1150, 840, 2.2, 2.4), 44, 49, {v: 'front', art: 'hands', dark: 0.62}),
   B(C(700, 700, 1.3, 1.4, 500), 49, 53, {art: 'sit', dark: 0.5}),
   B(C(1150, 800, 1.4, 1.5), 53, 56.8, {art: 'sit', dark: 0.45}),
   S(56.8, 60.7, 'sheet', C0, {k: [0.35, 0.6, 56.8, 60.7], hl: 1}),
@@ -70,19 +72,19 @@ const SH: Shot[] = [
   // ===== EPISODE 2 =====
   B(C(1200, 920, 1.7, 1.9), 200, 206, {art: 'hide', plate: 1, dark: 0.5}),
   S(206, 211, 'step', C0, {k: [0, 1, 206, 209]}),
-  B(C(700, 700, 1.1, 1.3), 211, 216, {art: 'sit', door: 1, man: [330, 800, 211, 216, 1, 1], plate: 1, dark: 0.45}),
+  B(C(700, 700, 1.1, 1.3), 211, 216, {v: 'front', art: 'sit', door: 1, man: [330, 800, 211, 216, 1, 1], plate: 1, dark: 0.45}),
   B(C(1000, 760, 1.4, 1.5), 216, 223, {art: 'sit', door: 1, man: [850, 1000, 216, 223, 0.2, 1], plate: 1, dark: 0.45}),
   B(C(1900, 780, 1.2, 1.3, 2100), 223, 227, {art: 'sit', door: 1, man: [1000, 2000, 223, 227, 0.8, 1], plate: 1, dark: 0.45}),
   B(C(700, 640, 1.2, 1.4, 450), 227, 235, {art: 'sit', door: [1, 0.3, 233, 235], man: [2000, 340, 227, 233, 0.8, 1], plate: 1, dark: 0.45}),
   B(C(600, 640, 1.2, 1.3), 235, 237, {art: 'sit', door: 0, plate: 1, dark: 0.7}, 3),
   B(C(1100, 600, 0.95, 1.1, 1500), 237, 242, {art: 'walk', artX: [900, 1500, 237, 242], plate: 1, dark: 0.5}),
-  B(C(1250, 220, 1.4, 1.7), 242, 246, {art: 'sit', plate: 1, dark: 0.5}),
-  B(C(450, 640, 1.3, 1.4), 246, 250, {art: 'sit', plate: 1, dark: 0.5}),
+  B(C(1250, 220, 1.4, 1.7), 242, 246, {v: 'front', art: 'sit', plate: 1, dark: 0.5}),
+  B(C(450, 640, 1.3, 1.4), 246, 250, {v: 'front', art: 'sit', plate: 1, dark: 0.5}),
   S(250, 254, 'sheet', C0, {k: 1, hl: 2}),
   B(C(560, 860, 1.4, 1.5), 254, 258, {art: 'sit', plate: 1, plank: [255, 257], dark: 0.45}),
   S(258, 262, 'step', C0, {k: [0, 1, 258, 261]}),
   B(C(2300, 400, 1.2, 1.4, 2450), 262, 269, {art: 'sit', water: 1, pipeShake: 1, plate: 1, dark: 0.45}),
-  B(C(1150, 760, 1.4, 1.5), 269, 272, {art: 'think', plate: 1, dark: 0.45}),
+  B(C(1150, 760, 1.4, 1.5), 269, 272, {v: 'front', art: 'think', plate: 1, dark: 0.45}),
   B(C(500, 640, 1.2, 1.4), 272, 275, {art: 'bang', plate: 1, dark: 0.45}, 3),
   B(C(2400, 860, 1.3, 1.5), 275, 280, {art: 'fake', bucket: [0, 1, 275, 276], artX: 2250, plate: 1, dark: 0.45}),
   S(280, 283, 'step', C0, {k: [0, 1, 280, 283]}),
@@ -92,13 +94,13 @@ const SH: Shot[] = [
   B(C(2300, 420, 1.3, 1.5), 294, 298, {art: 'fake', artX: 2250, bucket: 1, door: 1, man: [2000, 2000, 294, 298, 0.1, 1], water: 1.5, pipeShake: 3, plate: 1, dark: 0.35}, 5),
   B(C(2200, 740, 1.3, 1.5, 1600), 298, 302, {art: 'jump', artX: [2250, 1800, 298, 302], bucket: 1, door: 1, man: [2000, 2250, 298, 302, 0.1, 1], plate: 1, water: 1.5, pipeShake: 3, dark: 0.4}, 4),
   B(C(1500, 720, 1.2, 1.4, 700), 302, 305, {art: 'run', artX: [1800, 900, 302, 305], door: 1, man: [2250, 1700, 302, 305, 1, 1], plate: 1, dark: 0.42}, 3),
-  B(C(450, 620, 1.2, 1.5), 305, 307, {art: 'run', artX: [700, 300, 305, 307], door: 1, plate: 1, dark: 0.4}, 3),
-  S(307, 313, 'kitchen', C(900, 640, 1.0, 1.2, 1600), {door: 0.4, walk: [307, 313, 400, 1500]}),
-  S(313, 317, 'kitchen', C(2000, 600, 1.4, 1.5), {door: 1, walk: [313, 317, 1500, 2150]}, 2),
+  S(305, 309, 'pov', C0, {env: 'basement'}, 2),
+  S(309, 313, 'pov', C0, {env: 'kitchen'}, 2),
+  S(313, 317, 'pov', C0, {env: 'door'}, 3),
   S(317, 322, 'forest', C(900, 640, 1.2, 1.3, 1400), {dusk: 0.4, walk: [317, 322, 600, 1500, 'run']}, 2),
-  S(322, 325, 'forest', C(1500, 640, 1.2, 1.3), {dusk: 0.4, walk: [322, 325, 1500, 1800, 'run']}, 3),
+  S(322, 325, 'forest', C(1650, 640, 1.2, 1.3), {dusk: 0.4, v: 'front', vs: [1.0, 1.7], walk: [322, 325, 1600, 1700, 'run']}, 3),
   S(325, 331, 'forest', C(1900, 640, 1.2, 1.4, 3000), {dusk: 0.45, walk: [325, 331, 1800, 3000, 'run']}, 3),
-  S(331, 334, 'forest', C(3200, 640, 1.0, 1.1, 3800), {dusk: 0.45, walk: [331, 334, 3000, 3800, 'run']}, 2),
+  S(331, 334, 'forest', C(3200, 640, 1.0, 1.1, 3800), {dusk: 0.45, v: 'back', vs: [1.5, 0.9], walk: [331, 334, 3000, 3800, 'run']}, 2),
   S(334, 337, 'forest', C(3900, 640, 1.0, 1.2, 4300), {dusk: 0.5, road: 1, suv: 1, walk: [334, 337, 3800, 4200, 'walk']}),
   S(337, 344, 'forest', C(4300, 640, 1.3, 1.5), {dusk: 0.5, road: 1, suv: 1, walk: [337, 340, 3900, 4200, 'run'], brother: [4350, 4350]}),
   S(344, 350, 'forest', C(4300, 640, 1.5, 1.6), {dusk: 0.5, road: 1, suv: 1, walk: [344, 344.1, 4200, 4200], brother: [4350, 4350]}),
@@ -112,22 +114,22 @@ const SH: Shot[] = [
   S(388, 392, 'forest', C(5100, 640, 1.6, 1.8), {dusk: 0.55, road: 1, walk: [388, 392, 4850, 4850], brother: [5150, 5150]}),
   S(392, 397, 'forest', C(5100, 640, 1.8, 2.0), {dusk: 0.55, road: 1, walk: [392, 397, 4850, 4850], brother: [5150, 5150], smoke: 1}),
   S(397, 403, 'forest', C(4700, 640, 1.1, 1.3, 3800), {dusk: 0.6, road: 1, walk: [397, 403, 4800, 3800, 'run'], brother: [5100, 4300, 399, 403, 'run']}, 3),
-  S(403, 408, 'forest', C(3500, 640, 1.1, 1.3, 2500), {dusk: 0.6, walk: [403, 408, 3600, 2500, 'run']}, 3),
+  S(403, 408, 'forest', C(3200, 640, 1.1, 1.3, 2500), {dusk: 0.6, v: 'front', vs: [1.0, 1.6], walk: [403, 408, 3100, 2900, 'run']}, 3),
   S(408, 414, 'house', C(1100, 620, 1.0, 1.3, 1250), {walk: [408, 414, 300, 1050, 'run']}),
-  S(414, 417, 'house', C(1250, 700, 1.7, 1.9), {walk: [414, 417, 1050, 1180, 'walk'], knock: 1}),
-  S(417, 425, 'house', C(1250, 680, 1.6, 1.8), {walk: [417, 425, 1180, 1180], gran: 1}),
+  S(414, 417, 'house', C(1250, 640, 1.2, 1.5), {v: 'back', walk: [414, 417, 1050, 1250, 'walk'], knock: 1}),
+  S(417, 425, 'house', C(1250, 600, 1.5, 1.7), {v: 'back', walk: [417, 425, 1250, 1250], gran: 1}),
   S(425, 432, 'living', C(900, 640, 1.1, 1.3), {art: 'sitc', gran: [2500, 1500, 425, 430]}),
-  S(432, 443, 'living', C(1000, 640, 1.2, 1.4), {art: 'sitc', gran: [1500, 1500, 432, 443], talk: 1}),
+  S(432, 443, 'living', C(1000, 640, 1.2, 1.4), {v: 'front', art: 'sitc', gran: [1500, 1500, 432, 443], talk: 1}),
   S(443, 452, 'living', C(1100, 640, 1.5, 1.7), {art: 'sitc', gran: [1500, 1500, 443, 452], dark: 0.3}),
   S(452, 458, 'living', C(1300, 640, 1.2, 1.3, 2200), {art: 'sitc', gran: [1500, 2500, 452, 457]}),
-  S(458, 464, 'living', C(900, 620, 1.2, 1.4), {art: 'sitc', dark: 0.4}),
-  S(464, 470, 'living', C(900, 700, 1.6, 1.8), {art: 'sitc', dark: 0.45}),
+  S(458, 464, 'living', C(900, 620, 1.2, 1.4), {v: 'front', art: 'sitc', dark: 0.4}),
+  S(464, 470, 'living', C(900, 700, 1.6, 1.8), {v: 'front', art: 'sitc', dark: 0.45}),
   S(470, 474, 'sheet', C0, {k: 1, hl: 2}),
   S(474, 477, 'living', C(1500, 620, 1.1, 1.3, 2500), {art: 'sitc', dark: 0.4}),
   S(477, 480, 'living', C(2500, 860, 2.3, 2.5), {art: 'sitc', dark: 0.4}),
-  S(480, 490, 'living', C(1950, 360, 1.4, 2.2), {art: 'stand', artX: 1650, photoK: [0, 1, 482, 488], dark: 0.35}),
-  S(490, 497, 'living', C(2000, 340, 2.4, 3.0), {art: 'stand', artX: 1650, photoK: 1, dark: 0.35}, 1),
-  S(497, 504, 'living', C(2000, 340, 3.0, 3.2), {art: 'stand', artX: 1650, photoK: 1, dark: 0.35}),
+  S(480, 490, 'living', C(2090, 340, 1.4, 2.4), {art: 'stand', artX: 1650, photoK: [0, 1, 482, 488], dark: 0.35}),
+  S(490, 497, 'living', C(2090, 330, 2.4, 2.9), {art: 'stand', artX: 1650, photoK: 1, dark: 0.35}, 1),
+  S(497, 504, 'living', C(2090, 330, 2.9, 3.1), {art: 'stand', artX: 1650, photoK: 1, dark: 0.35}),
   S(504, 510, 'living', C(1400, 620, 1.0, 1.1), {art: 'startle', artX: 1650, photoK: 1, dark: 0.5}, 2),
   S(510, 517, 'living', C(2700, 640, 1.2, 1.5), {art: 'run', artX: [1650, 2500, 510, 513], dark: 0.4, locked: 1}, 2),
   S(517, 522, 'lock', C0, {k: 0}),
@@ -138,9 +140,9 @@ const SH: Shot[] = [
   S(547, 551, 'forest', C(2500, 640, 1.1, 1.3), {dusk: 0.6, road: 1, walk: [547, 551, 2300, 2400, 'walk'], carFar: 1}),
   S(551, 556, 'forest', C(2600, 700, 1.4, 1.6), {dusk: 0.6, road: 1, walk: [551, 556, 2400, 2400, 'walk'], carNear: 1}),
   S(556, 566, 'forest', C(2600, 700, 1.7, 1.9), {dusk: 0.6, road: 1, walk: [556, 566, 2400, 2400], carNear: 1, talk: 1}),
-  S(566, 572, 'forest', C(2600, 700, 1.7, 1.8), {dusk: 0.6, road: 1, walk: [566, 572, 2400, 2500, 'walk'], carNear: 1}),
-  S(572, 579, 'car', C0, {eyes: [0, 1, 572, 574], dark: 0.35}),
-  S(579, 584, 'car', C(960, 560, 1.0, 1.1), {eyes: 1, dark: 0.4}),
+  S(566, 572, 'forest', C(2600, 700, 1.7, 1.8), {dusk: 0.6, road: 1, walk: [566, 572, 2400, 2500, 'walk'], carNear: 1, doorOpen: 1}),
+  S(572, 579, 'car', C0, {eyes: [0, 1, 572, 574], leraTurn: 1, olegTurn: [0, 1, 576, 578], dark: 0.35}),
+  S(579, 584, 'car', C(960, 600, 1.0, 1.15), {eyes: 1, olegTurn: 1, leraTurn: 0, dark: 0.35}),
   S(584, 589, 'car', C(1200, 520, 1.2, 1.5), {eyes: 0, dark: 0.35}),
   // ===== EPISODE 4 =====
   S(589, 595, 'car', C(960, 560, 1.0, 1.05), {dark: 0.3}),
@@ -213,7 +215,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
   const artPose = (n: string): Pose => {
     switch (n) {
       case 'walk': return poseWalk(t, 2.0, 8);
-      case 'run': return poseWalk(t, 4.6, 16);
+      case 'run': return poseRun(t);
       case 'stand': return poseStand({mood: 'worried'});
       case 'startle': return poseStand({mood: 'scared', lean: -8, nod: -4, hf: [30, -130]});
       case 'sit': return poseSit({mood: 'worried', nod: 8});
@@ -223,7 +225,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
       case 'beg': return poseSit({mood: 'worried', nod: 6, hf: [74, -90]});
       case 'bang': return poseReach(60, -170, {lean: 10, mood: 'scared'});
       case 'back': return poseWalk(-t, 2, 2, {mood: 'scared'});
-      case 'jump': return poseWalk(t, 5, 22);
+      case 'jump': return poseRun(t);
       case 'window': return poseReach(40, -150, {lean: 12});
       default: return poseStand({mood: 'worried'});
     }
@@ -238,7 +240,8 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
       else if (p.art === 'lie2sit') { const k = E(t, a + 0.5, b); art = <g transform={`rotate(${lerp(-90, 0, k)} ${ax + 150 - 150 * k} 918)`}><Man x={ax + 150 - 150 * k} y={918} pose={poseStand({mood: 'neutral', nod: 8})} s={1.4} /></g>; }
       else if (p.art === 'stepplank') art = <Man x={lerp(900, 640, E(t, a, a + 3))} y={960} pose={poseWalk(t, 1.2, 10)} s={1.4} />;
       else if (p.art === 'hide') art = <g transform="translate(0 0)"><Man x={1180} y={925} pose={poseReach(40, -40, {lean: 24, mood: 'scared'})} s={1.4} /></g>;
-      else if (p.art === 'fake') { const k = E(t, a, a + 1.5); art = <g transform={`rotate(${-90 * k} ${ax} 960)`}><Man x={ax} y={960} pose={poseStand({mood: 'scared', nod: 8})} s={1.4} /></g>; }
+      else if (p.art === 'fake') { const k = E(t, 276.2, 277.4); art = <g transform={`rotate(${-90 * k} ${ax} 960)`}><Man x={ax} y={960} pose={poseStand({mood: 'scared', nod: 8})} s={1.4} /></g>; }
+      else if (p.v && p.art && ['sit', 'hands', 'think', 'beg', 'sitc', 'stand', 'startle'].includes(p.art)) art = <PersonV look={ARTEM} x={ax} y={['sit', 'hands', 'think', 'beg', 'sitc'].includes(p.art) ? 925 : 975} view={p.v} mode={p.art === 'hands' ? 'hands' : ['sit', 'think', 'beg', 'sitc'].includes(p.art) ? 'sit' : p.art === 'startle' ? 'scared' : 'stand'} t={t} s={1.45} mood={p.art === 'startle' || p.art === 'beg' ? 'scared' : 'worried'} />;
       else if (p.art && p.art !== 'none') art = <Man x={ax} y={p.art === 'sit' || p.art === 'hands' || p.art === 'beg' || p.art === 'think' || p.art === 'sitc' ? 925 : 975} pose={artPose(p.art)} s={1.45} />;
       const m = p.man ? man(p.man, p.arm) : null;
       const plank = Array.isArray(p.plank) ? (t >= p.plank[0] && t < p.plank[1] ? 1 : 0) : 0;
@@ -249,6 +252,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
         </g>
       );
     }
+    case 'pov': return <PovRun t={t} a={a} b={b} env={p.env} />;
     case 'face': return <ManiacFace t={t} light={p.light ?? 1} look={tw(p.look ?? 0, t)} smoke={p.smoke ?? 0} />;
     case 'sheet': return <RulesSheet t={t} k={tw(p.k ?? 1, t)} hl={p.hl ?? 0} />;
     case 'alley': return <Alley t={t} man={1} />;
@@ -263,44 +267,57 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
     }
     case 'forest': {
       const wx = p.walk ? lerp(p.walk[2], p.walk[3], E(t, p.walk[0], p.walk[1])) : null;
-      const wk = p.walk && p.walk[4] === 'run' ? poseWalk(t, 4.6, 16) : p.walk && p.walk[4] === 'back' ? poseWalk(-t, 2.0, 2, {mood: 'scared'}) : poseWalk(t, 2.2, 8);
+      const wk = p.walk && p.walk[4] === 'run' ? poseRun(t) : p.walk && p.walk[4] === 'back' ? poseWalk(-t, 2.0, 2, {mood: 'scared'}) : poseWalk(t, 2.2, 8);
       const br = p.brother ? lerp(p.brother[0], p.brother[1], p.brother.length > 3 ? E(t, p.brother[2], p.brother[3]) : 0) : null;
       const still = p.walk && p.walk[2] === p.walk[3];
       return (
         <g>
           <ForestDark t={t} cx={fx} road={!!p.road} dusk={p.dusk ?? 0.5} fog={0.6} suv={!!p.suv} />
           {p.carFar && <g transform="translate(3100 920)"><rect x={-60} y={-60} width={120} height={60} rx={14} fill="#1a1c22" /><circle cx={60} cy={-30} r={10} fill="#fff3b0" /><polygon points="60,-30 300,-80 300,20" fill="#fff3b0" opacity={0.12} /></g>}
-          {p.carNear && <g transform="translate(2880 960)"><ellipse cx={0} cy={8} rx={230} ry={16} fill="#000" opacity={0.5} /><path d="M-220 -30 L-220 -110 Q-210 -140 -170 -146 L-80 -156 Q-40 -220 40 -220 L130 -220 Q190 -212 210 -146 L236 -136 Q250 -120 250 -60 L250 -30 Z" fill="#3a2a22" /><circle cx={-120} cy={-10} r={42} fill="#0a0b0d" /><circle cx={150} cy={-10} r={42} fill="#0a0b0d" /><rect x={-220} y={-80} width={470} height={6} fill="#000" opacity={0.3} /><polygon points="-220,-60 -700,-90 -700,10 -220,-40" fill="#fff3b0" opacity={0.1} /></g>}
-          {wx !== null && <Man x={wx} y={1010} pose={still ? poseStand({mood: 'scared'}) : wk} s={1.4} />}
-          {br !== null && <Man x={br} y={1015} pose={p.brother[4] === 'run' ? poseWalk(t, 4.4, 16) : poseStand({mood: 'neutral', hf: p.smoke ? [60, -150] : [30, -128]})} look={BROTHER} flip s={1.4} />}
+          {p.carNear && <CarSide t={t} x={2900} y={970} k={1.15} flip doorOpen={p.doorOpen ?? 0} />}
+          {wx !== null && (p.v ? <PersonV look={ARTEM} x={wx} y={1010 + (p.vs ? lerp(0, 30, E(t, p.walk[0], p.walk[1])) : 0)} view={p.v} mode={still ? 'stand' : p.walk[4] === 'run' ? 'run' : 'walk'} t={t} s={p.vs ? lerp(p.vs[0], p.vs[1], E(t, p.walk[0], p.walk[1])) : 1.4} mood="scared" /> : <Man x={wx} y={1010} pose={still ? poseStand({mood: 'scared'}) : wk} s={1.4} />)}
+          {br !== null && <Man x={br} y={1015} pose={p.brother[4] === 'run' ? poseRun(t + 0.2) : poseStand({mood: 'neutral', hf: p.smoke ? [60, -150] : [30, -128]})} look={BROTHER} flip s={1.4} />}
           {p.smoke && br !== null && <g>{[0, 1, 2, 3].map((i) => <ellipse key={i} cx={br - 60 + Math.sin(t + i) * 14} cy={600 - i * 40 - ((t * 24) % 40)} rx={22 + i * 8} ry={12 + i * 4} fill="#c8c8d0" opacity={0.16 - i * 0.03} />)}<circle cx={br - 78} cy={640} r={5} fill="#ff6a2a" /></g>}
         </g>
       );
     }
     case 'house': {
       const wx = p.walk ? lerp(p.walk[2], p.walk[3], E(t, p.walk[0], p.walk[1])) : null;
-      return <g><HouseExt t={t} lit={1} />{wx !== null && <Man x={wx} y={1000} pose={p.walk[4] === 'run' ? poseWalk(t, 4.6, 16) : poseStand({mood: 'scared', hf: p.knock ? [60, -150 + Math.sin(t * 14) * 10] : [30, -128]})} s={1.35} />}{p.gran && <Man x={1250} y={880} pose={poseStand({mood: 'neutral'})} look={GRAN} s={1.3} />}</g>;
+      const near = p.v === 'back';
+      const prog = p.walk ? E(t, p.walk[0], p.walk[1]) : 0;
+      const gran = p.gran ? <PersonV x={0} y={0} look={GRAN} view="front" mode="stand" mood="worried" t={t} s={0.95} shadow={false} /> : null;
+      return (
+        <g>
+          <HouseExt2 t={t} lit={1} open={p.gran ? 1 : 0} inDoor={gran} />
+          {wx !== null && (near
+            ? <PersonV look={ARTEM} x={1250 + (wx - 1050) * 0.3} y={lerp(1010, 870, prog)} view="back" mode={prog < 0.95 && !p.knock ? 'walk' : p.knock ? 'scared' : 'walk'} t={t} s={lerp(1.35, 0.95, prog)} />
+            : <Man x={wx} y={1010} pose={p.walk[4] === 'run' ? poseRun(t) : poseStand({mood: 'scared'})} s={1.35} />)}
+        </g>
+      );
     }
     case 'living': {
       const gx = p.gran ? lerp(p.gran[0], p.gran[1], E(t, p.gran[2], p.gran[3])) : null;
       const ax = p.artX ?? 900;
-      const arr = p.empty ? null : <>{gx !== null && <Man x={gx} y={1000} pose={poseStand({mood: 'neutral'})} look={GRAN} flip s={1.35} />}<Man x={ax} y={p.art === 'sitc' ? 940 : 1000} pose={p.art === 'sitc' ? poseSit({mood: 'worried', nod: 8}) : p.art === 'run' ? poseWalk(t, 4.6, 16) : p.art === 'startle' ? poseStand({mood: 'scared', lean: -8}) : p.art === 'window' ? poseReach(40, -150, {lean: 12}) : poseStand({mood: 'worried', nod: -6})} s={1.4} /></>;
-      return <LivingRoom t={t} photoK={tw(p.photoK ?? 0, t)} windowOpen={tw(p.windowOpen ?? 0, t)} dark={p.dark ?? 0.3} chars={arr} />;
+      const front = p.v === 'front' && p.art === 'sitc';
+      const hero = front ? <PersonV look={ARTEM} x={ax} y={940} view="front" mode="sit" t={t} s={1.45} mood="worried" /> : null;
+      const arr = p.empty ? null : <>{gx !== null && <Man x={gx} y={1000} pose={poseStand({mood: 'neutral'})} look={GRAN} flip s={1.35} />}{front ? hero : <Man x={ax} y={p.art === 'sitc' ? 940 : 1000} pose={p.art === 'sitc' ? poseSit({mood: 'worried', nod: 8}) : p.art === 'run' ? poseRun(t) : p.art === 'startle' ? poseStand({mood: 'scared', lean: -8}) : p.art === 'window' ? poseReach(40, -150, {lean: 12}) : poseStand({mood: 'worried', nod: -6})} s={1.4} />}</>;
+      return <LivingRoom t={t} wall={<PhotoWall photoK={tw(p.photoK ?? 0, t)} />} photoK={tw(p.photoK ?? 0, t)} windowOpen={tw(p.windowOpen ?? 0, t)} dark={p.dark ?? 0.3} chars={arr} />;
     }
     case 'garden': {
       const ax = lerp(p.ax[0], p.ax[1], E(t, p.ax[2], p.ax[3]));
-      return <g><Garden t={t} /><Man x={ax} y={1000} pose={poseWalk(t, 4.8, 18)} s={1.35} />{t >= 537 && <Man x={1160} y={720} pose={poseStand({mood: 'scared', hf: [60, -150]})} look={BROTHER} s={0.9} />}</g>;
+      return <g><Garden t={t} /><Man x={ax} y={1000} pose={poseRun(t)} s={1.35} />{t >= 537 && <Man x={1160} y={720} pose={poseStand({mood: 'scared', hf: [60, -150]})} look={BROTHER} s={0.9} />}</g>;
     }
-    case 'car': return <CarInside t={t} eyes={tw(p.eyes ?? 0, t)} note={tw(p.note ?? 0, t)} apron={tw(p.apron ?? 0, t)} dark={p.dark ?? 0.3} smoke={p.smoke ?? 0} speed={p.speed ?? 300} />;
+    case 'car': return <CarInside2 t={t} leraTurn={tw(p.leraTurn ?? 0, t)} olegTurn={tw(p.olegTurn ?? 0, t)} eyes={tw(p.eyes ?? 0, t)} note={tw(p.note ?? 0, t)} apron={tw(p.apron ?? 0, t)} dark={p.dark ?? 0.3} smoke={p.smoke ?? 0} speed={p.speed ?? 300} />;
     case 'shop': {
       const wx = p.walk ? lerp(p.walk[2], p.walk[3], E(t, p.walk[0], p.walk[1])) : null;
       const lx = p.lera ? lerp(p.lera[2], p.lera[3], E(t, p.lera[0], p.lera[1])) : null;
       const run = p.walk && p.walk[4] === 'run';
       return (
         <g>
-          <ShopExt t={t} car={p.car} cops={tw(p.cops ?? 0, t)} />
-          {wx !== null && <Man x={wx} y={1010} pose={run ? poseWalk(t, 4.6, 16) : poseWalk(t, 2.2, 8)} s={1.35} flip />}
-          {lx !== null && <Man x={lx} y={1016} pose={run ? poseWalk(t + 0.3, 4.6, 16) : poseWalk(t, 2.2, 8)} look={LERA} flip s={1.3} />}
+          <ShopExt t={t} car={false} cops={tw(p.cops ?? 0, t)} />
+          {p.car && <CarSide t={t} x={2300} y={940} k={1.05} people={!(p.walk)} leraIn={false} lights={0.5} />}
+          {wx !== null && <Man x={wx} y={1010} pose={run ? poseRun(t) : poseWalk(t, 2.2, 8)} s={1.35} flip />}
+          {lx !== null && <Man x={lx} y={1016} pose={run ? poseRun(t + 0.3) : poseWalk(t, 2.2, 8)} look={LERA} flip s={1.3} />}
           {p.oleg && t >= p.oleg[0] && t < p.oleg[1] && <Man x={2150} y={1010} pose={poseStand({mood: 'neutral'})} look={OLEG} flip s={1.4} />}
         </g>
       );
@@ -332,7 +349,7 @@ const ShotView: React.FC<{sh: Shot; t: number}> = ({sh, t}) => {
   const c = sh.cam;
   const fx = lerp(c[0], c[3], k), fy = lerp(c[1], c[4], k), s = lerp(c[2], c[5], k);
   const shk = sh.shake ?? 0;
-  const fixed = ['sheet', 'lock', 'step', 'token', 'flash', 'desk', 'face'].includes(sh.sc);
+  const fixed = ['sheet', 'lock', 'step', 'token', 'flash', 'desk', 'face', 'pov'].includes(sh.sc);
   const sx = Math.sin(t * 0.83) * 4, sy = Math.cos(t * 0.71) * 3, rot = Math.sin(t * 0.5) * 0.25;
   const tf = fixed
     ? `translate(${shk * Math.sin(t * 61) + sx * 0.5} ${shk * Math.cos(t * 53) + sy * 0.5}) translate(960 540) scale(${s}) translate(${-fx} ${-fy})`
