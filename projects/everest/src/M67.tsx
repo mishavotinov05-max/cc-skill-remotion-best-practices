@@ -431,11 +431,6 @@ export const M67: React.FC = () => {
   return (
     <AbsoluteFill style={{backgroundColor: '#000'}}>
       <Audio src={staticFile('voice19.mp3')} volume={1} />
-      <Audio src={staticFile('sfx/m67dark.mp3')} volume={dark} loop />
-      <Audio src={staticFile('sfx/pipes.mp3')} volume={pipes} loop />
-      <Audio src={staticFile('sfx/breath2.mp3')} volume={breath} loop />
-      <Audio src={staticFile('sfx/wind.mp3')} volume={wind} loop />
-      <Audio src={staticFile('sfx/engine.mp3')} volume={engine} loop />
       <Audio src={staticFile('sfx/siren.mp3')} volume={siren} loop />
       <Audio src={staticFile('sfx/steps.mp3')} volume={steps} loop />
       <Audio src={staticFile('sfx/heart.mp3')} volume={heart} loop />
