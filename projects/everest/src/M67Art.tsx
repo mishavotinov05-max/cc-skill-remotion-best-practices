@@ -31,6 +31,7 @@ export const Maniac: React.FC<{x: number; y: number; s?: number; flip?: boolean;
   const sw = Math.sin(step * 6.28) * 22;
   return (
     <g transform={`translate(${x} ${y}) scale(${flip ? -s : s} ${s})`}>
+      <g transform="scale(1.28 1)">
       <ellipse cx={0} cy={6} rx={90} ry={10} fill="#000" opacity={0.45} />
       {/* legs */}
       <path d={`M-22 -250 L${-26 + sw} -10 L${6 + sw} -10 L-4 -250 Z`} fill="#0a0b0f" /><path d={`M6 -250 L${22 - sw} -10 L${52 - sw} -10 L28 -250 Z`} fill="#0e1015" />
@@ -43,8 +44,8 @@ export const Maniac: React.FC<{x: number; y: number; s?: number; flip?: boolean;
         <rect x={-30} y={-340} width={46} height={44} rx={5} fill="#000" opacity={0.35} />
         <path d="M-24 -300 L-24 -255 M10 -300 L10 -255" stroke="#5a4a30" strokeWidth={4} opacity={0.6} />
         {/* long arms */}
-        <path d={`M-52 -480 Q-96 -380 ${-70 + arm * 40} ${-230 - arm * 110}`} stroke="#14161c" strokeWidth={30} strokeLinecap="round" fill="none" />
-        <path d={`M60 -480 Q108 -380 ${86 + arm * 60} ${-250 - arm * 120}`} stroke="#14161c" strokeWidth={30} strokeLinecap="round" fill="none" />
+        <path d={`M-52 -480 Q-96 -380 ${-70 + arm * 40} ${-230 - arm * 110}`} stroke="#14161c" strokeWidth={40} strokeLinecap="round" fill="none" />
+        <path d={`M60 -480 Q108 -380 ${86 + arm * 60} ${-250 - arm * 120}`} stroke="#14161c" strokeWidth={40} strokeLinecap="round" fill="none" />
         <circle cx={-70 + arm * 40} cy={-228 - arm * 110} r={16} fill="#2a2420" /><circle cx={86 + arm * 60} cy={-248 - arm * 120} r={16} fill="#2a2420" />
         {/* gaunt head, bowed, face half in shadow */}
         <g transform="translate(14 -566) rotate(14)">
@@ -58,6 +59,7 @@ export const Maniac: React.FC<{x: number; y: number; s?: number; flip?: boolean;
           <path d="M-20 12 Q-24 26 -10 40 M26 10 Q30 26 14 42" stroke="#000" strokeWidth={8} opacity={0.3} fill="none" />
           <path d="M-32 -46 Q-8 -78 30 -52 Q4 -60 -32 -46 Z" fill="#1a1410" />
         </g>
+      </g>
       </g>
     </g>
   );
@@ -79,7 +81,7 @@ export const ManiacFace: React.FC<{t: number; light?: number; look?: number; smo
       </defs>
       <rect x={-100} y={-100} width={2200} height={1300} fill="#07090c" /><rect x={-100} y={-100} width={2200} height={1300} fill={P('concrete')} opacity={0.35} />
       <Glow x={700} y={200} r={900} c="#ffc880" o={0.35 * light} id="mf1" />
-      <g transform={`translate(960 600) scale(${breathe * 1.5})`}>
+      <g transform={`translate(960 600) scale(${breathe * 1.62} ${breathe * 1.5})`}>
         {/* neck + apron strap */}
         <path d="M-130 300 L-110 140 L110 140 L140 300 Z" fill="#6a5a4c" /><path d="M-130 300 L-110 140 L-60 140 L-80 300 Z" fill="#000" opacity={0.4} />
         <path d="M-120 330 L-60 150 L-30 150 L-70 330 Z" fill={P('leather')} /><path d="M120 330 L60 150 L30 150 L70 330 Z" fill={P('leather')} />
@@ -92,7 +94,7 @@ export const ManiacFace: React.FC<{t: number; light?: number; look?: number; smo
         <path d="M-196 -120 Q-200 -280 0 -290 Q200 -280 196 -120 Q150 -200 90 -214 Q0 -230 -90 -214 Q-150 -200 -196 -120 Z" fill="#17120e" />
         {Array.from({length: 14}).map((_, k) => <path key={k} d={`M${-170 + k * 26} -200 Q${-160 + k * 26} -170 ${-150 + k * 26} -140`} stroke="#0a0806" strokeWidth={5} fill="none" opacity={0.8} />)}
         {/* sunken cheeks and temples */}
-        <ellipse cx={-120} cy={70} rx={52} ry={90} fill="#000" opacity={0.32} /><ellipse cx={120} cy={70} rx={52} ry={90} fill="#000" opacity={0.4} />
+        <ellipse cx={-120} cy={70} rx={40} ry={70} fill="#000" opacity={0.2} /><ellipse cx={120} cy={70} rx={40} ry={70} fill="#000" opacity={0.26} />
         <ellipse cx={-120} cy={-70} rx={50} ry={46} fill="#000" opacity={0.18} />
         {/* brow ridge */}
         <path d="M-150 -84 Q-80 -92 -16 -36 L-16 -18 Q-80 -62 -150 -56 Z" fill="#1c1510" /><path d="M150 -84 Q80 -92 16 -36 L16 -18 Q80 -62 150 -56 Z" fill="#1c1510" />
