@@ -228,7 +228,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
       default: return poseStand({mood: 'worried'});
     }
   };
-  const man = (m: number[], extra?: any) => m && m.length >= 5 ? <Maniac x={lerp(m[0], m[1], E(t, m[2], m[3]))} y={970} s={1.0} t={t} step={m[5] ? (t * 1.1) % 1 : 0} arm={extra ?? 0} /> : null;
+  const man = (m: number[], extra?: any) => m && m.length >= 5 ? <Maniac x={lerp(m[0], m[1], E(t, m[2], m[3]))} y={970} s={0.88} t={t} step={m[5] ? (t * 1.1) % 1 : 0} arm={extra ?? 0} /> : null;
   switch (sh.sc) {
     case 'base':
     case 'basement': {
