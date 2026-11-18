@@ -4,6 +4,37 @@ import '@fontsource/caveat/latin-700.css';
 import {staticFile} from 'remotion';
 import {clamp, ease, lerp, rnd, mixc, Tx, Glow, Person, Look, Pose, poseStand, poseWalk, poseSit, poseReach, E} from './M60Base';
 
+// ===================== faces for the family photo =====================
+export const FaceMini: React.FC<{x: number; y: number; k: number; kind: 'gran' | 'man' | 'maniac' | 'boy'; dim?: number; skinC?: string; hairC?: string; coat?: string}> = ({x, y, k, kind, dim = 0, skinC, hairC, coat}) => {
+  const skin = skinC ?? (kind === 'gran' ? '#d9b496' : kind === 'maniac' ? '#8e7c6c' : '#c9a080');
+  const hair = hairC ?? (kind === 'gran' ? '#c8c8d0' : kind === 'maniac' ? '#17120e' : '#3a2a20');
+  return (
+    <g transform={`translate(${x} ${y}) scale(${k})`}>
+      {/* shoulders */}
+      <path d={`M-70 90 Q-64 50 -24 44 L24 44 Q64 50 70 90 Z`} fill={coat ?? (kind === 'gran' ? '#6a5a6a' : kind === 'maniac' ? '#1c1a1a' : '#2f4a38')} />
+      {kind === 'maniac' && <path d="M-40 90 L-22 46 M40 90 L22 46" stroke="#3a2a1c" strokeWidth={8} />}
+      <rect x={-12} y={30} width={24} height={22} fill={skin} />
+      {kind === 'gran' && <circle cx={0} cy={-52} r={20} fill={hair} />}
+      <ellipse cx={-36} cy={0} rx={7} ry={11} fill={skin} /><ellipse cx={36} cy={0} rx={7} ry={11} fill={skin} />
+      <path d={kind === 'maniac' ? 'M-34 -6 Q-36 -48 0 -50 Q36 -48 34 -6 Q36 24 18 40 Q0 52 -18 40 Q-36 24 -34 -6 Z' : 'M-34 -4 Q-36 -46 0 -48 Q36 -46 34 -4 Q36 30 0 44 Q-36 30 -34 -4 Z'} fill={skin} />
+      <path d={kind === 'maniac' ? 'M-36 -14 Q-38 -56 2 -56 Q38 -54 36 -12 Q10 -34 -36 -14 Z' : kind === 'gran' ? 'M-36 -8 Q-40 -50 0 -52 Q40 -50 36 -8 Q16 -32 0 -32 Q-20 -32 -36 -8 Z' : 'M-35 -8 Q-38 -50 0 -50 Q38 -50 35 -8 Q18 -30 0 -30 Q-18 -30 -35 -8 Z'} fill={hair} />
+      {[-1, 1].map((sd) => <g key={sd}>
+        <ellipse cx={sd * 14} cy={-4} rx={kind === 'maniac' ? 9 : 7.5} ry={kind === 'maniac' ? 8 : 6} fill={kind === 'maniac' ? '#14100e' : '#fff'} />
+        <circle cx={sd * 14} cy={-3} r={kind === 'maniac' ? 3 : 3.4} fill={kind === 'maniac' ? '#e8e0cc' : '#2a1a14'} />
+        <path d={`M${sd * 6} ${kind === 'maniac' ? -12 : -14} L${sd * 24} ${kind === 'maniac' ? -16 : -14}`} stroke={hair} strokeWidth={kind === 'maniac' ? 5 : 3} strokeLinecap="round" />
+      </g>)}
+      {kind === 'gran' && <g stroke="#2a2018" strokeWidth={2} fill="none"><circle cx={-14} cy={-4} r={11} /><circle cx={14} cy={-4} r={11} /><path d="M-3 -4 L3 -4" /></g>}
+      <path d="M0 -2 Q-4 14 4 16" stroke="#000" strokeOpacity={0.3} strokeWidth={2.4} fill="none" />
+      <path d={kind === 'maniac' ? 'M-12 28 Q0 30 12 27' : kind === 'gran' ? 'M-12 26 Q0 34 12 26' : 'M-11 27 Q0 33 11 27'} stroke={kind === 'maniac' ? '#2a1610' : '#8a3a34'} strokeWidth={3} fill="none" strokeLinecap="round" />
+      {kind === 'maniac' && <><path d="M-26 -16 Q-22 6 -26 22" stroke="#7a3a34" strokeWidth={3} fill="none" /><ellipse cx={-22} cy={14} rx={10} ry={18} fill="#000" opacity={0.25} /><ellipse cx={22} cy={14} rx={10} ry={18} fill="#000" opacity={0.25} /></>}
+      {kind === 'man' && <path d="M-26 14 Q-24 42 0 46 Q24 42 26 14 Q16 34 0 34 Q-16 34 -26 14 Z" fill="#2a2420" opacity={0.28} />}
+      {kind === 'gran' && <path d="M-26 -14 Q-20 -18 -12 -16 M12 -16 Q20 -18 26 -14 M-18 20 Q-24 24 -22 30" stroke="#000" strokeOpacity={0.18} strokeWidth={2} fill="none" />}
+      {dim > 0 && <rect x={-80} y={-70} width={160} height={170} fill="#000" opacity={dim} />}
+    </g>
+  );
+};
+
+
 export const Full: React.FC<{c: string; o?: number}> = ({c, o = 1}) => <rect x={-3000} y={-2000} width={14000} height={6000} fill={c} opacity={o} />;
 const TEXS = ['concrete', 'rust', 'wood', 'dirt', 'leather', 'wallpaper', 'tile', 'asphalt', 'paper', 'metal', 'fog'];
 
@@ -206,14 +237,14 @@ export const Basement: React.FC<{t: number; p: BaseP}> = ({t, p}) => {
         <rect x={-80} y={-40} width={160} height={80} fill="#2a4060" opacity={0.55} />{[-40, 0, 40].map((bx) => <rect key={bx} x={bx - 4} y={-50} width={8} height={100} fill="#0a0e12" />)}</g>
       <polygon points="1160,200 1340,200 1520,760 1060,760" fill="#9ab4d8" opacity={0.06} />
       {/* photos wall */}
-      {(p.photos ?? 1) > 0 && <g transform="translate(1050 330)">
+      {(p.photos ?? 1) > 0 && <g transform="translate(1050 330)"><defs><clipPath id="phclip"><rect x={-60} y={-76} width={120} height={130} /></clipPath></defs>
         {Array.from({length: nPhotos}).map((_, i) => {
           const row = Math.floor(i / 4), col = i % 4, x = col * 190 + (row ? 95 : 0), y = row * 230;
           const crossed = i < 6 && (p.crossed ?? 1) > i / 6;
           return (
             <g key={i} transform={`translate(${x} ${y}) rotate(${(i % 3) * 2 - 2})`} opacity={clamp((p.photos ?? 1) * 8 - i)}>
               <rect x={-70} y={-86} width={140} height={172} fill={P('paper')} /><rect x={-70} y={-86} width={140} height={172} fill="#000" opacity={0.18} />
-              <rect x={-60} y={-76} width={120} height={130} fill="#2a2e34" /><circle cx={0} cy={-26} r={24} fill="#12151a" /><path d="M-40 54 Q0 -8 40 54 Z" fill="#12151a" />
+              <rect x={-60} y={-76} width={120} height={130} fill={['#3a4048', '#46443a', '#3a463e', '#44404c', '#403a38', '#384450', '#463e3a'][i]} /><g clipPath="url(#phclip)"><FaceMini x={0} y={-6} k={0.62} kind={(['man', 'boy', 'gran', 'man', 'boy', 'gran', 'man'] as const)[i]} skinC={['#c9a080', '#d6b090', '#d9b496', '#b88a6a', '#e0b898', '#cfa890', '#c09878'][i]} hairC={['#2a2018', '#6a4a2a', '#d0d0d8', '#1a1410', '#a8782a', '#b8b8c0', '#4a3020'][i]} coat={['#3a3a4a', '#6a3a3a', '#5a5a6a', '#2a3a4a', '#4a6a4a', '#6a5a6a', '#3a4a3a'][i]} /></g>
               {crossed && <g stroke="#050505" strokeWidth={7} strokeLinecap="round"><line x1={-52} y1={-68} x2={52} y2={46} /><line x1={52} y1={-68} x2={-52} y2={46} /></g>}
               <circle cx={0} cy={-90} r={6} fill="#6a1a1a" />
               {i === 0 && <Tx x={0} y={78} size={26} fill="#2a1a10">2 дня</Tx>}{i === 1 && <Tx x={0} y={78} size={26} fill="#2a1a10">4 дня</Tx>}{i === 2 && <Tx x={0} y={78} size={26} fill="#2a1a10">7 дней</Tx>}
@@ -432,7 +463,16 @@ export const Garden: React.FC<{t: number}> = ({t}) => (
     {Array.from({length: 30}).map((_, i) => <g key={i} transform={`translate(${-100 + i * 110} 720)`}><rect x={-8} y={-190} width={16} height={190} fill="#2a1a10" /><polygon points="-10,-190 10,-190 0,-215" fill="#2a1a10" /></g>)}
     <rect x={-300} y={560} width={3600} height={14} fill="#2a1a10" /><rect x={-300} y={640} width={3600} height={14} fill="#2a1a10" />
     {Array.from({length: 10}).map((_, i) => <ellipse key={i} cx={100 + i * 300} cy={800 + (i % 3) * 30} rx={110 + rnd(i) * 40} ry={70} fill="#0e1e12" />)}
-    <g transform="translate(1100 700)"><rect x={-300} y={-360} width={600} height={360} fill={P('wood')} /><rect x={-300} y={-360} width={600} height={360} fill="#000" opacity={0.45} /><rect x={-60} y={-280} width={120} height={120} fill="#ffd890" opacity={0.85} /></g>
+    <g transform="translate(1100 720)">
+      <rect x={-340} y={-380} width={680} height={380} fill={P('wood')} /><rect x={-340} y={-380} width={680} height={380} fill="#000" opacity={0.4} />
+      {Array.from({length: 13}).map((_, k) => <rect key={k} x={-340} y={-380 + k * 30} width={680} height={3} fill="#0a0604" opacity={0.55} />)}
+      <polygon points="-400,-370 400,-370 300,-520 -300,-520" fill="#2a1a16" /><polygon points="-400,-370 400,-370 386,-350 -386,-350" fill="#120a08" />
+      <rect x={-180} y={-290} width={150} height={130} fill="#1a100a" /><rect x={-170} y={-280} width={130} height={110} fill="#ffd890" opacity={0.9} /><rect x={-108} y={-280} width={6} height={110} fill="#2a1a10" /><rect x={-170} y={-228} width={130} height={6} fill="#2a1a10" />
+      <path d="M-170 -280 Q-146 -226 -170 -170 L-146 -170 Q-128 -226 -146 -280 Z" fill="#a8483a" opacity={0.85} />
+      <rect x={60} y={-250} width={130} height={250} fill="#1a100a" /><rect x={68} y={-242} width={114} height={242} fill={P('wood')} /><rect x={68} y={-242} width={114} height={242} fill="#000" opacity={0.4} /><circle cx={166} cy={-120} r={7} fill="#c8a85a" />
+      <rect x={30} y={0} width={190} height={20} fill={P('wood')} /><rect x={50} y={-278} width={14} height={30} fill="#2a1a10" /><circle cx={0} cy={-300} r={0} fill="none" />
+      <circle cx={125} cy={-290} r={16} fill="#ffe0a0" opacity={0.9} />
+    </g>
     <Glow x={1100} y={500} r={600} c="#ffc070" o={0.4} id="ga1" /><rect x={-300} y={-100} width={3600} height={1300} fill="#010308" opacity={0.2} />
   </g>
 );
@@ -488,15 +528,24 @@ export const ShopInt: React.FC<{t: number; chars?: React.ReactNode; storeroom?: 
     {[0, 1, 2].map((i) => <g key={i} transform={`translate(${400 + i * 520} 400)`}><rect x={-200} y={0} width={400} height={14} fill="#3a2a1a" /><rect x={-200} y={180} width={400} height={14} fill="#3a2a1a" />{Array.from({length: 8}).map((_, k) => <rect key={k} x={-190 + k * 48} y={-60 + (k % 2) * 8} width={36} height={60 - (k % 2) * 8} fill={['#8a3a2a', '#2a6a8a', '#c8a838', '#4a8a4a'][k % 4]} opacity={0.85} />)}</g>)}
     <g transform="translate(2150 780)"><rect x={-260} y={-190} width={520} height={190} fill={P('wood')} /><rect x={-260} y={-190} width={520} height={190} fill="#000" opacity={0.3} /><rect x={-260} y={-206} width={520} height={20} fill="#2a1a10" /></g>
     <g transform="translate(2760 780)"><rect x={-100} y={-480} width={200} height={480} fill={P('metal')} stroke="#050608" strokeWidth={8} /><rect x={-100} y={-480} width={200} height={480} fill="#000" opacity={0.3} /><rect x={20} y={-250} width={46} height={30} fill="#1a1a1e" />{storeroom > 0 && <rect x={-100 + Math.sin(t * 40) * 4 * storeroom} y={-480} width={200} height={480} fill="none" stroke="#fff" strokeWidth={2} opacity={0.1} />}</g>
+    <g transform="translate(1500 780)"><rect x={-110} y={-420} width={220} height={420} fill="#2a2e34" stroke="#0a0c10" strokeWidth={6} /><rect x={-96} y={-406} width={192} height={390} fill="#bfe8f0" opacity={0.5} />{[0, 1, 2].map((r) => <g key={r}><rect x={-96} y={-330 + r * 120} width={192} height={6} fill="#6a7a80" />{[0, 1, 2, 3].map((q) => <rect key={q} x={-84 + q * 46} y={-376 + r * 120} width={26} height={44} rx={6} fill={['#c8402a', '#2a8a4a', '#e8c838', '#3a6ac8'][(q + r) % 4]} opacity={0.9} />)}</g>)}<rect x={-110} y={-420} width={220} height={420} fill="#9ee8ff" opacity={0.08} /></g>
+    <g transform="translate(1000 330)"><rect x={-150} y={-90} width={300} height={190} fill="#06101c" stroke="#1a1a1e" strokeWidth={12} /><rect x={-138} y={-78} width={276} height={166} fill="#142840" opacity={0.8} /><rect x={-4} y={-90} width={8} height={190} fill="#1a1a1e" /><polygon points="-138,-78 -40,-78 -138,40" fill="#fff" opacity={0.06} /></g>
+    {[700, 1500, 2300].map((lx, i) => <g key={i} transform={`translate(${lx} 0)`}><rect x={-2} y={-100} width={4} height={150} fill="#1a1a1a" /><rect x={-70} y={50} width={140} height={14} rx={6} fill="#e8e8d8" /><Glow x={0} y={60} r={260} c="#fff3c0" o={0.22} id={`sl${i}`} /></g>)}
+    <g transform="translate(2150 780)"><rect x={-70} y={-250} width={110} height={70} fill="#1a1c20" /><rect x={-60} y={-242} width={90} height={40} fill="#3a6a5a" /><rect x={-150} y={-218} width={70} height={30} fill="#d8d0b8" /><circle cx={-110} cy={-236} r={9} fill="#c83a2a" /></g>
     {chars}
-    {photo > 0 && <g transform="translate(960 540) rotate(-4)" opacity={photo}><rect x={-230} y={-160} width={460} height={320} fill={P('paper')} /><rect x={-220} y={-150} width={440} height={300} fill="#2a2e36" /><circle cx={-60} cy={-30} r={40} fill="#0e1014" /><path d="M-130 150 Q-60 20 10 150 Z" fill="#0e1014" /><circle cx={90} cy={-30} r={40} fill="#14161a" /><path d="M20 150 Q90 20 160 150 Z" fill="#14161a" /><path d="M-30 90 Q30 70 80 100" stroke="#14161a" strokeWidth={34} fill="none" /></g>}
+    {photo > 0 && <g transform="translate(960 540) rotate(-4)" opacity={photo}><rect x={-230} y={-160} width={460} height={320} fill={P('paper')} /><rect x={-220} y={-150} width={440} height={300} fill="#3a3a34" /><rect x={-220} y={-150} width={440} height={300} fill="#8a6a30" opacity={0.15} />
+      <rect x={-220} y={20} width={440} height={130} fill="#2a2a26" /><rect x={-210} y={-130} width={140} height={110} fill="#14181c" opacity={0.7} /><rect x={150} y={-110} width={60} height={130} fill="#14181c" opacity={0.6} />
+      <FaceMini x={-120} y={20} k={1.5} kind="man" skinC="#b88a6a" hairC="#2a2018" coat="#4a4030" />
+      <FaceMini x={0} y={14} k={1.5} kind="maniac" dim={0.1} />
+      <FaceMini x={120} y={20} k={1.5} kind="man" skinC="#c0987a" hairC="#3a2e24" coat="#2a3a30" />
+      <text x={0} y={140} textAnchor="middle" fontFamily="Caveat, cursive" fontWeight={700} fontSize={30} fill="#d8d0b8" opacity={0.9}>автомастерская</text></g>}
     <Glow x={1000} y={130} r={900} c="#ffe8b0" o={0.3} id="si1" />
     <rect x={-300} y={-100} width={3600} height={1300} fill="#010308" opacity={dark} />
   </g>
 );
 
 // ===== investigation desk + apartment corridor =====
-export const Desk: React.FC<{t: number; shown: number; flip?: number; dark?: number}> = ({t, shown, flip = 0, dark = 0.3}) => {
+export const Desk: React.FC<{t: number; shown: number; flip?: number; dark?: number; photoArt?: (i: number) => React.ReactNode}> = ({t, shown, flip = 0, dark = 0.3, photoArt}) => {
   const photos = [
     {x: 560, y: 470, r: -4, kind: 'door'}, {x: 960, y: 520, r: 3, kind: 'stop'}, {x: 1360, y: 470, r: -2, kind: 'shop'}, {x: 960, y: 760, r: 2, kind: 'pair'},
   ];
@@ -507,7 +556,8 @@ export const Desk: React.FC<{t: number; shown: number; flip?: number; dark?: num
         <g key={i} transform={`translate(${p.x} ${p.y}) rotate(${p.r})`} opacity={clamp(shown * 5 - i)}>
           <rect x={-170} y={-120} width={340} height={240} fill="#000" opacity={0.4} transform="translate(8 10)" /><rect x={-170} y={-120} width={340} height={240} fill={P('paper')} />
           <rect x={-158} y={-108} width={316} height={216} fill={['#3a4a58', '#4a5a46', '#4a4458', '#3a3a30'][i]} />
-          {i === 3 ? <><circle cx={-30} cy={-10} r={30} fill="#0e1014" /><path d="M-90 108 Q-30 10 30 108 Z" fill="#0e1014" /><circle cx={70} cy={-14} r={28} fill="#1a1a20" /><path d="M20 108 Q70 14 120 108 Z" fill="#1a1a20" /></> : <><rect x={-60} y={-40} width={120} height={148} fill="#16181e" opacity={0.8} /><circle cx={0} cy={-62} r={26} fill="#0e1014" /></>}
+          {photoArt ? photoArt(i) : null}
+          <rect x={-158} y={-108} width={316} height={216} fill="#2a1a08" opacity={0.18} />
         </g>
       ))}
       {flip > 0 && <g transform="translate(960 560) rotate(-2)" opacity={flip}><rect x={-300} y={-200} width={600} height={400} fill="#000" opacity={0.45} transform="translate(10 14)" /><rect x={-300} y={-200} width={600} height={400} fill={P('paper')} /><text x={0} y={-30} textAnchor="middle" fontFamily="Caveat, cursive" fontWeight={700} fontSize={110} fill="#1a1a1a">Артём.</text><text x={0} y={90} textAnchor="middle" fontFamily="Caveat, cursive" fontWeight={700} fontSize={120} fill="#a01818">Следующий</text></g>}
@@ -522,6 +572,12 @@ export const AptHall: React.FC<{t: number; door?: number; dark?: number}> = ({t,
     <rect x={-300} y={-100} width={3600} height={880} fill={P('wallpaper')} /><rect x={-300} y={-100} width={3600} height={880} fill="#05070c" opacity={0.6} />
     <rect x={-300} y={770} width={3600} height={420} fill={P('tile')} /><rect x={-300} y={770} width={3600} height={420} fill="#000" opacity={0.6} />
     <g transform="translate(1500 770)"><rect x={-170} y={-520} width={340} height={520} fill="#02040a" />{door > 0 && <rect x={-160} y={-510} width={320 * door} height={500} fill="#1a2438" opacity={0.7} />}<g transform={`translate(-160 0) scale(${1 - door * 0.7} 1)`}><rect x={0} y={-510} width={320} height={510} fill={P('wood')} /><rect x={0} y={-510} width={320} height={510} fill="#000" opacity={0.5} /><circle cx={280} cy={-240} r={14} fill="#b49a58" /></g></g>
+    {/* neighbour door, mailboxes, lamp, doormat, stairs */}
+    <g transform="translate(500 770)"><rect x={-130} y={-500} width={260} height={500} fill="#02040a" /><rect x={-120} y={-490} width={240} height={490} fill={P('wood')} /><rect x={-120} y={-490} width={240} height={490} fill="#000" opacity={0.42} /><circle cx={80} cy={-240} r={11} fill="#b49a58" /><circle cx={0} cy={-380} r={8} fill="#0a0a0a" stroke="#8a8a8a" strokeWidth={3} /><rect x={-26} y={-440} width={52} height={36} fill="#c8c0a0" /><text x={0} y={-414} textAnchor="middle" fontFamily="Montserrat, sans-serif" fontWeight={800} fontSize={26} fill="#222">1</text><rect x={-100} y={-4} width={200} height={8} fill="#000" opacity={0.6} /></g>
+    <g transform="translate(1100 770)"><rect x={-100} y={-360} width={200} height={220} fill="#3a4048" stroke="#0a0c10" strokeWidth={5} />{Array.from({length: 6}).map((_, k) => <g key={k}><rect x={-92 + (k % 3) * 62} y={-352 + Math.floor(k / 3) * 104} width={56} height={96} fill="#5a626c" /><rect x={-80 + (k % 3) * 62} y={-330 + Math.floor(k / 3) * 104} width={30} height={6} fill="#14161a" /></g>)}</g>
+    <g transform="translate(1500 770)"><rect x={-110} y={-6} width={220} height={14} fill="#3a2a22" /><rect x={-92} y={-6} width={184} height={6} fill="#6a4a3a" /></g>
+    <g transform="translate(1000 100)"><rect x={-3} y={-100} width={6} height={140} fill="#1a1a1a" /><rect x={-50} y={40} width={100} height={16} rx={8} fill="#e8e8d8" opacity={0.85} /></g><Glow x={1000} y={160} r={520} c="#dfe8c8" o={0.2} id="ap2" />
+    <polygon points="2000,770 2500,770 2500,300 2400,350 2300,400 2200,450 2100,500 2000,550" fill="#14181e" opacity={0.7} />{[0, 1, 2, 3, 4].map((k) => <rect key={k} x={2000 + k * 100} y={560 - k * 50 + 100} width={100} height={12} fill="#2a2e34" />)}
     <Glow x={1500} y={300} r={700} c="#9ab4d8" o={0.15} id="ap1" /><Dust t={t} x={0} y={100} w={2200} h={650} n={14} />
     <rect x={-300} y={-100} width={3600} height={1300} fill="#010206" opacity={dark} />
   </g>

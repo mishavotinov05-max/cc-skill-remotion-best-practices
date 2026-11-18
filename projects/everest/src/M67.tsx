@@ -5,7 +5,7 @@ import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame} from 'remoti
 import {ramp} from './Everest';
 import {clamp, ease, lerp, rnd, Tx, E, Pose, poseStand, poseWalk, poseSit, poseReach} from './M60Base';
 import {PersonV} from './M67Fig';
-import {poseRun, PhotoWall, HouseExt2, CarSide, CarInside2, PovRun} from './M67Art2';
+import {poseRun, DeskPhoto, PhotoWall, HouseExt2, CarSide, CarInside2, PovRun} from './M67Art2';
 import {Full, Man, ARTEM, OLEG, BROTHER, GRAN, LERA, SELLER, Maniac, ManiacFace, Basement, Alley, TokenClose, LockClose, StepClose, RulesSheet, Kitchen, ForestDark, HouseExt, LivingRoom, Garden, CarInside, ShopExt, ShopInt, Desk, AptHall} from './M67Art';
 import subs from './subs_s8.json';
 
@@ -338,7 +338,7 @@ const Scene: React.FC<{sh: Shot; t: number; fx: number}> = ({sh, t, fx}) => {
         </g>
       );
     }
-    case 'desk': return <Desk t={t} shown={tw(p.shown ?? 1, t)} flip={tw(p.flip ?? 0, t)} />;
+    case 'desk': return <Desk t={t} shown={tw(p.shown ?? 1, t)} flip={tw(p.flip ?? 0, t)} photoArt={DeskPhoto} />;
     case 'apt': return <AptHall t={t} door={tw(p.door ?? 0, t)} dark={p.dark ?? 0.5} />;
     default: return null;
   }

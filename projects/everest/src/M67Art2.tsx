@@ -1,6 +1,8 @@
 import React from 'react';
 import {clamp, lerp, rnd, Tx, Glow, E, Pose} from './M60Base';
-import {Defs, Dust, P, Full} from './M67Art';
+import {Defs, Dust, P, Full, FaceMini} from './M67Art';
+import {PersonV} from './M67Fig';
+import {ARTEM, GRAN, BROTHER} from './M67Art';
 
 // ===================== running pose with long, lively strides =====================
 export const poseRun = (t: number, mood: Pose['mood'] = 'scared'): Pose => {
@@ -17,36 +19,6 @@ export const poseRun = (t: number, mood: Pose['mood'] = 'scared'): Pose => {
     nod: -6 + sn * 3,
     mood,
   };
-};
-
-// ===================== faces for the family photo =====================
-export const FaceMini: React.FC<{x: number; y: number; k: number; kind: 'gran' | 'man' | 'maniac' | 'boy'; dim?: number}> = ({x, y, k, kind, dim = 0}) => {
-  const skin = kind === 'gran' ? '#d9b496' : kind === 'maniac' ? '#8e7c6c' : '#c9a080';
-  const hair = kind === 'gran' ? '#c8c8d0' : kind === 'maniac' ? '#17120e' : '#3a2a20';
-  return (
-    <g transform={`translate(${x} ${y}) scale(${k})`}>
-      {/* shoulders */}
-      <path d={`M-70 90 Q-64 50 -24 44 L24 44 Q64 50 70 90 Z`} fill={kind === 'gran' ? '#6a5a6a' : kind === 'maniac' ? '#1c1a1a' : '#2f4a38'} />
-      {kind === 'maniac' && <path d="M-40 90 L-22 46 M40 90 L22 46" stroke="#3a2a1c" strokeWidth={8} />}
-      <rect x={-12} y={30} width={24} height={22} fill={skin} />
-      {kind === 'gran' && <circle cx={0} cy={-52} r={20} fill={hair} />}
-      <ellipse cx={-36} cy={0} rx={7} ry={11} fill={skin} /><ellipse cx={36} cy={0} rx={7} ry={11} fill={skin} />
-      <path d={kind === 'maniac' ? 'M-34 -6 Q-36 -48 0 -50 Q36 -48 34 -6 Q36 24 18 40 Q0 52 -18 40 Q-36 24 -34 -6 Z' : 'M-34 -4 Q-36 -46 0 -48 Q36 -46 34 -4 Q36 30 0 44 Q-36 30 -34 -4 Z'} fill={skin} />
-      <path d={kind === 'maniac' ? 'M-36 -14 Q-38 -56 2 -56 Q38 -54 36 -12 Q10 -34 -36 -14 Z' : kind === 'gran' ? 'M-36 -8 Q-40 -50 0 -52 Q40 -50 36 -8 Q16 -32 0 -32 Q-20 -32 -36 -8 Z' : 'M-35 -8 Q-38 -50 0 -50 Q38 -50 35 -8 Q18 -30 0 -30 Q-18 -30 -35 -8 Z'} fill={hair} />
-      {[-1, 1].map((sd) => <g key={sd}>
-        <ellipse cx={sd * 14} cy={-4} rx={kind === 'maniac' ? 9 : 7.5} ry={kind === 'maniac' ? 8 : 6} fill={kind === 'maniac' ? '#14100e' : '#fff'} />
-        <circle cx={sd * 14} cy={-3} r={kind === 'maniac' ? 3 : 3.4} fill={kind === 'maniac' ? '#e8e0cc' : '#2a1a14'} />
-        <path d={`M${sd * 6} ${kind === 'maniac' ? -12 : -14} L${sd * 24} ${kind === 'maniac' ? -16 : -14}`} stroke={hair} strokeWidth={kind === 'maniac' ? 5 : 3} strokeLinecap="round" />
-      </g>)}
-      {kind === 'gran' && <g stroke="#2a2018" strokeWidth={2} fill="none"><circle cx={-14} cy={-4} r={11} /><circle cx={14} cy={-4} r={11} /><path d="M-3 -4 L3 -4" /></g>}
-      <path d="M0 -2 Q-4 14 4 16" stroke="#000" strokeOpacity={0.3} strokeWidth={2.4} fill="none" />
-      <path d={kind === 'maniac' ? 'M-12 28 Q0 30 12 27' : kind === 'gran' ? 'M-12 26 Q0 34 12 26' : 'M-11 27 Q0 33 11 27'} stroke={kind === 'maniac' ? '#2a1610' : '#8a3a34'} strokeWidth={3} fill="none" strokeLinecap="round" />
-      {kind === 'maniac' && <><path d="M-26 -16 Q-22 6 -26 22" stroke="#7a3a34" strokeWidth={3} fill="none" /><ellipse cx={-22} cy={14} rx={10} ry={18} fill="#000" opacity={0.25} /><ellipse cx={22} cy={14} rx={10} ry={18} fill="#000" opacity={0.25} /></>}
-      {kind === 'man' && Array.from({length: 16}).map((_, i) => <circle key={i} cx={-14 + (i % 8) * 4} cy={26 + Math.floor(i / 8) * 6} r={1.2} fill="#2a2420" opacity={0.6} />)}
-      {kind === 'gran' && <path d="M-26 -14 Q-20 -18 -12 -16 M12 -16 Q20 -18 26 -14 M-18 20 Q-24 24 -22 30" stroke="#000" strokeOpacity={0.18} strokeWidth={2} fill="none" />}
-      {dim > 0 && <rect x={-80} y={-70} width={160} height={170} fill="#000" opacity={dim} />}
-    </g>
-  );
 };
 
 export const PhotoWall: React.FC<{photoK: number}> = ({photoK}) => (
@@ -349,3 +321,45 @@ export const PovRun: React.FC<{t: number; a: number; b: number; env: 'basement' 
 };
 
 void lerp; void E;
+
+// ===================== investigator's photos =====================
+export const DeskPhoto = (i: number): React.ReactNode => (
+  <g>
+    <clipPath id={`dpc${i}`}><rect x={-158} y={-108} width={316} height={216} /></clipPath>
+    <g clipPath={`url(#dpc${i})`}>
+      {i === 0 && <g>
+        <rect x={-158} y={-108} width={316} height={216} fill="#2a3444" />
+        <rect x={-158} y={52} width={316} height={56} fill="#3a3a38" />
+        <rect x={-150} y={-108} width={300} height={170} fill={P('concrete')} opacity={0.5} />
+        {[-110, 110].map((wx) => <g key={wx}>{[0, 1].map((r) => <rect key={r} x={wx - 22} y={-90 + r * 60} width={44} height={40} fill="#e8d890" opacity={0.7} stroke="#1a1a1a" strokeWidth={3} />)}</g>)}
+        <rect x={-52} y={-30} width={104} height={92} fill="#1a1612" stroke="#0a0a0a" strokeWidth={5} /><rect x={-44} y={-22} width={88} height={84} fill="#3a2a1a" />
+        <rect x={-52} y={-48} width={104} height={14} fill="#5a4a3a" /><circle cx={0} cy={-62} r={8} fill="#ffe0a0" />
+        <PersonV x={0} y={104} look={ARTEM} view="front" mode="stand" t={0} s={0.3} mood="neutral" shadow={false} />
+      </g>}
+      {i === 1 && <g>
+        <rect x={-158} y={-108} width={316} height={216} fill="#3a4a5c" /><rect x={-158} y={-108} width={316} height={80} fill="#6a7a8c" opacity={0.5} />
+        <rect x={-158} y={40} width={316} height={68} fill="#3a3a38" /><rect x={-158} y={36} width={316} height={8} fill="#6a6a64" />
+        <rect x={-130} y={-70} width={150} height={100} fill="#0a121c" opacity={0.5} stroke="#1a2228" strokeWidth={5} /><polygon points="-142,-70 32,-70 32,-86 -142,-86" fill="#2a3440" />
+        <rect x={-120} y={6} width={130} height={10} fill="#5a4a3a" /><rect x={-114} y={16} width={6} height={22} fill="#3a2a1a" /><rect x={-20} y={16} width={6} height={22} fill="#3a2a1a" />
+        <rect x={70} y={-70} width={8} height={110} fill="#2a2a2a" /><rect x={46} y={-90} width={56} height={34} fill="#c8a838" /><text x={74} y={-66} textAnchor="middle" fontFamily="Montserrat, sans-serif" fontWeight={800} fontSize={22} fill="#222">12</text>
+        <PersonV x={-50} y={100} look={ARTEM} view="front" mode="stand" t={0} s={0.3} mood="neutral" shadow={false} />
+      </g>}
+      {i === 2 && <g>
+        <rect x={-158} y={-108} width={316} height={216} fill="#1e2838" /><rect x={-158} y={56} width={316} height={52} fill="#3a3a38" />
+        <rect x={-148} y={-60} width={296} height={116} fill={P('concrete')} opacity={0.7} /><rect x={-154} y={-76} width={308} height={20} fill="#7a1a1a" />
+        <rect x={-130} y={-40} width={110} height={80} fill="#ffe8b0" opacity={0.85} /><rect x={30} y={-40} width={100} height={80} fill="#ffe8b0" opacity={0.85} /><rect x={-14} y={-40} width={36} height={96} fill="#2a2018" />
+        <PersonV x={-40} y={102} look={ARTEM} view="front" mode="walk" t={0.15} s={0.3} mood="neutral" shadow={false} />
+        <rect x={-12} y={66} width={20} height={24} fill="#8a6a3a" />
+      </g>}
+      {i === 3 && <g>
+        <rect x={-158} y={-108} width={316} height={216} fill="#323a46" /><rect x={-158} y={60} width={316} height={48} fill="#3a3a38" />
+        <rect x={-148} y={-100} width={296} height={160} fill={P('concrete')} opacity={0.7} />
+        {[-100, 100].map((wx) => <rect key={wx} x={wx - 26} y={-80} width={52} height={46} fill="#e8d890" opacity={0.6} stroke="#1a1a1a" strokeWidth={3} />)}
+        <FaceMini x={-62} y={8} k={0.95} kind="gran" />
+        <FaceMini x={62} y={8} k={0.95} kind="man" skinC="#c8a080" hairC="#4a4a50" coat="#3a4a5a" />
+      </g>}
+      <rect x={-158} y={-108} width={316} height={216} fill="#d8c890" opacity={0.12} />
+    </g>
+  </g>
+);
+void GRAN; void BROTHER;
