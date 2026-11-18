@@ -19,6 +19,7 @@ import {T0, T1, T2, T3} from './M64Test';
 import {M64, FPS64, DUR64} from './M64';
 import {M65, FPS65, DUR65} from './M65';
 import {M66, FPS66, DUR66} from './M66';
+import {M67, FPS67, DUR67} from './M67';
 import {M66Cover} from './M66Cover';
 import {M65Cover} from './M65Cover';
 import {M64Cover} from './M64Cover';
@@ -43,6 +44,7 @@ export const Root: React.FC = () => (
   <Composition id="Cover64" component={M64Cover} durationInFrames={1} fps={30} width={1920} height={1080} />
   <Composition id="Cover65" component={M65Cover} durationInFrames={1} fps={30} width={1920} height={1080} />
   <Composition id="Cover66" component={M66Cover} durationInFrames={1} fps={30} width={1920} height={1080} />
+  <Composition id="M67" component={M67} durationInFrames={Math.round(DUR67 * FPS67)} fps={FPS67} width={1920} height={1080} />
   <Composition id="M66" component={M66} durationInFrames={Math.round(DUR66 * FPS66)} fps={FPS66} width={1920} height={1080} />
   <Composition id="M65" component={M65} durationInFrames={Math.round(DUR65 * FPS65)} fps={FPS65} width={1920} height={1080} />
   <Composition id="M64" component={M64} durationInFrames={Math.round(DUR64 * FPS64)} fps={FPS64} width={1920} height={1080} />
