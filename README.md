@@ -36,6 +36,16 @@ rules/            # 37+ topic-specific reference files
   ...
 ```
 
+## Bundled Skills (from affaan-m/ECC)
+
+Copied from [affaan-m/ECC](https://github.com/affaan-m/ECC/tree/main/skills) under `skills/`:
+
+- `skills/video-editing/`
+- `skills/content-engine/`
+- `skills/brand-voice/`
+- `skills/security-review/`
+- `skills/remotion-video-creation/`
+
 ## Required API Keys
 
 None. This is a pure knowledge/reference skill.
